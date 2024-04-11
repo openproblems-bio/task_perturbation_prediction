@@ -1,0 +1,17 @@
+name: dge_perturbation_prediction
+label: DGE Perturbation Prediction
+summary: "DGE Perturbation Prediction"
+motivation: |
+  Motivation
+description: |
+  In this task, the goal is to
+authors:
+  - name: Artur Szałata
+    roles: [ author ]
+    info:
+      github: szalata
+  - name: Robrecht Cannoodt
+    roles: [ author ]
+    info:
+      github: rcannood
+      orcid: "0000-0003-3641-729X"
