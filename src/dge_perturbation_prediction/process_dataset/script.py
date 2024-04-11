@@ -7,11 +7,6 @@ par = {
     "de_train": "resources/neurips-2023-data/de_train.h5ad",
     "de_test": "resources/neurips-2023-data/de_test.h5ad",
 }
-meta = {
-    "functionality_name": "process_dataset",
-    "resources_dir": "src/tasks/spatial_decomposition/process_dataset",
-    "config": "target/nextflow/spatial_decomposition/process_dataset/.config.vsh.yaml"
-}
 ## VIASH END
 
 print(">> Load dataset", flush=True)
