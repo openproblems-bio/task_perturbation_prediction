@@ -20,8 +20,8 @@ nextflow run openproblems-bio/openproblems-v2 \
   -profile docker \
   -latest \
   -c $TMP_CONFIG \
-  --task "dge-perturbation-prediction" \
-  --task_dir "src" \
+  --task "dge_perturbation_prediction" \
+  --task_dir "src/dge_perturbation_prediction" \
   --github_url "https://github.com/openproblems-bio/task-dge-perturbation-prediction/tree/main/" \
   --output "README.md" \
   --viash_yaml "_viash.yaml" \
