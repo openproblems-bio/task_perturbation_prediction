@@ -1,0 +1,20 @@
+functionality:
+  namespace: "dge_perturbation_prediction/methods"
+  info:
+    type: method
+    type_info:
+      label: Method
+      summary: A regression method.
+      description: |
+        A regression method to predict the expression of one modality from another.
+  arguments:
+    - name: --input
+      __merge__: file_de_train.yaml
+      required: true
+      direction: input
+    # ... more inputs ...
+    - name: --output
+      __merge__: file_prediction.yaml
+      required: true
+      direction: output
+  test_resources: []

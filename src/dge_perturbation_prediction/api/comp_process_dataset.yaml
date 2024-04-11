@@ -1,0 +1,25 @@
+functionality:
+  namespace: "dge_perturbation_prediction"
+  info:
+    type: process_dataset
+    type_info:
+      label: Data processor
+      summary: A DGE regression dataset processor
+      description: |
+        A DGE regression dataset processor to process the dataset for the DGE regression task.
+  arguments:
+    - name: --de_per_plate_by_celltype
+      __merge__: file_de_per_plate_by_celltype.yaml
+      required: true
+      direction: input
+    - name: --de_per_plate_by_celltype
+      __merge__: file_de_per_plate.yaml
+      required: true
+      direction: input
+    # ... more inputs ...
+    - name: --de_train
+      __merge__: file_de_train.yaml
+      required: true
+      direction: input
+    # ... more outputs ...
+  test_resources: []
