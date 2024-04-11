@@ -3,3 +3,4 @@ work
 .nextflow*
 target
 .idea
+.vscode
