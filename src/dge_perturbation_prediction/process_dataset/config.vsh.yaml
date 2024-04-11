@@ -7,6 +7,9 @@ functionality:
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_python:1.0.2
+    setup:
+      - type: python
+        packages: [ numpy, scipy ]
   - type: nextflow
     directives:
       label: [ midtime, midmem, lowcpu ]
