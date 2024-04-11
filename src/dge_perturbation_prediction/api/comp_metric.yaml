@@ -1,12 +1,12 @@
 functionality:
   namespace: "dge_perturbation_prediction/metrics"
   info:
-    type: method
+    type: metric
     type_info:
-      label: Method
-      summary: A regression method.
+      label: Metric
+      summary: A metric to compare two predictions.
       description: |
-        A regression method to predict the expression of one modality from another.
+        A metric to compare two predictions.
   arguments:
     - name: --de_train
       __merge__: file_de_train.yaml

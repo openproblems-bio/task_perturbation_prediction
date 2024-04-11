@@ -29,7 +29,7 @@ flowchart LR
   comp_process_dataset[/"Data processor"/]
   file_de_train("DE train")
   comp_method[/"Method"/]
-  comp_metric[/"Method"/]
+  comp_metric[/"Metric"/]
   file_prediction("Prediction")
   file_score("Score")
   file_de_per_plate("DE per plate")
@@ -154,12 +154,12 @@ Arguments:
 
 </div>
 
-## Component type: Method
+## Component type: Metric
 
 Path:
 [`src/dge_perturbation_prediction/metrics`](https://github.com/openproblems-bio/openproblems-v2/tree/main/src/dge_perturbation_prediction/metrics)
 
-A regression method.
+A metric to compare two predictions.
 
 Arguments:
 
