@@ -21,5 +21,9 @@ functionality:
       __merge__: file_de_train.yaml
       required: true
       direction: output
+    - name: --de_test
+      __merge__: file_de_test.yaml
+      required: true
+      direction: output
     # ... more outputs ...
   test_resources: []

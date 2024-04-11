@@ -28,6 +28,7 @@ flowchart LR
   file_de_per_plate_by_celltype("DE per plate by cell type")
   comp_process_dataset[/"Data processor"/]
   file_de_train("DE train")
+  file_de_test("DE test")
   comp_method[/"Method"/]
   comp_metric[/"Metric"/]
   file_prediction("Prediction")
@@ -35,8 +36,9 @@ flowchart LR
   file_de_per_plate("DE per plate")
   file_de_per_plate_by_celltype---comp_process_dataset
   comp_process_dataset-->file_de_train
+  comp_process_dataset-->file_de_test
   file_de_train---comp_method
-  file_de_train---comp_metric
+  file_de_test---comp_metric
   comp_method-->file_prediction
   comp_metric-->file_score
   file_prediction---comp_metric
@@ -102,6 +104,7 @@ Arguments:
 | `--de_per_plate_by_celltype` | `file` | Differential expression results per plate and cell type. |
 | `--de_per_plate_by_celltype` | `file` | Differential expression results per plate and cell type. |
 | `--de_train`                 | `file` | (*Output*) Differential expression results for training. |
+| `--de_test`                  | `file` | (*Output*) Differential expression results for testing.  |
 
 </div>
 
@@ -110,6 +113,37 @@ Arguments:
 Differential expression results for training.
 
 Example file: `resources/datasets/de_train.h5ad`
+
+Format:
+
+<div class="small">
+
+    AnnData object
+     obs: 'cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'control'
+     layers: '-log10(p-value)sign(lfc)'
+
+</div>
+
+Slot description:
+
+<div class="small">
+
+| Slot                                 | Type      | Description                                                                                                                                                                                                                                                                                                     |
+|:-------------------------------------|:----------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `obs["cell_type"]`                   | `string`  | The annotated cell type of each cell based on RNA expression.                                                                                                                                                                                                                                                   |
+| `obs["sm_name"]`                     | `string`  | The primary name for the (parent) compound (in a standardized representation) as chosen by LINCS. This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                       |
+| `obs["sm_lincs_id"]`                 | `string`  | The global LINCS ID (parent) compound (in a standardized representation). This is provided to map the data in this experiment to the LINCS Connectivity Map data.                                                                                                                                               |
+| `obs["SMILES"]`                      | `string`  | Simplified molecular-input line-entry system (SMILES) representations of the compounds used in the experiment. This is a 1D representation of molecular structure. These SMILES are provided by Cellarity based on the specific compounds ordered for this experiment.                                          |
+| `obs["control"]`                     | `boolean` | Boolean indicating whether this instance was used as a control.                                                                                                                                                                                                                                                 |
+| `layers["-log10(p-value)sign(lfc)"]` | `double`  | ifferential expression value (-log10(p-value) \* sign(LFC)) for each gene. Here, LFC is the estimated log-fold change in expression between the treatment and control condition after shrinkage as calculated by Limma. Positive LFC means the gene goes up in the treatment condition relative to the control. |
+
+</div>
+
+## File format: DE test
+
+Differential expression results for testing.
+
+Example file: `resources/datasets/de_test.h5ad`
 
 Format:
 
@@ -165,11 +199,11 @@ Arguments:
 
 <div class="small">
 
-| Name           | Type   | Description                                   |
-|:---------------|:-------|:----------------------------------------------|
-| `--de_train`   | `file` | Differential expression results for training. |
-| `--prediction` | `file` | Differential Gene Expression prediction.      |
-| `--output`     | `file` | (*Output*) Metric score file.                 |
+| Name           | Type   | Description                                  |
+|:---------------|:-------|:---------------------------------------------|
+| `--de_test`    | `file` | Differential expression results for testing. |
+| `--prediction` | `file` | Differential Gene Expression prediction.     |
+| `--output`     | `file` | (*Output*) Metric score file.                |
 
 </div>
 

@@ -1,0 +1,46 @@
+type: file
+example: resources/datasets/de_test.h5ad
+info:
+  label: DE test
+  summary: "Differential expression results for testing."
+  slots:
+    obs:
+      - name: cell_type
+        description: "The annotated cell type of each cell based on RNA expression."
+        type: string
+        required: true
+      - name: sm_name
+        description: |
+          The primary name for the (parent) compound (in a standardized representation)
+          as chosen by LINCS. This is provided to map the data in this experiment to 
+          the LINCS Connectivity Map data.
+        type: string
+        required: true
+      - name: sm_lincs_id
+        description: |
+          The global LINCS ID (parent) compound (in a standardized representation).
+          This is provided to map the data in this experiment to the LINCS Connectivity
+          Map data.
+        type: string
+        required: true
+      - name: SMILES
+        description: |
+          Simplified molecular-input line-entry system (SMILES) representations of the
+          compounds used in the experiment. This is a 1D representation of molecular
+          structure. These SMILES are provided by Cellarity based on the specific
+          compounds ordered for this experiment.
+        type: string
+        required: true
+      - name: control
+        description: "Boolean indicating whether this instance was used as a control."
+        type: boolean
+        required: true
+    layers:
+      - name: "-log10(p-value)sign(lfc)"
+        description: |
+          ifferential expression value (-log10(p-value) * sign(LFC)) for each gene.
+          Here, LFC is the estimated log-fold change in expression between the treatment
+          and control condition after shrinkage as calculated by Limma. Positive LFC means
+          the gene goes up in the treatment condition relative to the control.
+        type: double
+        required: true

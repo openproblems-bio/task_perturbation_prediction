@@ -8,8 +8,8 @@ functionality:
       description: |
         A metric to compare two predictions.
   arguments:
-    - name: --de_train
-      __merge__: file_de_train.yaml
+    - name: --de_test
+      __merge__: file_de_test.yaml
       required: true
       direction: input
     - name: --prediction
