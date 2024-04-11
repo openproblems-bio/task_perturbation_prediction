@@ -15,7 +15,7 @@ functionality:
     - name: --prediction
       __merge__: file_prediction.yaml
       required: true
-      direction: output
+      direction: input
     # ... more inputs ...
     - name: --output
       __merge__: file_score.yaml

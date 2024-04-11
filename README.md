@@ -38,8 +38,8 @@ flowchart LR
   file_de_train---comp_method
   file_de_train---comp_metric
   comp_method-->file_prediction
-  comp_metric-->file_prediction
   comp_metric-->file_score
+  file_prediction---comp_metric
   file_de_per_plate---comp_process_dataset
 ```
 
@@ -165,11 +165,11 @@ Arguments:
 
 <div class="small">
 
-| Name           | Type   | Description                                         |
-|:---------------|:-------|:----------------------------------------------------|
-| `--de_train`   | `file` | Differential expression results for training.       |
-| `--prediction` | `file` | (*Output*) Differential Gene Expression prediction. |
-| `--output`     | `file` | (*Output*) Metric score file.                       |
+| Name           | Type   | Description                                   |
+|:---------------|:-------|:----------------------------------------------|
+| `--de_train`   | `file` | Differential expression results for training. |
+| `--prediction` | `file` | Differential Gene Expression prediction.      |
+| `--output`     | `file` | (*Output*) Metric score file.                 |
 
 </div>
 
