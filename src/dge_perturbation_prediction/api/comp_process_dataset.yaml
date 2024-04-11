@@ -20,6 +20,6 @@ functionality:
     - name: --de_train
       __merge__: file_de_train.yaml
       required: true
-      direction: input
+      direction: output
     # ... more outputs ...
   test_resources: []

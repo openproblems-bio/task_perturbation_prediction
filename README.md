@@ -25,23 +25,85 @@ TODO: fill in
 
 ``` mermaid
 flowchart LR
+  file_de_per_plate_by_celltype("DE per plate by cell type")
+  comp_process_dataset[/"Data processor"/]
   file_de_train("DE train")
   comp_method[/"Method"/]
   comp_metric[/"Method"/]
-  comp_process_dataset[/"Data processor"/]
   file_prediction("Prediction")
   file_score("Score")
-  file_de_per_plate_by_celltype("DE per plate by cell type")
   file_de_per_plate("DE per plate")
+  file_de_per_plate_by_celltype---comp_process_dataset
+  comp_process_dataset-->file_de_train
   file_de_train---comp_method
   file_de_train---comp_metric
-  file_de_train---comp_process_dataset
   comp_method-->file_prediction
   comp_metric-->file_prediction
   comp_metric-->file_score
-  file_de_per_plate_by_celltype---comp_process_dataset
   file_de_per_plate---comp_process_dataset
 ```
+
+## File format: DE per plate by cell type
+
+Differential expression results per plate and cell type.
+
+Example file:
+`resources/neurips-2023-raw/de_per_plate_by_cell_type.h5ad`
+
+Format:
+
+<div class="small">
+
+    AnnData object
+     obs: 'dose_uM', 'plate_name', 'cell_type', 'n_de_genes', 'n_de_genes_adj', 'split', 'donor_id', 'sm_name'
+     layers: '-log10(p-value)sign(lfc)', 'P.Value', 'adj.P.Val', 'is_de', 'is_de_adj', 'lfc', 'logFC', 'masked_lfc', 'masked_sign(lfc)'
+
+</div>
+
+Slot description:
+
+<div class="small">
+
+| Slot                                 | Type      | Description                                                                 |
+|:-------------------------------------|:----------|:----------------------------------------------------------------------------|
+| `obs["dose_uM"]`                     | `integer` | Dose in uM.                                                                 |
+| `obs["plate_name"]`                  | `string`  | Name of the plate.                                                          |
+| `obs["cell_type"]`                   | `string`  | Cell type.                                                                  |
+| `obs["n_de_genes"]`                  | `integer` | Number of differentially expressed genes.                                   |
+| `obs["n_de_genes_adj"]`              | `integer` | Number of differentially expressed genes after multiple testing correction. |
+| `obs["split"]`                       | `string`  | Split of the data.                                                          |
+| `obs["donor_id"]`                    | `string`  | Donor ID.                                                                   |
+| `obs["sm_name"]`                     | `string`  | Name of the small molecule.                                                 |
+| `layers["-log10(p-value)sign(lfc)"]` | `double`  | Log10 of the p-value multiplied by the sign of the log fold change.         |
+| `layers["P.Value"]`                  | `double`  | P-value.                                                                    |
+| `layers["adj.P.Val"]`                | `double`  | Adjusted p-value.                                                           |
+| `layers["is_de"]`                    | `boolean` | Is differentially expressed.                                                |
+| `layers["is_de_adj"]`                | `boolean` | Is differentially expressed after multiple testing correction.              |
+| `layers["lfc"]`                      | `double`  | Log fold change.                                                            |
+| `layers["logFC"]`                    | `double`  | Log fold change.                                                            |
+| `layers["masked_lfc"]`               | `double`  | Masked log fold change.                                                     |
+| `layers["masked_sign(lfc)"]`         | `double`  | Masked sign of the log fold change.                                         |
+
+</div>
+
+## Component type: Data processor
+
+Path:
+[`src/dge_perturbation_prediction`](https://github.com/openproblems-bio/openproblems-v2/tree/main/src/dge_perturbation_prediction)
+
+A DGE regression dataset processor
+
+Arguments:
+
+<div class="small">
+
+| Name                         | Type   | Description                                              |
+|:-----------------------------|:-------|:---------------------------------------------------------|
+| `--de_per_plate_by_celltype` | `file` | Differential expression results per plate and cell type. |
+| `--de_per_plate_by_celltype` | `file` | Differential expression results per plate and cell type. |
+| `--de_train`                 | `file` | (*Output*) Differential expression results for training. |
+
+</div>
 
 ## File format: DE train
 
@@ -111,25 +173,6 @@ Arguments:
 
 </div>
 
-## Component type: Data processor
-
-Path:
-[`src/dge_perturbation_prediction`](https://github.com/openproblems-bio/openproblems-v2/tree/main/src/dge_perturbation_prediction)
-
-A DGE regression dataset processor
-
-Arguments:
-
-<div class="small">
-
-| Name                         | Type   | Description                                              |
-|:-----------------------------|:-------|:---------------------------------------------------------|
-| `--de_per_plate_by_celltype` | `file` | Differential expression results per plate and cell type. |
-| `--de_per_plate_by_celltype` | `file` | Differential expression results per plate and cell type. |
-| `--de_train`                 | `file` | Differential expression results for training.            |
-
-</div>
-
 ## File format: Prediction
 
 Differential Gene Expression prediction
@@ -180,49 +223,6 @@ Slot description:
 | `uns["method_id"]`     | `string` | A unique identifier for the method.                                                          |
 | `uns["metric_ids"]`    | `string` | One or more unique metric identifiers.                                                       |
 | `uns["metric_values"]` | `double` | The metric values obtained for the given prediction. Must be of same length as ‘metric_ids’. |
-
-</div>
-
-## File format: DE per plate by cell type
-
-Differential expression results per plate and cell type.
-
-Example file:
-`resources/neurips-2023-raw/de_per_plate_by_cell_type.h5ad`
-
-Format:
-
-<div class="small">
-
-    AnnData object
-     obs: 'dose_uM', 'plate_name', 'cell_type', 'n_de_genes', 'n_de_genes_adj', 'split', 'donor_id', 'sm_name'
-     layers: '-log10(p-value)sign(lfc)', 'P.Value', 'adj.P.Val', 'is_de', 'is_de_adj', 'lfc', 'logFC', 'masked_lfc', 'masked_sign(lfc)'
-
-</div>
-
-Slot description:
-
-<div class="small">
-
-| Slot                                 | Type      | Description                                                                 |
-|:-------------------------------------|:----------|:----------------------------------------------------------------------------|
-| `obs["dose_uM"]`                     | `integer` | Dose in uM.                                                                 |
-| `obs["plate_name"]`                  | `string`  | Name of the plate.                                                          |
-| `obs["cell_type"]`                   | `string`  | Cell type.                                                                  |
-| `obs["n_de_genes"]`                  | `integer` | Number of differentially expressed genes.                                   |
-| `obs["n_de_genes_adj"]`              | `integer` | Number of differentially expressed genes after multiple testing correction. |
-| `obs["split"]`                       | `string`  | Split of the data.                                                          |
-| `obs["donor_id"]`                    | `string`  | Donor ID.                                                                   |
-| `obs["sm_name"]`                     | `string`  | Name of the small molecule.                                                 |
-| `layers["-log10(p-value)sign(lfc)"]` | `double`  | Log10 of the p-value multiplied by the sign of the log fold change.         |
-| `layers["P.Value"]`                  | `double`  | P-value.                                                                    |
-| `layers["adj.P.Val"]`                | `double`  | Adjusted p-value.                                                           |
-| `layers["is_de"]`                    | `boolean` | Is differentially expressed.                                                |
-| `layers["is_de_adj"]`                | `boolean` | Is differentially expressed after multiple testing correction.              |
-| `layers["lfc"]`                      | `double`  | Log fold change.                                                            |
-| `layers["logFC"]`                    | `double`  | Log fold change.                                                            |
-| `layers["masked_lfc"]`               | `double`  | Masked log fold change.                                                     |
-| `layers["masked_sign(lfc)"]`         | `double`  | Masked sign of the log fold change.                                         |
 
 </div>
 
