@@ -8,12 +8,8 @@ functionality:
       description: |
         A DGE regression dataset processor to process the dataset for the DGE regression task.
   arguments:
-    - name: --de_per_plate_by_celltype
-      __merge__: file_de_per_plate_by_celltype.yaml
-      required: true
-      direction: input
-    - name: --de_per_plate_by_celltype
-      __merge__: file_de_per_plate.yaml
+    - name: --sc_counts
+      __merge__: file_sc_counts.yaml
       required: true
       direction: input
     # ... more inputs ...

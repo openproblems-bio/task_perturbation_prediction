@@ -38,7 +38,7 @@ info:
     layers:
       - name: "-log10(p-value)sign(lfc)"
         description: |
-          ifferential expression value (-log10(p-value) * sign(LFC)) for each gene.
+          Differential expression value (-log10(p-value) * sign(LFC)) for each gene.
           Here, LFC is the estimated log-fold change in expression between the treatment
           and control condition after shrinkage as calculated by Limma. Positive LFC means
           the gene goes up in the treatment condition relative to the control.
