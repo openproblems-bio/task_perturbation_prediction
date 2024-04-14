@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 
 import anndata as ad
+from tempfile import TemporaryDirectory
+import os
 
 from utils import sum_by, create_split_mapping, make_r_safe_names, _run_limma_for_cell_type, convert_de_df_to_anndata, anndata_to_dataframe
 import limma_utils
@@ -60,11 +62,16 @@ for col in factors:
 cell_types = bulk_adata.obs['cell_type'].unique()
 de_dfs = []
 
-for cell_type in cell_types:
-    cell_type_selection = bulk_adata.obs['cell_type'].eq(cell_type)
-    cell_type_bulk_adata = bulk_adata[cell_type_selection].copy()
-
-    de_df = _run_limma_for_cell_type(cell_type_bulk_adata, "resources/neurips-2023-data")
+# save limma output in temporary directory
+temp_prefix = os.path.expanduser('~') + '/.tmp/limma/'
+if not os.path.exists(temp_prefix):
+    os.makedirs(temp_prefix)
+with TemporaryDirectory(prefix=temp_prefix) as tempdirname:
+    data_dir = tempdirname + '/'
+    for cell_type in cell_types:
+        cell_type_selection = bulk_adata.obs['cell_type'].eq(cell_type)
+        cell_type_bulk_adata = bulk_adata[cell_type_selection].copy()
+        de_df = _run_limma_for_cell_type(cell_type_bulk_adata, data_dir, "/usr/local/bin/Rscript")
 
     de_dfs.append(de_df)
 de_df = pd.concat(de_dfs)
