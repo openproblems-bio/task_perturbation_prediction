@@ -5,10 +5,6 @@ import anndata as ad
 from tempfile import TemporaryDirectory
 import os
 
-from utils import sum_by, create_split_mapping, make_r_safe_names, _run_limma_for_cell_type, convert_de_df_to_anndata, anndata_to_dataframe
-import limma_utils
-import imp
-imp.reload(limma_utils)
 
 ## VIASH START
 par = {
@@ -18,7 +14,19 @@ par = {
     "de_test": "resources/neurips-2023-data/de_test.parquet",
     "id_map": "resources/neurips-2023-data/id_map.csv"
 }
+meta = {
+    "resources_dir": "src/dge_perturbation_prediction/process_dataset",
+}
 ## VIASH END
+
+# import helper functions
+import sys
+sys.path.append(meta["resources_dir"])
+
+from utils import sum_by, create_split_mapping, make_r_safe_names, _run_limma_for_cell_type, convert_de_df_to_anndata, anndata_to_dataframe
+import limma_utils
+import imp
+imp.reload(limma_utils)
 
 print(">> Load dataset", flush=True)
 sc_counts = ad.read_h5ad(par["sc_counts"])
