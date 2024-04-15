@@ -25,5 +25,9 @@ functionality:
       __merge__: file_de_test.yaml
       required: true
       direction: output
+    - name: --id_map
+      __merge__: file_id_map.yaml
+      required: true
+      direction: output
     # ... more outputs ...
   test_resources: []
