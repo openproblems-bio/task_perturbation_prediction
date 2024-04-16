@@ -17,11 +17,11 @@ viash run src/dge_perturbation_prediction/datasets/clean_sc_counts/config.vsh.ya
 echo "Compute pseudobulk"
 viash run src/dge_perturbation_prediction/datasets/compute_pseudobulk/config.vsh.yaml -- \
   --input "$OUT/sc_counts_cleaned.h5ad" \
-  --output "$OUT/bulk_counts.h5ad"
+  --output "$OUT/pseudobulk.h5ad"
 
 echo "Run limma"
 viash run src/dge_perturbation_prediction/datasets/run_limma/config.vsh.yaml -- \
-  --input "$OUT/bulk_counts.h5ad" \
+  --input "$OUT/pseudobulk.h5ad" \
   --output "$OUT/de.h5ad"
 
 echo "Split dataset"

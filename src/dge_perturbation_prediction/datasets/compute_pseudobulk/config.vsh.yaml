@@ -13,10 +13,12 @@ functionality:
       type: file
       required: true
       direction: input
+      example: resources/neurips-2023-data/sc_counts_cleaned.h5ad
     - name: --output
       type: file
       required: true
       direction: output
+      example: resources/neurips-2023-data/pseudobulk.h5ad
   resources:
     - type: python_script
       path: script.py
