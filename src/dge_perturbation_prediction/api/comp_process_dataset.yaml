@@ -16,7 +16,6 @@ functionality:
       __merge__: file_lincs_id_compound_mapping.yaml
       required: true
       direction: input
-    # ... more inputs ...
     - name: --de_train
       __merge__: file_de_train.yaml
       required: true
@@ -29,5 +28,4 @@ functionality:
       __merge__: file_id_map.yaml
       required: true
       direction: output
-    # ... more outputs ...
   test_resources: []
