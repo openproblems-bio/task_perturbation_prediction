@@ -10,7 +10,7 @@ par = {
 ## VIASH END
 
 de_test = pd.read_parquet(par["de_test"]).set_index('id')
-prediction = pd.read_csv(par["prediction"]).set_index('id')
+prediction = pd.read_parquet(par["prediction"]).set_index('id')
 
 # subset to the same columns
 genes = list(set(de_test.columns) - set(["cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"]))
