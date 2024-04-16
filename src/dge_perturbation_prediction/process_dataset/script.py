@@ -79,7 +79,7 @@ with TemporaryDirectory(prefix=temp_prefix) as tempdirname:
     for cell_type in cell_types:
         cell_type_selection = bulk_adata.obs['cell_type'].eq(cell_type)
         cell_type_bulk_adata = bulk_adata[cell_type_selection].copy()
-        de_df = _run_limma_for_cell_type(cell_type_bulk_adata, data_dir, "/usr/local/bin/Rscript")
+        de_df = _run_limma_for_cell_type(cell_type_bulk_adata, data_dir, "Rscript", meta["resources_dir"])
 
     de_dfs.append(de_df)
 de_df = pd.concat(de_dfs)

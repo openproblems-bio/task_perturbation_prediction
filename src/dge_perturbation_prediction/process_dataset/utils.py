@@ -70,7 +70,7 @@ def create_split_mapping(df):
     return mapping_dict
 
 
-def _run_limma_for_cell_type(bulk_adata, output_dir, rscript_path):
+def _run_limma_for_cell_type(bulk_adata, output_dir, rscript_path, code_dir):
     import limma_utils
     bulk_adata = bulk_adata.copy()
 
@@ -96,7 +96,7 @@ def _run_limma_for_cell_type(bulk_adata, output_dir, rscript_path):
         design='~0+Rpert+donor_id+plate_name+row',
         output_path=f'{output_dir}/{random_string}_limma.rds',
         plot_output_path=f'{output_dir}/{random_string}_voom',
-        exec_path='limma_fit.r',
+        exec_path=f'{code_dir}/limma_fit.r',
         Rscript_path=rscript_path
     )
 
@@ -109,7 +109,7 @@ def _run_limma_for_cell_type(bulk_adata, output_dir, rscript_path):
         pert_de_df = limma_utils.limma_contrast(
             fit_path=f'{output_dir}/{random_string}_limma.rds',
             contrast='Rpert' + pert + '-Rpert' + ref_pert,
-            exec_path='limma_contrast.r',
+            exec_path=f'{code_dir}/limma_contrast.r',
             Rscript_path=rscript_path
         )
 
