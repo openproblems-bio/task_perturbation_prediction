@@ -4,7 +4,7 @@ import json
 ## VIASH START
 par = {
   "de_test": "resources/neurips-2023-data/de_test.parquet",
-  "prediction": "resources/neurips-2023-data/output_rf.csv",
+  "prediction": "resources/neurips-2023-data/output_rf.parquet",
   "output": "resources/neurips-2023-data/score_rf.json",
 }
 ## VIASH END
