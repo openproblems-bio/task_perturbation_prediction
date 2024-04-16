@@ -17,9 +17,9 @@ platforms:
     image: ghcr.io/openproblems-bio/base_r:1.0.2
     setup:
       - type: python
-        packages: [ anndata, pandas, numpy, scipy ]
+        packages: [ pyarrow ]
       - type: r
-        bioc: [ edgeR, limma ]
+        bioc: [ edgeR, limma, optparse ]
   - type: nextflow
     directives:
       label: [ midtime, midmem, lowcpu ]
