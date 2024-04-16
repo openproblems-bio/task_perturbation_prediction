@@ -1,11 +1,5 @@
 type: file
-example: resources/processed/prediction.h5ad
+example: resources/neurips-2023-data/output_rf.parquet
 info:
   label: Prediction
   summary: "Differential Gene Expression prediction"
-  slots:
-    layers:
-      - name: prediction
-        type: double
-        required: true
-        description: "Predicted differential gene expression values."

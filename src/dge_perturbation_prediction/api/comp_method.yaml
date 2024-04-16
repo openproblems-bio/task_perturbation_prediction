@@ -8,11 +8,14 @@ functionality:
       description: |
         A regression method to predict the expression of one modality from another.
   arguments:
-    - name: --input
+    - name: --de_train
       __merge__: file_de_train.yaml
       required: true
       direction: input
-    # ... more inputs ...
+    - name: --id_map
+      __merge__: file_id_map.yaml
+      required: true
+      direction: input
     - name: --output
       __merge__: file_prediction.yaml
       required: true
