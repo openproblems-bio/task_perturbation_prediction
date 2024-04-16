@@ -1,5 +1,6 @@
 requireNamespace("arrow", quietly = TRUE)
-requireNamespace("randomForest", quietly = TRUE)
+requireNamespace("ranger", quietly = TRUE)
+requireNamespace("pbapply", quietly = TRUE)
 
 ## VIASH START
 par <- list(
@@ -36,10 +37,14 @@ preds <- pbapply::pblapply(
   }
 )
 
-output <- as.data.frame(c(
-  list(id = id_map$id),
-  setNames(preds, gene_names)
-))
+output <- data.frame(
+  c(
+    list(id = id_map$id),
+    setNames(preds, gene_names)
+  ),
+  stringsAsFactors = FALSE,
+  check.names = FALSE
+)
 
 # store output
 write.csv(output, par$output, row.names = FALSE)
