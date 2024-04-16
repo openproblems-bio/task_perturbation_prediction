@@ -2,17 +2,31 @@
 
 set -e
 
+IN=resources/neurips-2023-raw
+OUT=resources/neurips-2023-data
+
 # create directory if it doesn't exist
-[[ -d resources/neurips-2023-data/ ]] || mkdir -p resources/neurips-2023-data/
+[[ -d "$OUT" ]] || mkdir -p "$OUT"
 
-# assuming that `viash ns build --setup cb --parallel` was run before
-# target/docker/dge_perturbation_prediction/process_dataset/process_dataset \
-#   ...
+echo "Clean single-cell counts"
+viash run src/dge_perturbation_prediction/datasets/clean_sc_counts/config.vsh.yaml -- \
+  --input "$IN/sc_counts.h5ad" \
+  --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
+  --output "$OUT/sc_counts_cleaned.h5ad"
 
-# or if it wasn't:
-viash run src/dge_perturbation_prediction/process_dataset/config.vsh.yaml -- \
-  --sc_counts resources/neurips-2023-raw/sc_counts.h5ad \
-  --lincs_id_compound_mapping resources/neurips-2023-raw/lincs_id_compound_mapping.parquet \
-  --de_train resources/neurips-2023-data/de_train.parquet \
-  --de_test resources/neurips-2023-data/de_test.parquet \
-  --id_map resources/neurips-2023-data/id_map.csv
+echo "Compute pseudobulk"
+viash run src/dge_perturbation_prediction/datasets/compute_pseudobulk/config.vsh.yaml -- \
+  --input "$OUT/sc_counts_cleaned.h5ad" \
+  --output "$OUT/bulk_counts.h5ad"
+
+echo "Run limma"
+viash run src/dge_perturbation_prediction/datasets/run_limma/config.vsh.yaml -- \
+  --input "$OUT/bulk_counts.h5ad" \
+  --output "$OUT/de.h5ad"
+
+echo "Split dataset"
+viash run src/dge_perturbation_prediction/datasets/split_dataset/config.vsh.yaml -- \
+  --input "$OUT/de.h5ad" \
+  --output_train "$OUT/de_train.parquet" \
+  --output_test "$OUT/de_test.parquet" \
+  --output_id_map "$OUT/id_map.csv"
