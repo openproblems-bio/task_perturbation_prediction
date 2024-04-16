@@ -2,7 +2,8 @@
 
 set -e
 
-mkdir -p resources/neurips-2023-data/
+# create directory if it doesn't exist
+[[ -d resources/neurips-2023-data/ ]] || mkdir -p resources/neurips-2023-data/
 
 # assuming that `viash ns build --setup cb --parallel` was run before
 # target/docker/dge_perturbation_prediction/process_dataset/process_dataset \
