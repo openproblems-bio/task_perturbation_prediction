@@ -47,4 +47,4 @@ output <- data.frame(
 )
 
 # store output
-write.csv(output, par$output, row.names = FALSE)
+arrow::write_csv_arrow(output, par$output)
