@@ -6,7 +6,7 @@ requireNamespace("pbapply", quietly = TRUE)
 par <- list(
   de_train = "resources/neurips-2023-data/de_train.parquet",
   id_map = "resources/neurips-2023-data/id_map.csv",
-  output = "resources/neurips-2023-data/output_rf.csv"
+  output = "resources/neurips-2023-data/output_rf.parquet"
 )
 ## VIASH END
 
@@ -47,4 +47,4 @@ output <- data.frame(
 )
 
 # store output
-arrow::write_csv_arrow(output, par$output)
+arrow::write_parquet(output, par$output)
