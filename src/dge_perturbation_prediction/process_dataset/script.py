@@ -57,8 +57,6 @@ bulk_adata.X = np.array(bulk_adata.X.todense())
 # remove samples with no counts
 bulk_adata = bulk_adata[bulk_adata.X.sum(axis=1) > 0].copy()
 
-mapping_split = create_split_mapping(bulk_adata.obs)
-
 factors = ['sm_name', 'donor_id', 'plate_name', 'row']
 
 # Apply the renaming function only to the entries of selected columns
@@ -66,6 +64,7 @@ for col in factors:
     if col in bulk_adata.obs.columns:
         bulk_adata.obs[col] = bulk_adata.obs[col].apply(make_r_safe_names)
 
+mapping_split = create_split_mapping(bulk_adata.obs)
 # Run limma
 cell_types = bulk_adata.obs['cell_type'].unique()
 de_dfs = []
@@ -79,9 +78,11 @@ with TemporaryDirectory(prefix=temp_prefix) as tempdirname:
     for cell_type in cell_types:
         cell_type_selection = bulk_adata.obs['cell_type'].eq(cell_type)
         cell_type_bulk_adata = bulk_adata[cell_type_selection].copy()
+        print(f">> Run limma for {cell_type}", flush=True)
         de_df = _run_limma_for_cell_type(cell_type_bulk_adata, data_dir, "Rscript", meta["resources_dir"])
-
     de_dfs.append(de_df)
+print(f">> limma runs completed", flush=True)
+
 de_df = pd.concat(de_dfs)
 de_adata = convert_de_df_to_anndata(de_df, 0.05)
 # convert anndata back to dataframe with the format of kaggle data
