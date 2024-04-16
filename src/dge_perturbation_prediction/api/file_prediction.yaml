@@ -1,5 +1,5 @@
 type: file
-example: resources/processed/prediction.h5ad
+example: resources/neurips-2023-data/prediction.csv
 info:
   label: Prediction
   summary: "Differential Gene Expression prediction"
