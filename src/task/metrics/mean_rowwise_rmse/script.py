@@ -9,22 +9,23 @@ par = {
 }
 ## VIASH END
 
+print("Load data", flush=True)
 de_test = pd.read_parquet(par["de_test"]).set_index('id')
 prediction = pd.read_parquet(par["prediction"]).set_index('id')
 
-# subset to the same columns
+print("Select genes", flush=True)
 genes = list(set(de_test.columns) - set(["cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"]))
 de_test = de_test.loc[:, genes]
 prediction = prediction[genes]
 
-# compute mean_rowwise_rmse
+print("Calculate mean rowwise RMSE", flush=True)
 mean_rowwise_rmse = 0
 for i in de_test.index:
     mean_rowwise_rmse += ((de_test.iloc[i] - prediction.iloc[i])**2).mean()
 
 mean_rowwise_rmse /= de_test.shape[0]
 
-# prepare output
+print("Create output", flush=True)
 output = ad.AnnData(
     uns = {
         "dataset_id": "unknown",
@@ -34,4 +35,5 @@ output = ad.AnnData(
     }
 )
 
-ad.write_h5ad(par["output"], output, compression="gzip")
+print("Write output", flush=True)
+output.write_h5ad(par["output"], compression="gzip")
