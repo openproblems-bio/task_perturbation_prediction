@@ -1,6 +1,6 @@
 functionality:
   name: run_limma
-  namespace: dge_perturbation_prediction/process_dataset
+  namespace: process_dataset
   info:
     type: process_dataset
     type_info:

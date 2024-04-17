@@ -1,5 +1,5 @@
 functionality:
-  namespace: "dge_perturbation_prediction/metrics"
+  namespace: "metrics"
   info:
     type: metric
     type_info:
@@ -20,4 +20,3 @@ functionality:
       __merge__: file_score.yaml
       direction: output
       required: true
-  test_resources: []

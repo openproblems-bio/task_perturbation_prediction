@@ -1,5 +1,5 @@
 functionality:
-  namespace: "dge_perturbation_prediction/control_methods"
+  namespace: "control_methods"
   info:
     type: control_method
     type_info:
@@ -24,4 +24,3 @@ functionality:
       __merge__: file_prediction.yaml
       required: true
       direction: output
-  test_resources: []

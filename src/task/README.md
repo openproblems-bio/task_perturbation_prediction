@@ -4,7 +4,7 @@
 DGE Perturbation Prediction
 
 Path:
-[`src/dge_perturbation_prediction`](https://github.com/openproblems-bio/task-dge-perturbation-prediction/tree/main/src/dge_perturbation_prediction)
+[`src/task`](https://github.com/openproblems-bio/task-dge-perturbation-prediction/tree/main/src/task)
 
 ## Motivation
 
