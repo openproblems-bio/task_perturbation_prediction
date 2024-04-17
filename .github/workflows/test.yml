@@ -47,7 +47,7 @@ jobs:
       id: cache
       with:
         s3_bucket: $s3_bucket
-        dest_path: resources/neurips-2023-data/
+        dest_path: resources/neurips-2023-data
         cache_key_prefix: resources_test__
 
     - id: ns_list
@@ -94,7 +94,7 @@ jobs:
       uses: actions/cache@v4
       timeout-minutes: 10
       with:
-        path: resources_test
+        path: resources/neurips-2023-data
         key: ${{ needs.list.outputs.cache_key }}
 
     - name: Run test
