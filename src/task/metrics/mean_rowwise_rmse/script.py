@@ -28,6 +28,7 @@ mean_rowwise_rmse /= de_test.shape[0]
 print("Create output", flush=True)
 output = ad.AnnData(
     uns = {
+        # this info is not stored in the parquet files
         "dataset_id": "unknown",
         "method_id": "unknown",
         "metric_ids": ["mean_rowwise_rmse"],
