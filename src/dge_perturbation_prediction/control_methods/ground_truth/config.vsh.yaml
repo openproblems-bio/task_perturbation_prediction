@@ -1,11 +1,11 @@
 __merge__: ../../api/comp_control_method.yaml
 functionality:
-  name: identity
+  name: ground_truth
   info:
-    label: Identity
-    summary: "The identity function."
+    label: Ground truth
+    summary: "Returns the ground truth predictions."
     description: |
-      The identity function returns the ground-truth information as the output.
+      The identity function that returns the ground-truth information as the output.
     preferred_normalization: counts
   resources:
     - type: r_script
