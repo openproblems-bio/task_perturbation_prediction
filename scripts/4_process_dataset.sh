@@ -25,7 +25,7 @@ viash run src/dge_perturbation_prediction/process_dataset/run_limma/config.vsh.y
   --output "$OUT/de_train.h5ad" \
   --input_splits "train;control;public_test" \
   --output_splits "train;control;public_test"
-  
+
 echo "Run limma on test set"
 viash run src/dge_perturbation_prediction/process_dataset/run_limma/config.vsh.yaml -- \
   --input "$OUT/pseudobulk.h5ad" \
@@ -40,6 +40,14 @@ viash run src/dge_perturbation_prediction/process_dataset/convert_h5ad_to_parque
   --output_train "$OUT/de_train.parquet" \
   --output_test "$OUT/de_test.parquet" \
   --output_id_map "$OUT/id_map.csv"
+
+echo "Convert kaggle h5ad to parquet"
+viash run src/dge_perturbation_prediction/process_dataset/convert_kaggle_h5ad_to_parquet/config.vsh.yaml -- \
+  --input_train "$IN/2023-09-12_de_by_cell_type_train.h5ad" \
+  --input_test "$IN/2023-09-12_de_by_cell_type_test.h5ad" \
+  --output_train "$OUT/de_train_kaggle.parquet" \
+  --output_test "$OUT/de_test_kaggle.parquet" \
+  --output_id_map "$OUT/id_map_kaggle.csv"
 
 # # Alternatively:
 # nextflow run \
