@@ -13,17 +13,15 @@ par = {
 
 
 def anndata_to_dataframe(adata):
-  metadata = input.obs[['cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control']]
+  metadata = adata.obs[['cell_type', 'sm_name', 'sm_lincs_id', 'SMILES', 'split', 'control']]
 
   sign_logfc_pval = pd.DataFrame(
-    input.layers["sign_log10_pval_adj"],
-    columns=input.var_names,
-    index=input.obs.index
+    adata.layers["sign_log10_pval"],
+    columns=adata.var_names,
+    index=adata.obs.index
   )
 
-  full_data = pd.concat([metadata, sign_logfc_pval], axis=1).reset_index(drop=True)
-
-  return full_data
+  return pd.concat([metadata, sign_logfc_pval], axis=1).reset_index(drop=True)
 
 print(">> Load dataset", flush=True)
 input_train = ad.read_h5ad(par["input_train"])
