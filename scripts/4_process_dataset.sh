@@ -2,17 +2,55 @@
 
 set -e
 
+IN=resources/neurips-2023-raw
+OUT=resources/neurips-2023-data
+
 # create directory if it doesn't exist
-[[ -d resources/neurips-2023-data/ ]] || mkdir -p resources/neurips-2023-data/
+[[ -d "$OUT" ]] || mkdir -p "$OUT"
 
-# assuming that `viash ns build --setup cb --parallel` was run before
-# target/docker/dge_perturbation_prediction/process_dataset/process_dataset \
-#   ...
+echo "Clean single-cell counts"
+viash run src/dge_perturbation_prediction/process_dataset/clean_sc_counts/config.vsh.yaml -- \
+  --input "$IN/sc_counts.h5ad" \
+  --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
+  --output "$OUT/sc_counts_cleaned.h5ad"
 
-# or if it wasn't:
-viash run src/dge_perturbation_prediction/process_dataset/config.vsh.yaml -- \
-  --sc_counts resources/neurips-2023-raw/sc_counts.h5ad \
-  --lincs_id_compound_mapping resources/neurips-2023-raw/lincs_id_compound_mapping.parquet \
-  --de_train resources/neurips-2023-data/de_train.parquet \
-  --de_test resources/neurips-2023-data/de_test.parquet \
-  --id_map resources/neurips-2023-data/id_map.csv
+echo "Compute pseudobulk"
+viash run src/dge_perturbation_prediction/process_dataset/compute_pseudobulk/config.vsh.yaml -- \
+  --input "$OUT/sc_counts_cleaned.h5ad" \
+  --output "$OUT/pseudobulk.h5ad"
+
+echo "Run limma on training set"
+viash run src/dge_perturbation_prediction/process_dataset/run_limma/config.vsh.yaml -- \
+  --input "$OUT/pseudobulk.h5ad" \
+  --output "$OUT/de_train.h5ad" \
+  --input_splits "train;control;public_test" \
+  --output_splits "train;control;public_test"
+  
+echo "Run limma on test set"
+viash run src/dge_perturbation_prediction/process_dataset/run_limma/config.vsh.yaml -- \
+  --input "$OUT/pseudobulk.h5ad" \
+  --output "$OUT/de_test.h5ad" \
+  --input_splits "train;control;public_test;private_test" \
+  --output_splits "private_test"
+
+echo "Convert h5ad to parquet"
+viash run src/dge_perturbation_prediction/process_dataset/convert_h5ad_to_parquet/config.vsh.yaml -- \
+  --input_train "$OUT/de_train.h5ad" \
+  --input_test "$OUT/de_test.h5ad" \
+  --output_train "$OUT/de_train.parquet" \
+  --output_test "$OUT/de_test.parquet" \
+  --output_id_map "$OUT/id_map.csv"
+
+# # Alternatively:
+# nextflow run \
+#   target/nextflow/dge_perturbation_prediction/process_dataset/workflow/main.nf \
+#   -profile docker \
+#   --sc_counts "$IN/sc_counts.h5ad" \
+#   --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
+#   --pseudobulk "pseudo_bulk.h5ad" \
+#   --de_train_h5ad "de_train.h5ad" \
+#   --de_train_parquet "de_train.parquet" \
+#   --de_test_h5ad "de_test.h5ad" \
+#   --de_test_parquet "de_test.parquet" \
+#   --id_map "id_map.csv" \
+#   --publish_dir "$OUT"

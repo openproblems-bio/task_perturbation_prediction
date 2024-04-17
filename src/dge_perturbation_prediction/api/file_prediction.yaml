@@ -3,3 +3,14 @@ example: resources/neurips-2023-data/output_rf.parquet
 info:
   label: Prediction
   summary: "Differential Gene Expression prediction"
+  slots:
+    obs:
+      - name: id
+        type: integer
+        description: Index of the test observation
+        required: true
+    layers:
+      - name: sign_log10_pval
+        type: double
+        description: "Predicted sign of the logFC times the log10 of the adjusted p-value"
+        required: true
