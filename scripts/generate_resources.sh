@@ -35,5 +35,18 @@ nextflow run \
   --id_map "id_map.csv" \
   --publish_dir "$OUT"
 
+# run method
+viash run src/task/control_methods/sample/config.vsh.yaml -- \
+  --de_train "$OUT/de_train.parquet" \
+  --de_test "$OUT/de_test.parquet" \
+  --id_map "$OUT/id_map.csv" \
+  --output "$OUT/prediction.parquet"
+
+# run metric
+viash run src/task/metrics/mean_rowwise_rmse/config.vsh.yaml -- \
+  --prediction "$OUT/prediction.parquet" \
+  --de_test "$OUT/de_test.parquet" \
+  --output "$OUT/score.h5ad"
+
 echo "Uploading results to S3"
 aws s3 sync --profile op2 "$OUT" "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" --delete --dryrun
