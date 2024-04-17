@@ -25,7 +25,7 @@ nextflow run openproblems-bio/openproblems-v2 \
   --github_url "https://github.com/openproblems-bio/task-dge-perturbation-prediction/tree/main/" \
   --output "README.md" \
   --viash_yaml "_viash.yaml" \
-  --publish_dir .
+  --publish_dir src/dge_perturbation_prediction
 
 # remove the unused state file
-rm run.create_task_readme.state.yaml
+rm src/dge_perturbation_prediction/run.create_task_readme.state.yaml
