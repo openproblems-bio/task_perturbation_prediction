@@ -1,10 +1,11 @@
-viash_version: 0.8.0
+viash_version: 0.8.5
 
 source: src
 target: target
 
 config_mods: |
   .functionality.version := 'dev'
+  .functionality.arguments[.multiple == true].multiple_sep := ';'
   .platforms[.type == 'docker'].target_registry := 'ghcr.io'
   .platforms[.type == 'docker'].target_organization := 'openproblems-bio'
   .platforms[.type == 'docker'].target_image_source := 'https://github.com/openproblems-bio/task-dge-perturbation-prediction'
