@@ -1,29 +1,29 @@
 functionality:
-  name: clean_sc_counts
+  name: initial_dataset_split
   namespace: dge_perturbation_prediction/process_dataset
   info:
     type: process_dataset
     type_info:
-      label: Clean dataset
-      summary: Clean up the single-cell dataset
+      label: Initial dataset split
+      summary: Split the data for limma
       description: |
-        Clean up the single-cell dataset for the DGE regression task.
+        Split the dataset before passing it separately for limma processing to avoid data leakage.
   arguments:
     - name: --input
       type: file
       required: true
       direction: input
-      example: resources/neurips-2023-raw/sc_counts.h5ad
-    - name: --lincs_id_compound_mapping
-      type: file
-      required: true
-      direction: input
-      example: resources/neurips-2023-raw/lincs_id_compound_mapping.parquet
-    - name: --output
+      example: resources/neurips-2023-data/pseudobulk.h5ad
+    - name: --output_train
       type: file
       required: true
       direction: output
-      example: resources/neurips-2023-data/sc_counts_cleaned.h5ad
+      example: resources/neurips-2023-data/pseudobulk_train.h5ad
+    - name: --output_test_celltypes
+      type: file
+      required: true
+      direction: output
+      example: resources/neurips-2023-data/pseudobulk_test_celltypes.h5ad
   resources:
     - type: python_script
       path: script.py
@@ -32,7 +32,7 @@ platforms:
     image: ghcr.io/openproblems-bio/base_python:1.0.2
     setup:
       - type: python
-        packages: [ pyarrow ]
+        packages: [ fastparquet, anndata, pandas ]
   - type: nextflow
     directives:
       label: [ midtime, midmem, lowcpu ]

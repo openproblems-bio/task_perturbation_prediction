@@ -34,9 +34,7 @@ functionality:
       path: script.py
 platforms:
   - type: docker
-    # doesn't want to work with 'base_python:1.0.2'
-    # image: ghcr.io/openproblems-bio/base_python:1.0.2
-    image: python:3.12
+    image: ghcr.io/openproblems-bio/base_python:1.0.2
     setup:
       - type: python
         packages: [ fastparquet, anndata, pandas ]

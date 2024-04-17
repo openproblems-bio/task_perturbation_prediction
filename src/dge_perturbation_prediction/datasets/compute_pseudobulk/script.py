@@ -63,11 +63,8 @@ print(">> Create pseudobulk dataset", flush=True)
 bulk_adata = sum_by(sc_counts, 'plate_well_cell_type')
 bulk_adata.obs = bulk_adata.obs.drop(columns=['plate_well_cell_type'])
 
-# print(">> Convert to dense matrix", flush=True)
-# bulk_adata.layers["counts"] = np.array(bulk_adata.layers["counts"].todense())
-
 print(">> Remove samples with no counts", flush=True)
-bulk_adata = bulk_adata[bulk_adata.layers["counts"].sum(axis=1) > 0]
+bulk_adata = bulk_adata[bulk_adata.X.todense().sum(axis=1) > 0]
 
 print(">> Save dataset", flush=True)
 bulk_adata.write_h5ad(par["output"], compression="gzip")

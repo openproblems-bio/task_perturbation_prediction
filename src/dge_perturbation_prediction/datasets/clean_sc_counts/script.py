@@ -26,5 +26,9 @@ sc_counts.obs['plate_well_cell_type'] = sc_counts.obs['plate_name'].astype('str'
     + '_' + sc_counts.obs['cell_type'].astype('str')
 sc_counts.obs['plate_well_cell_type'] = sc_counts.obs['plate_well_cell_type'].astype('category')
 
+print(">> Remove normalized counts, store only raw counts", flush=True)
+sc_counts.X = sc_counts.layers["counts"].copy()
+del sc_counts.layers["counts"]
+
 print(">> Save dataset", flush=True)
 sc_counts.write_h5ad(par["output"], compression="gzip")

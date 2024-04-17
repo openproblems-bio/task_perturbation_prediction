@@ -18,10 +18,6 @@ de_sig_cutoff <- 0.05
 
 # load data
 adata <- anndata::read_h5ad(par$input)
-# > adata
-# AnnData object with n_obs × n_vars = 3318 × 21265
-#     obs: 'well', 'timepoint_hr', 'col', 'dose_uM', 'plate_name', 'cell_type', 'sm_lincs_id', 'SMILES', 'sm_name', 'library_id', 'cell_id', 'row', 'split', 'donor_id', 'control'
-#     layers: 'counts'
 
 # create new obs
 new_obs <- adata$obs %>%
@@ -48,13 +44,13 @@ for (cell_type_i in seq_along(cell_types)) {
   cell_type_adata <- adata[adata$obs$cell_type == cell_type, ]
 
   # calc norm factors
-  d0 <- Matrix::t(cell_type_adata$layers[["counts"]]) %>%
+  d0 <- Matrix::t(cell_type_adata$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
   # create design matrix
   mm <- model.matrix(
-    ~ 0 + sm_name + donor_id + plate_name + row,
+    ~ 0 + sm_name + donor_id + plate_name + library_id,
     cell_type_adata$obs %>% mutate_all(limma_trafo)
   )
 
@@ -73,11 +69,9 @@ de_df <- list_rbind(map(
   seq_len(nrow(new_obs)),
   function(row_i) {
     cat(row_i, "/", nrow(new_obs), "\n", sep = "")
-    # get cell type and compound
     cell_type <- new_obs$cell_type[[row_i]]
     sm_name <- new_obs$sm_name[[row_i]]
-    
-    # get limma fit
+
     fit <- limma_fit_per_celltype[[cell_type]]
 
     # run contrast fit
@@ -104,7 +98,7 @@ de_df2 <- de_df %>%
   mutate(
     # convert gene names to factor
     gene = factor(gene),
-    # readjust p-values for multiple testing <----- !!!!!!!!!!!!!!!!!!!!!!
+    # readjust p-values for multiple testing
     adj.P.Value = p.adjust(P.Value, method = "BH"),
     # compute sign log10 p-values
     sign_log10_pval = sign(logFC) * -log10(ifelse(P.Value == 0, .Machine$double.eps, P.Value)),
