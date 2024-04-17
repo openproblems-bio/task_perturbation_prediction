@@ -4,8 +4,9 @@ import json
 ## VIASH START
 par = {
   "de_train": "resources/neurips-2023-data/de_train.parquet",
+  "de_test": "resources/neurips-2023-data/de_test.parquet",
   "id_map": "resources/neurips-2023-data/id_map.csv",
-  "output": "resources/neurips-2023-data/output_baseline_zero.json",
+  "output": "resources/neurips-2023-data/output_baseline_zero.parquet",
 }
 ## VIASH END
 
