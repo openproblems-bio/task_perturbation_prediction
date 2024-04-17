@@ -1,5 +1,5 @@
 functionality:
-  name: split_dataset
+  name: convert_h5ad_to_parquet
   namespace: dge_perturbation_prediction/process_dataset
   info:
     type: process_dataset
@@ -9,11 +9,16 @@ functionality:
       description: |
         Split dataset into training and test parquet files.
   arguments:
-    - name: --input
+    - name: --input_train
       type: file
       required: true
       direction: input
-      example: resources/neurips-2023-data/de.h5ad
+      example: resources/neurips-2023-data/de_train.h5ad
+    - name: --input_test
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-data/de_test.h5ad
     - name: --output_train
       type: file
       required: true

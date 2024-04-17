@@ -33,9 +33,10 @@ viash run src/dge_perturbation_prediction/datasets/run_limma/config.vsh.yaml -- 
   --input_splits "train;control;public_test;private_test" \
   --output_splits "private_test"
 
-echo "Split dataset"
-viash run src/dge_perturbation_prediction/datasets/split_dataset/config.vsh.yaml -- \
-  --input "$OUT/de.h5ad" \
+echo "Convert h5ad to parquet"
+viash run src/dge_perturbation_prediction/datasets/convert_h5ad_to_parquet/config.vsh.yaml -- \
+  --input_train "$OUT/de_train.h5ad" \
+  --input_test "$OUT/de_test.h5ad" \
   --output_train "$OUT/de_train.parquet" \
   --output_test "$OUT/de_test.parquet" \
   --output_id_map "$OUT/id_map.csv"
