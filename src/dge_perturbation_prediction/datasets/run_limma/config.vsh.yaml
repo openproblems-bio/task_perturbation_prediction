@@ -14,11 +14,28 @@ functionality:
       required: true
       direction: input
       example: resources/neurips-2023-data/pseudobulk.h5ad
+    - name: --input_splits
+      type: string
+      multiple: true
+      description: The splits to use for the limma fitting
+      example: [ train, control, public_test, private_test ]
     - name: --output
       type: file
       required: true
       direction: output
       example: resources/neurips-2023-data/de.h5ad
+    - name: --output_splits
+      type: string
+      multiple: true
+      description: The splits to use for DE analysis
+    - name: --de_sig_cutoff
+      type: double
+      required: false
+      default: 0.05
+    - name: --control_compound
+      type: string
+      required: false
+      default: "Dimethyl Sulfoxide"
   resources:
     - type: r_script
       path: script.R
@@ -27,7 +44,7 @@ platforms:
     image: ghcr.io/openproblems-bio/base_r:1.0.2
     setup:
       - type: r
-        bioc: [ edgeR, limma, tidyverse ]
+        bioc: [ edgeR, limma, dplyr, tidyr, purrr, tibble ]
   - type: nextflow
     directives:
       label: [ midtime, midmem, lowcpu ]
