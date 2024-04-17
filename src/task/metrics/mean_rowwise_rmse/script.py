@@ -1,11 +1,11 @@
 import pandas as pd
-import json
+import anndata as ad
 
 ## VIASH START
 par = {
-  "de_test": "resources/neurips-2023-data/de_test.parquet",
-  "prediction": "resources/neurips-2023-data/output_rf.parquet",
-  "output": "resources/neurips-2023-data/score_rf.json",
+    "de_test": "resources/neurips-2023-data/de_test.parquet",
+    "prediction": "resources/neurips-2023-data/output_rf.parquet",
+    "output": "resources/neurips-2023-data/score.h5ad",
 }
 ## VIASH END
 
@@ -24,10 +24,14 @@ for i in de_test.index:
 
 mean_rowwise_rmse /= de_test.shape[0]
 
-output = {
-    "mean_rowwise_rmse": mean_rowwise_rmse
-}
+# prepare output
+output = ad.AnnData(
+    uns = {
+        "dataset_id": "unknown",
+        "method_id": "unknown",
+        "metric_ids": ["mean_rowwise_rmse"],
+        "metric_values": [mean_rowwise_rmse]
+    }
+)
 
-# write to file
-with open(par["output"], 'w') as f:
-    json.dump(output, f)
+ad.write_h5ad(par["output"], output, compression="gzip")
