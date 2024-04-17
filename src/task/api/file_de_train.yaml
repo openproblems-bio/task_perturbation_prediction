@@ -1,5 +1,5 @@
 type: file
-example: resources/neurips-2023-data/de_train.h5ad
+example: resources/neurips-2023-data/de_train.parquet
 info:
   label: DE train
   summary: "Differential expression results for training."
