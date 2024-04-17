@@ -40,3 +40,17 @@ viash run src/dge_perturbation_prediction/process_dataset/convert_h5ad_to_parque
   --output_train "$OUT/de_train.parquet" \
   --output_test "$OUT/de_test.parquet" \
   --output_id_map "$OUT/id_map.csv"
+
+# # Alternatively:
+# nextflow run \
+#   target/nextflow/dge_perturbation_prediction/process_dataset/workflow/main.nf \
+#   -profile docker \
+#   --sc_counts "$IN/sc_counts.h5ad" \
+#   --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
+#   --pseudobulk "pseudo_bulk.h5ad" \
+#   --de_train_h5ad "de_train.h5ad" \
+#   --de_train_parquet "de_train.parquet" \
+#   --de_test_h5ad "de_test.h5ad" \
+#   --de_test_parquet "de_test.parquet" \
+#   --id_map "id_map.csv" \
+#   --publish_dir "$OUT"
