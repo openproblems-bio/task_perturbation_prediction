@@ -17,15 +17,18 @@ functionality:
       required: true
       direction: input
     - name: --de_train
-      __merge__: file_de_train_h5ad.yaml
+      __merge__: file_de_train_parquet.yaml
       required: true
       direction: output
+      default: de_train.parquet
     - name: --de_test
-      __merge__: file_de_test_h5ad.yaml
+      __merge__: file_de_test_parquet.yaml
       required: true
       direction: output
+      default: de_test.parquet
     - name: --id_map
       __merge__: file_id_map.yaml
       required: true
       direction: output
+      default: id_map.csv
   test_resources: []

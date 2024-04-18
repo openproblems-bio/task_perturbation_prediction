@@ -28,10 +28,13 @@ nextflow run \
   --id neurips-2023-data \
   --sc_counts "$IN/sc_counts.h5ad" \
   --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
-  --pseudobulk "pseudo_bulk.h5ad" \
-  --de_train "de_train.parquet" \
-  --de_test "de_test.parquet" \
-  --id_map "id_map.csv" \
+  --dataset_id "neurips-2023-data" \
+  --dataset_name "NeurIPS2023 scPerturb DGE" \
+  --dataset_url "TBD" \
+  --dataset_reference "TBD" \
+  --dataset_summary "Differential gene expression sign(logFC) * -log10(p-value) values after 24 hours of treatment with 144 compounds in human PBMCs" \
+  --dataset_description "For this competition, we designed and generated a novel single-cell perturbational dataset in human peripheral blood mononuclear cells (PBMCs). We selected 144 compounds from the Library of Integrated Network-Based Cellular Signatures (LINCS) Connectivity Map dataset (PMID: 29195078) and measured single-cell gene expression profiles after 24 hours of treatment. The experiment was repeated in three healthy human donors, and the compounds were selected based on diverse transcriptional signatures observed in CD34+ hematopoietic stem cells (data not released). We performed this experiment in human PBMCs because the cells are commercially available with pre-obtained consent for public release and PBMCs are a primary, disease-relevant tissue that contains multiple mature cell types (including T-cells, B-cells, myeloid cells, and NK cells) with established markers for annotation of cell types. To supplement this dataset, we also measured cells from each donor at baseline with joint scRNA and single-cell chromatin accessibility measurements using the 10x Multiome assay. We hope that the addition of rich multi-omic data for each donor and cell type at baseline will help establish biological priors that explain the susceptibility of particular genes to exhibit perturbation responses in difference biological contexts." \
+  --dataset_organism "homo_sapiens" \
   --output_state "state.yaml" \
   --publish_dir "$OUT"
 
