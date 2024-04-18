@@ -1,10 +1,11 @@
 __merge__: ../../api/comp_control_method.yaml
 functionality:
-  name: baseline_zero
+  name: zeros
   info:
-    label: Zero baseline
-    summary: Baseline method that predicts no change for any gene.
-    description: Baseline.
+    label: Zeros
+    summary: Baseline method that predicts all zeros
+    description: |
+      Baseline method that predicts all zeros.
   resources:
     - type: python_script
       path: script.py
