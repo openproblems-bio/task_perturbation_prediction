@@ -47,8 +47,8 @@ jobs:
       id: cache
       with:
         s3_bucket: $s3_bucket
-        dest_path: resources/neurips-2023-data
-        cache_key_prefix: resources_test__
+        dest_path: resources
+        cache_key_prefix: resources__
 
     - id: ns_list
       uses: viash-io/viash-actions/ns-list@v5
@@ -94,7 +94,7 @@ jobs:
       uses: actions/cache@v4
       timeout-minutes: 10
       with:
-        path: resources/neurips-2023-data
+        path: resources
         key: ${{ needs.list.outputs.cache_key }}
 
     - name: Run test

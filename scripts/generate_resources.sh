@@ -49,4 +49,10 @@ viash run src/task/metrics/mean_rowwise_rmse/config.vsh.yaml -- \
   --output "$OUT/score.h5ad"
 
 echo "Uploading results to S3"
-aws s3 sync --profile op2 "$OUT" "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" --delete --dryrun
+aws s3 sync --profile op2 \
+  --include "*" \
+  --exclude "neurips-2023-raw/*" \
+  --exclude "neurips-2023-public/*" \
+  "resources" \
+  "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" \
+  --delete --dryrun
