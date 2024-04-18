@@ -9,7 +9,7 @@ functionality:
         A metric to compare two predictions.
   arguments:
     - name: --de_test
-      __merge__: file_de_test.yaml
+      __merge__: file_de_test_parquet.yaml
       required: true
       direction: input
     - name: --prediction

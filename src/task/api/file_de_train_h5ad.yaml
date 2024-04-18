@@ -1,14 +1,11 @@
 type: file
-example: resources/neurips-2023-data/de_test.parquet
+example: resources/neurips-2023-data/de_train.h5ad
 info:
-  label: DE test
-  summary: "Differential expression results for testing."
+  label: DE train
+  summary: "Differential expression results for training."
+  file_type: h5ad
   slots:
     obs:
-      - name: id
-        type: integer
-        description: Index of the test observation
-        required: true
       - name: cell_type
         type: string
         description: "The annotated cell type of each cell based on RNA expression."

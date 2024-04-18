@@ -16,6 +16,8 @@ platforms:
     setup:
       - type: r
         cran: [ arrow, dplyr ]
+      - type: python
+        packages: [ fastparquet ]
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]

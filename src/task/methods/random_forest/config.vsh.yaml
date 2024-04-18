@@ -18,6 +18,8 @@ platforms:
     setup:
       - type: r
         cran: [ ranger, arrow, pbapply ]
+      - type: python
+        packages: [ fastparquet ]
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]

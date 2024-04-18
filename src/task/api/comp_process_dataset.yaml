@@ -3,10 +3,10 @@ functionality:
   info:
     type: process_dataset
     type_info:
-      label: Data processor
-      summary: A DGE regression dataset processor
+      label: Process dataset
+      summary: Process the raw dataset
       description: |
-        A DGE regression dataset processor to process the dataset for the DGE regression task.
+        Process the raw dataset for the DGE regression task.
   arguments:
     - name: --sc_counts
       __merge__: file_sc_counts.yaml
@@ -16,12 +16,20 @@ functionality:
       __merge__: file_lincs_id_compound_mapping.yaml
       required: true
       direction: input
-    - name: --de_train
-      __merge__: file_de_train.yaml
+    - name: --de_train_h5ad
+      __merge__: file_de_train_h5ad.yaml
       required: true
       direction: output
-    - name: --de_test
-      __merge__: file_de_test.yaml
+    - name: --de_train_parquet
+      __merge__: file_de_train_h5ad.yaml
+      required: true
+      direction: output
+    - name: --de_test_h5ad
+      __merge__: file_de_test_h5ad.yaml
+      required: true
+      direction: output
+    - name: --de_test_parquet
+      __merge__: file_de_test_h5ad.yaml
       required: true
       direction: output
     - name: --id_map

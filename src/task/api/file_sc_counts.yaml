@@ -3,6 +3,7 @@ example: resources/neurips-2023-raw/sc_counts.h5ad
 info:
   label: Single Cell Counts
   summary: "Anndata with the counts of the whole dataset."
+  file_type: h5ad
   slots:
     obs:
       - name: dose_uM
