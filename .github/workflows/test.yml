@@ -1,0 +1,107 @@
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [ '**' ]
+
+jobs:
+  run_ci_check_job:
+    runs-on: ubuntu-latest
+    outputs:
+      run_ci: ${{ steps.github_cli.outputs.check }}
+    steps:
+      - name: 'Check if branch has an existing pull request and the trigger was a push'
+        id: github_cli
+        run: |
+          pull_request=$(gh pr list -R ${{ github.repository }} -H ${{ github.ref_name }} --json url --state open --limit 1 | jq '.[0].url')
+          # If the branch has a PR and this run was triggered by a push event, do not run
+          if [[ "$pull_request" != "null" && "$GITHUB_REF_NAME" != "main" && "${{ github.event_name == 'push' }}" == "true" && "${{ !contains(github.event.head_commit.message, 'ci force') }}" == "true" ]]; then
+            echo "check=false" >> $GITHUB_OUTPUT
+          else
+            echo "check=true" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GTHB_PAT }}
+
+  # phase 1
+  list:
+    needs: run_ci_check_job
+    env:
+      s3_bucket: s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/
+    runs-on: ubuntu-latest
+    if: ${{ needs.run_ci_check_job.outputs.run_ci == 'true' }}
+
+    outputs:
+      matrix: ${{ steps.set_matrix.outputs.matrix }}
+      cache_key: ${{ steps.cache.outputs.cache_key }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 
+
+    - uses: viash-io/viash-actions/setup@v5
+
+    - uses: viash-io/viash-actions/project/sync-and-cache-s3@v5
+      id: cache
+      with:
+        s3_bucket: $s3_bucket
+        dest_path: resources
+        cache_key_prefix: resources__
+
+    - id: ns_list
+      uses: viash-io/viash-actions/ns-list@v5
+      with:
+        platform: docker
+        format: json
+
+    - id: ns_list_filtered
+      uses: viash-io/viash-actions/project/detect-changed-components@v5
+      with:
+        input_file: "${{ steps.ns_list.outputs.output_file }}"
+
+    - id: set_matrix
+      run: |
+        echo "matrix=$(jq -c '[ .[] | 
+          { 
+            "name": (.functionality.namespace + "/" + .functionality.name),
+            "config": .info.config
+          }
+        ]' ${{ steps.ns_list_filtered.outputs.output_file }} )" >> $GITHUB_OUTPUT
+
+  # phase 2
+  viash_test:
+    needs: list
+    if: ${{ needs.list.outputs.matrix != '[]' && needs.list.outputs.matrix != '' }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        component: ${{ fromJson(needs.list.outputs.matrix) }}
+
+    steps:
+    # Remove unnecessary files to free up space. Otherwise, we get 'no space left on device.'
+    - uses: data-intuitive/reclaim-the-bytes@v2
+    
+    - uses: actions/checkout@v4
+
+    - uses: viash-io/viash-actions/setup@v5
+
+    # use cache
+    - name: Cache resources data
+      uses: actions/cache@v4
+      timeout-minutes: 10
+      with:
+        path: resources
+        key: ${{ needs.list.outputs.cache_key }}
+
+    - name: Run test
+      timeout-minutes: 30
+      run: |
+        VIASH_TEMP=$RUNNER_TEMP/viash viash test \
+          "${{ matrix.component.config }}" \
+          --cpus 2 \
+          --memory "5gb"
+
