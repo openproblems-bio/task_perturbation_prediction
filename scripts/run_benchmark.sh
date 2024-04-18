@@ -10,11 +10,13 @@ OUT="output"
 # run benchmark
 export NXF_VER=23.04.2
 
+[ -f "$OUT/trace.txt" ] && rm "$OUT/trace.txt"
+
 nextflow run . \
   -main-script target/nextflow/workflows/run_benchmark/main.nf \
   -profile docker \
   -resume \
-  -with-trace \
+  -with-trace "$OUT/trace.txt" \
   --publish_dir "$OUT" \
   --output_state "state.yaml" \
   --id neurips-2023-data \
