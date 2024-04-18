@@ -14,23 +14,32 @@ meta = {
 ## VIASH END
 
 # helper functions
-def check_slots(adata, arg):
+def check_h5ad_slots(adata, arg):
     """Check whether an AnnData file contains all for the required
     slots in the corresponding .info.slots field.
     """
-    for struc_name, slot_items in arg["info"].get("slots", {}).items():
+    for struc_name, items in arg["info"].get("slots", {}).items():
         struc_x = getattr(adata, struc_name)
         
         if struc_name == "X":
-            if slot_items.get("required", True):
+            if items.get("required", True):
                 assert struc_x is not None,\
                     f"File '{arg['value']}' is missing slot .{struc_name}"
         
         else:
-            for slot_item in slot_items:
-                if slot_item.get("required", True):
-                    assert slot_item["name"] in struc_x,\
-                        f"File '{arg['value']}' is missing slot .{struc_name}['{slot_item['name']}']"
+            for item in items:
+                if item.get("required", True):
+                    assert item["name"] in struc_x,\
+                        f"File '{arg['value']}' is missing slot .{struc_name}['{item['name']}']"
+
+def check_df_columns(df, arg):
+    """Check whether a DataFrame contains all for the required
+    columns in the corresponding .info.columns field.
+    """
+    for item in arg["info"].get("columns", []):
+        if item.get("required", True):
+            assert item['name'] in df.columns,\
+                f"File '{arg['value']}' is missing column '{item['name']}'"
 
 def run_and_check_outputs(arguments, cmd):
     print(">> Checking whether input files exist", flush=True)
@@ -54,28 +63,29 @@ def run_and_check_outputs(arguments, cmd):
             assert path.exists(arg["value"]), f"Output file '{arg['value']}' does not exist"
 
     print(">> Reading h5ad files and checking formats", flush=True)
-    adatas = {}
     for arg in arguments:
-        if arg["type"] == "file" and "slots" in arg["info"]:
-            print(f"Reading and checking {arg['clean_name']}", flush=True)
-            
-            # try to read as an anndata, else as a parquet file
-            try:
+        file_type = arg.get("info", {}).get("file_type", "h5ad")
+        if arg["type"] == "file":
+            if file_type == "h5ad" and "slots" in arg["info"]:
+                print(f"Reading and checking {arg['clean_name']}", flush=True)
+
+                # try to read as an anndata, else as a parquet file
                 adata = ad.read_h5ad(arg["value"])
-            except:
-                try:
+
+                print(f"  {adata}")
+
+                check_h5ad_slots(adata, arg)
+            elif file_type in ["parquet", "csv"] and "columns" in arg["info"]:
+                print(f"Reading and checking {arg['clean_name']}", flush=True)
+
+                if file_type == "csv":
+                    df = pd.read_csv(arg["value"])
+                else:
                     df = pd.read_parquet(arg["value"])
-                    adata = ad.AnnData(obs = df)
-                    # don't check for anything other than obs
-                    arg.update({"info": {"slots": {"obs": arg.info.get("slots", {}).get("obs", {})}}})
-                except:
-                    raise ValueError(f"File '{arg['value']}' is neither a h5ad file nor a parquet file")
+                print(f"  {df}")
+                
+                check_df_columns(df, arg)
 
-            print(f"  {adata}")
-
-            check_slots(adata, arg)
-
-            adatas[arg["clean_name"]] = adata
 
     print("All checks succeeded!", flush=True)
 
