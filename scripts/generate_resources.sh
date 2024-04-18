@@ -28,10 +28,8 @@ nextflow run \
   --sc_counts "$IN/sc_counts.h5ad" \
   --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
   --pseudobulk "pseudo_bulk.h5ad" \
-  --de_train_h5ad "de_train.h5ad" \
-  --de_train_parquet "de_train.parquet" \
-  --de_test_h5ad "de_test.h5ad" \
-  --de_test_parquet "de_test.parquet" \
+  --de_train "de_train.parquet" \
+  --de_test "de_test.parquet" \
   --id_map "id_map.csv" \
   --publish_dir "$OUT"
 

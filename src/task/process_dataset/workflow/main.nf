@@ -51,17 +51,15 @@ workflow run_wf {
         input_test: "de_test_h5ad"
       ],
       toState: [
-        de_train_parquet: "output_train",
-        de_test_parquet: "output_test",
+        de_train: "output_train",
+        de_test: "output_test",
         id_map: "output_id_map"
       ]
     )
 
     | setState ([
-      "de_train_h5ad",
-      "de_test_h5ad",
-      "de_train_parquet",
-      "de_test_parquet",
+      "de_train",
+      "de_test",
       "id_map"
     ])
 
