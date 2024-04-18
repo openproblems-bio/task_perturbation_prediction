@@ -77,3 +77,11 @@ functionality:
       tag: main_build
 platforms:
   - type: nextflow
+    config:
+      script: |
+        process.errorStrategy = 'ignore'
+        trace {
+            enabled = true
+            overwrite = true
+            file = "${params.publish_dir}/trace.txt"
+        }
