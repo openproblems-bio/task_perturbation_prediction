@@ -14,20 +14,41 @@ Path to source:
 
 ## Installation
 
-You need to have Docker, Java, and Viash installed. Follow [these
-instructions](https://openproblems.bio/documentation/fundamentals/requirements)
+You need to have Docker, Java, and Viash installed. Follow
+[these instructions](https://openproblems.bio/documentation/fundamentals/requirements)
 to install the required dependencies.
 
 ## First steps
 
 To get started, you can run the following commands:
 
-``` bash
+```bash
 git clone git@github.com:openproblems-bio/task-dge-perturbation-prediction.git
 
 cd task-dge-perturbation-prediction
 
-scripts/sync_resources.sh
+# download resources
+scripts/download_resources.sh
+```
+
+To run the benchmark, you first need to build the components. Afterwards, you can run the benchmark:
+
+```bash
+viash ns build --parallel --setup cachedbuild
+
+scripts/run_benchmark.sh
+```
+
+After adding a component, it is recommended to run the tests to ensure that the component is working correctly:
+
+```bash
+viash ns test --parallel
+```
+
+Optionally, you can provide the `--query` argument to test only a subset of components:
+
+```bash
+viash ns test --parallel --query "component_name"
 ```
 
 ## Motivation
