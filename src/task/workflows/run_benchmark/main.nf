@@ -24,15 +24,26 @@ workflow run_wf {
     mean_rowwise_rmse
   ]
 
-  /***************************
-   * RUN METHODS AND METRICS *
-   ***************************/
-  score_ch = input_ch
+  /* **************************
+   * PREPARE DATASET AND TASK *
+   ************************** */
+  dataset_ch = input_ch
 
     // store original id for later use
     | map{ id, state ->
       [id, state + ["_meta": [join_id: id]]]
     }
+
+    // read the dataset info
+    | map { id, state ->
+      def dataset_info = readYaml(state.dataset_info)
+      [id, state + [dataset_info: dataset_info]]
+    }
+
+  /***************************
+   * RUN METHODS AND METRICS *
+   ***************************/
+  score_ch = dataset_ch
 
     // run all methods
     | runEach(
@@ -94,10 +105,10 @@ workflow run_wf {
    ******************************/
 
   // extract and combine the dataset metadata
-  dataset_meta_ch = input_ch
+  dataset_meta_ch = dataset_ch
     | joinStates { ids, states ->
       // combine the dataset info into one file
-      def dataset_uns = states.collect{readYaml(it.dataset_info)}
+      def dataset_uns = states.collect{it.dataset_info}
       def dataset_uns_yaml_blob = toYamlBlob(dataset_uns)
       def dataset_uns_file = tempFile("dataset_uns.yaml")
       dataset_uns_file.write(dataset_uns_yaml_blob)
@@ -135,7 +146,7 @@ workflow run_wf {
       // store the scores in a file
       def score_uns = states.collect{state ->
         state.score_uns + [
-          dataset_id: state.dataset_id,
+          dataset_id: state.dataset_info.dataset_id,
           method_id: state.method_id
         ]
       }
