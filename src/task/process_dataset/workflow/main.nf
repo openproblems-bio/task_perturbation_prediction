@@ -59,6 +59,7 @@ workflow run_wf {
       def dataset_info = [
         dataset_id: state.dataset_id,
         dataset_name: state.dataset_name,
+        dataset_summary: state.dataset_summary,
         dataset_description: state.dataset_description,
         dataset_url: state.dataset_url,
         dataset_reference: state.dataset_reference,
