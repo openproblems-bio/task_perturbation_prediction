@@ -6,12 +6,12 @@ import re
 
 ## VIASH START
 par = {
-  "task": "denoising",
+  "task": "DGE Perturbation Prediction",
   "type": "method",
   "language": "python",
   "name": "new_comp",
-  "output": "src/tasks/denoising/methods/new_comp",
-  "api_file": "src/tasks/denoising/api/comp_method.yaml",
+  "output": "src/task/method/new_comp",
+  "api_file": "src/task/api/comp_method.yaml",
   "viash_yaml": "_viash.yaml"
 }
 ## VIASH END
