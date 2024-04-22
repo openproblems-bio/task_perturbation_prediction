@@ -22,6 +22,7 @@ viash run src/common/create_component/config.vsh.yaml -- \
 viash test src/task/methods/$method_id/config.vsh.yaml
 
 # rebuild the container (only if you change something to the docker platform)
+# You can reduce the memory and cpu allotted to jobs in _viash.yaml by modifying .platforms[.type == "nextflow"].config.labels
 viash run src/task/methods/$method_id/config.vsh.yaml -- \
   ---setup cachedbuild ---verbose
 
