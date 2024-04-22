@@ -38,5 +38,5 @@ viash run src/task/metrics/mean_rowwise_rmse/config.vsh.yaml -- \
   --prediction "output/prediction.parquet" \
   --output "output/score.h5ad"
 
-# print score
+# print score on kaggle test dataset
 python -c 'import anndata; print(anndata.read_h5ad("output/score.h5ad").uns)'
