@@ -70,7 +70,7 @@ def generate_info(par, component_type, pretty_name) -> str:
   """Generate the functionality info for a component."""
   if component_type in ["method", "control_method"]:
     str = strip_margin(f'''\
-      |    # A relatively short label, used when rendering visualisarions (required)
+      |    # A relatively short label, used when rendering visualisations (required)
       |    label: {pretty_name}
       |    # A one sentence summary of how this method works (required). Used when 
       |    # rendering summary tables.
