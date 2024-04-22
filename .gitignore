@@ -5,3 +5,5 @@ target
 .idea
 .vscode
 .DS_Store
+output
+trace-*
