@@ -1,0 +1,23 @@
+__merge__: ../../api/comp_method.yaml
+functionality:
+  name: scape
+  info:
+    label: ScAPE
+    summary: judge_2
+    description: ScAPE is a package implementing the neural network model used in the Open Problems – Single-Cell Perturbations challenge hosted by Kaggle. This is the model we used to generate the submission that achieved top <2% performance (16th position out of 1097 teams) in the final leaderboard.
+    reference: pablormier2023scape
+    documentation_url: https://github.com/scapeML/scape
+    repository_url: https://github.com/scapeML/scape
+    preferred_normalization: counts
+  resources:
+    - type: python_script
+      path: python
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_r:1.0.2
+    setup:
+      - type: python
+        packages: [ fastparquet, tensorflow==2.14, tensorflow-io-gcs-filesystem>=0.31.0, pandas~=1.5.3, scikit-learn~=1.2.2 ]
+  - type: nextflow
+    directives:
+      label: [ midtime, highmem, highgpu ]
