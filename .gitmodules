@@ -1,0 +1,3 @@
+[submodule "src/task/methods/third_place/single_cell_perturbations"]
+	path = src/task/methods/third_place/single_cell_perturbations
+	url = https://github.com/okon2000/single_cell_perturbations/
