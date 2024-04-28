@@ -1,0 +1,10 @@
+n_components_list: # targets dimension list
+  - 18211
+d_models_list:
+  - 128
+batch_size: 5
+data_file: 'de_train.parquet'
+id_map_file: 'id_map.csv'
+device: cuda
+seed: null
+models_dir: 'trained_models'

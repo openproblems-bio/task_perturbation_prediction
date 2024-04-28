@@ -1,0 +1,68 @@
+# The API specifies which type of component this is.
+# It contains specifications for:
+#   - The input/output files
+#   - Common parameters
+#   - A unit test
+__merge__: ../../api/comp_method.yaml
+
+functionality:
+  # A unique identifier for your component (required).
+  # Can contain only lowercase letters or underscores.
+  name: lb2
+
+  # Metadata for your component
+  info:
+    # A relatively short label, used when rendering visualisations (required)
+    label: lb2
+    # A one sentence summary of how this method works (required). Used when 
+    # rendering summary tables.
+    summary: "FILL IN: A one sentence summary of this method."
+    # A multi-line description of how this component works (required). Used
+    # when rendering reference documentation.
+    description: |
+      FILL IN: A (multi-line) description of how this method works.
+    # Which normalisation method this component prefers to use (required).
+    preferred_normalization: log_cp10k
+    # A reference key from the bibtex library at src/common/library.bib (required).
+    reference: bibtex_reference_key
+    # URL to the documentation for this method (required).
+    documentation_url: https://url.to/the/documentation
+    # URL to the code repository for this method (required).
+    repository_url: https://github.com/organisation/repository
+
+  # Component-specific parameters (optional)
+  # arguments:
+  #   - type: file
+  #     name: "--config"
+  #     default: "config_train.yaml"
+
+  # Resources required to run the component
+  resources:
+    # The script of your component (required)
+    - type: python_script
+      path: script.py
+    - path: models.py
+    - path: utils.py
+    - path: sample_submission.csv
+
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+    setup:
+      - type: python
+        packages: [anndata,
+        pytorch==2.1.0,
+        torchvision==0.16.0,
+        torchaudio==2.1.0,
+        fastparquet ,
+        pyarrow,
+           pandas~=2.0.3,
+scikit-learn~=1.0.1,
+tqdm~=4.66.1,
+numpy~=1.23,
+matplotlib~=3.5.0,
+PyYAML~=6.0.1,
+lion-pytorch ]
+  - type: nextflow
+    directives:
+      label: [ midtime, lowmem, midcpu ]
