@@ -34,7 +34,7 @@ viash run src/task/methods/$method_id/config.vsh.yaml -- \
 
 # run the method (using h5ad as input)
 viash run src/task/methods/$method_id/config.vsh.yaml -- \
-  --de_train_h5ad "resources/neurips-2023-kaggle/de_train.h5ad" \
+  --de_train_h5ad "resources/neurips-2023-kaggle/2023-09-12_de_by_cell_type_train.h5ad" \
   --id_map "resources/neurips-2023-kaggle/id_map.csv" \
   --output "output/prediction.parquet"
 
