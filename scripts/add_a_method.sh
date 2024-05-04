@@ -8,7 +8,7 @@ exit 1
 scripts/download_resources.sh
 
 # create a new component
-method_id="third_place"
+method_id="my_method"
 method_lang="python" # change this to "r" if need be
 
 viash run src/common/create_component/config.vsh.yaml -- \
