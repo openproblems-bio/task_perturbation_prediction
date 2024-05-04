@@ -170,8 +170,8 @@ def set_par_values(config) -> None:
       value = arg.get("default", arg.get("example", "..."))
     elif key == "de_train":
       value = "resources/neurips-2023-kaggle/de_train.parquet"
-    elif key == "de_train":
-      value = "resources/neurips-2023-kaggle/de_train.h5ad"
+    elif key == "de_train_h5ad":
+      value = "resources/neurips-2023-kaggle/2023-09-12_de_by_cell_type_train.h5ad"
     elif key == "id_map":
       value = "resources/neurips-2023-kaggle/id_map.csv"
     else:
