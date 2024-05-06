@@ -16,7 +16,7 @@ functionality:
     label: A deep NN model proposed by Antoine Passiemier and Jalil Nourisa
     # A one sentence summary of how this method works (required). Used when 
     # rendering summary tables.
-    summary: "Deep learning architecture composed of 2 modules: a sample-centric MLP
+    summary: "Deep learning architecture composed of 2 modules: a sample-centric MLP and a gene-centric MLP"
     and a gene-centric MLP"
     # A multi-line description of how this component works (required). Used
     # when rendering reference documentation.
