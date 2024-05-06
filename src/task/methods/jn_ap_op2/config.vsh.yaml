@@ -1,0 +1,69 @@
+# The API specifies which type of component this is.
+# It contains specifications for:
+#   - The input/output files
+#   - Common parameters
+#   - A unit test
+__merge__: ../../api/comp_method.yaml
+
+functionality:
+  # A unique identifier for your component (required).
+  # Can contain only lowercase letters or underscores.
+  name: jn_ap_op2
+
+  # Metadata for your component
+  info:
+    # A relatively short label, used when rendering visualisations (required)
+    label: A deep NN model proposed by Antoine Passiemier and Jalil Nourisa
+    # A one sentence summary of how this method works (required). Used when 
+    # rendering summary tables.
+    summary: "Deep learning architecture composed of 2 modules: a sample-centric MLP
+    and a gene-centric MLP"
+    # A multi-line description of how this component works (required). Used
+    # when rendering reference documentation.
+    description: |
+      We first encode each sample using leave-one-out encoder based on compound and cell type. This produces X with the dimension of n_samples, n_genes, n_encode,
+      where n_encode is 2. Then, X is passed to a MLP1 sample-wise with input of n_samples, n_genes*n_encode, which outputs the same dimension data.
+      The purpose of this MLP is to learn inter-gene relationships. Then, we group the output of MLP1 with X (original encoded data) and feed it
+      to MLP2 which receives n_smaples*n_genes, (n_encode + n_encode) and results n_samples*n_genes. This MLP2 trains on each (compound, cell_type, gene)
+      combination. This is to overcome the underdetermination problem due to lack of sufficient (compound, cell_type) samples. 
+    # Which normalisation method this component prefers to use (required).
+    preferred_normalization: None
+    # A reference key from the bibtex library at src/common/library.bib (required).
+    reference: bibtex_reference_key
+    # URL to the documentation for this method (required).
+    documentation_url: https://github.com/AntoinePassemiers/Open-Challenges-Single-Cell-Perturbations
+    # URL to the code repository for this method (required).
+    repository_url: https://github.com/AntoinePassemiers/Open-Challenges-Single-Cell-Perturbations
+
+  # Component-specific parameters (optional)
+  # arguments:
+  #   - name: "--n_neighbors"
+  #     type: "integer"
+  #     default: 5
+  #     description: Number of neighbors to use.
+
+  # Resources required to run the component
+  resources:
+    # The script of your component (required)
+    - type: python_script
+      path: script.py
+    # #Additional resources your script needs (optional)
+    # - type: python_script
+    #   path: module.py
+
+platforms:
+  # Specifications for the Docker image for this component.
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    # Add custom dependencies here (optional). For more information, see
+    # https://viash.io/reference/config/platforms/docker/#setup .
+    setup:
+      - type: python
+        packages: [ fastparquet, torch, pandas, category_encoders ]
+
+  # This platform allows running the component natively
+  - type: native
+  # Allows turning the component into a Nextflow module / pipeline.
+  - type: nextflow
+    directives:
+      label: [midtime,midmem,midcpu]
