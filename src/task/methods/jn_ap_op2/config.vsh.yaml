@@ -26,10 +26,6 @@ functionality:
       The purpose of this MLP is to learn inter-gene relationships. Then, we group the output of MLP1 with X (original encoded data) and feed it
       to MLP2 which receives n_smaples*n_genes, (n_encode + n_encode) and results n_samples*n_genes. This MLP2 trains on each (compound, cell_type, gene)
       combination. This is to overcome the underdetermination problem due to lack of sufficient (compound, cell_type) samples. 
-    # Which normalisation method this component prefers to use (required).
-    preferred_normalization: None
-    # A reference key from the bibtex library at src/common/library.bib (required).
-    reference: bibtex_reference_key
     # URL to the documentation for this method (required).
     documentation_url: https://github.com/AntoinePassemiers/Open-Challenges-Single-Cell-Perturbations
     # URL to the code repository for this method (required).
