@@ -62,4 +62,4 @@ platforms:
   # Allows turning the component into a Nextflow module / pipeline.
   - type: nextflow
     directives:
-      label: [midtime,midmem,midcpu]
+      label: [midtime,midmem,midcpu,gpu]
