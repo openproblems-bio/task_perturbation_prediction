@@ -455,12 +455,12 @@ def set_id_as_index(df):
     return df
 
 
-def create_submission_df(weighted_sum):
-    sample_submission = pd.read_csv(r"sample_submission.csv")
-    sample_columns = sample_submission.columns[1:]
-    submission_df = pd.DataFrame(weighted_sum.iloc[:, :].to_numpy(), columns=sample_columns)
-    submission_df.insert(0, 'id', range(255))
-    return submission_df
+# def create_submission_df(weighted_sum):
+#     sample_submission = pd.read_csv(r"sample_submission.csv")
+#     sample_columns = sample_submission.columns[1:]
+#     submission_df = pd.DataFrame(weighted_sum.iloc[:, :].to_numpy(), columns=sample_columns)
+#     submission_df.insert(0, 'id', range(255))
+#     return submission_df
 
 
 def save_submission_df(submission_df, file_path='weighted_submission.csv'):
