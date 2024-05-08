@@ -42,7 +42,7 @@ output = ad.AnnData(
         # this info is not stored in the parquet files
         "dataset_id": "unknown",
         "method_id": "unknown",
-        "metric_ids": ["mean_rowwise_rmse"],
+        "metric_ids": ["mean_cosine_sim"],
         "metric_values": [mean_cosine_similarity]
     }
 )
