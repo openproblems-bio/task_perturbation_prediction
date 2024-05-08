@@ -291,7 +291,7 @@ def main1(sampling_strategy = "k-means", output_folder = 'trained_models_kmeans_
     validation_percentage = 0.1
     device = 'cpu'
     seed = None
-    num_epochs = 20_000
+    num_epochs = 1 #20_000
     early_stopping = 5000
     print('start training')
 
