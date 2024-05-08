@@ -5,26 +5,26 @@
 # exit 1
 
 # # sync resources
-scripts/download_resources.sh
+# scripts/download_resources.sh
 
 # create a new component
 method_id="lb2"
 method_lang="python" # change this to "r" if need be
 
-viash run src/common/create_component/config.vsh.yaml -- \
-  --language "$method_lang" \
-  --name "$method_id"
+# viash run src/common/create_component/config.vsh.yaml -- \
+#   --language "$method_lang" \
+#   --name "$method_id"
 
 # TODO: fill in required fields in src/task/methods/foo/config.vsh.yaml
 # TODO: edit src/task/methods/foo/script.py/R
 
 # test the component
-viash test src/task/methods/$method_id/config.vsh.yaml
+# viash test src/task/methods/$method_id/config.vsh.yaml
 
-# rebuild the container (only if you change something to the docker platform)
-# You can reduce the memory and cpu allotted to jobs in _viash.yaml by modifying .platforms[.type == "nextflow"].config.labels
-viash run src/task/methods/$method_id/config.vsh.yaml -- \
-  ---setup cachedbuild ---verbose
+# # rebuild the container (only if you change something to the docker platform)
+# # You can reduce the memory and cpu allotted to jobs in _viash.yaml by modifying .platforms[.type == "nextflow"].config.labels
+# viash run src/task/methods/$method_id/config.vsh.yaml -- \
+#   ---setup cachedbuild ---verbose
 
 # # run the method
 viash run src/task/methods/$method_id/config.vsh.yaml -- \

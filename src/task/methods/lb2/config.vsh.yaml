@@ -43,7 +43,11 @@ functionality:
       path: script.py
     - path: models.py
     - path: utils.py
-    - path: sample_submission.csv
+    - path: "sample_submission.csv"
+    - path: "result (8).csv"
+    - path: "result (9).csv"
+    - path: "result (11).csv"
+    - path: "result (15).csv"
 
 platforms:
   - type: docker
@@ -65,4 +69,4 @@ PyYAML~=6.0.1,
 lion-pytorch ]
   - type: nextflow
     directives:
-      label: [ midtime, lowmem, midcpu ]
+      label: [ midtime, highmem, highcpu ]

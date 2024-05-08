@@ -36,19 +36,25 @@ def evaluate_model(model, dataloader, criterion=None):
         return total_mrrmse.detach().cpu().item()
     return total_mrrmse.detach().cpu().item(), running_loss / num_batches
 
-
-def load_transformer_model(n_components, input_features, d_model, models_foler='trained_models', device='cuda'):
+def load_transformer_model(n_components, input_features, d_model, models_folder='trained_models', device='cuda',
+                           mean_std='mean_std'):
     # transformer_model = CustomTransformer(num_features=input_features, num_labels=n_components, d_model=d_model).to(
     #     device)
-    transformer_model = CustomTransformer_v3(num_features=input_features, num_labels=n_components, d_model=d_model).to(
-        device)
+    if mean_std == 'mean_std':
+        transformer_model = CustomTransformer_mean_std(num_features=input_features, num_labels=n_components,
+                                                       d_model=d_model).to(
+            device)
+    else:
+        transformer_model = CustomTransformer_mean(num_features=input_features, num_labels=n_components,
+                                                   d_model=d_model).to(
+            device)
     # transformer_model = CustomDeeperModel(input_features, d_model, n_components).to(device)
-    transformer_model.load_state_dict(torch.load(f'trained_models/transformer_model_{n_components}_{d_model}.pt'))
+    transformer_model.load_state_dict(torch.load(f'{models_folder}/transformer_model_{n_components}_{d_model}.pt'))
     transformer_model.eval()
     if n_components == 18211:
         return None, None, transformer_model
-    label_reducer = pickle.load(open(f'{models_foler}/label_reducer_{n_components}_{d_model}.pkl', 'rb'))
-    scaler = pickle.load(open(f'{models_foler}/scaler_{n_components}_{d_model}.pkl', 'rb'))
+    label_reducer = pickle.load(open(f'{models_folder}/label_reducer_{n_components}_{d_model}.pkl', 'rb'))
+    scaler = pickle.load(open(f'{models_folder}/scaler_{n_components}_{d_model}.pkl', 'rb'))
     return label_reducer, scaler, transformer_model
 
 
@@ -66,7 +72,7 @@ def reduce_labels(Y, n_components):
 
 def prepare_augmented_data(
         data_file="",
-        id_map_file=""):
+        id_map_file="", uncommon=False):
     de_train = pd.read_parquet(data_file)
     de_train= de_train.drop(columns = ['split'])
     id_map = pd.read_csv(id_map_file)
@@ -82,8 +88,9 @@ def prepare_augmented_data(
     # Split the combined data back into train and test
     train = dum_data.iloc[:len(de_train)]
     test = dum_data.iloc[len(de_train):]
-    # uncommon = [f for f in train if f not in test]
-    # X = train.drop(columns=uncommon)
+    if uncommon:
+        uncommon = [f for f in train if f not in test]
+        X = train.drop(columns=uncommon)
     X = train
     de_cell_type = de_train.iloc[:, [0] + list(range(5, de_train.shape[1]))]
     de_sm_name = de_train.iloc[:, [1] + list(range(5, de_train.shape[1]))]
