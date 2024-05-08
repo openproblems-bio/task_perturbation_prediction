@@ -32,7 +32,7 @@ output = ad.AnnData(
         # this info is not stored in the parquet files
         "dataset_id": "unknown",
         "method_id": "unknown",
-        "metric_ids": ["mean_rowwise_mae"],
+        "metric_ids": ["mean_rowwise_absolute_error"],
         "metric_values": [mean_rowwise_mae]
     }
 )
