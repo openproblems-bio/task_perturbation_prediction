@@ -13,7 +13,12 @@ functionality:
       combination. This is to overcome the underdetermination problem due to lack of sufficient (compound, cell_type) samples. 
     documentation_url: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/461159
     repository_url: https://github.com/AntoinePassemiers/Open-Challenges-Single-Cell-Perturbations
-
+  arguments:
+    - type: integer
+      name: --epochs
+      default: 10
+      info:
+        test_default: 1
   resources:
     - type: python_script
       path: script.py
