@@ -1,0 +1,3 @@
+[submodule "src/task/methods/first_place/single_cell_perturbations"]
+	path = src/task/methods/first_place/single_cell_perturbations
+	url = git@github.com:Jean-KOUAGOU/1st-place-solution-single-cell-pbs.git

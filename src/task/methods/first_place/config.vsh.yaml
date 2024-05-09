@@ -1,0 +1,97 @@
+# The API specifies which type of component this is.
+# It contains specifications for:
+#   - The input/output files
+#   - Common parameters
+#   - A unit test
+__merge__: ../../api/comp_method.yaml
+
+functionality:
+  # A unique identifier for your component (required).
+  # Can contain only lowercase letters or underscores.
+  name: first_place
+
+  # Metadata for your component
+  info:
+    # A relatively short label, used when rendering visualisations (required)
+    label: First Place
+    # A one sentence summary of how this method works (required). Used when 
+    # rendering summary tables.
+    summary: "FILL IN: A one sentence summary of this method."
+    # A multi-line description of how this component works (required). Used
+    # when rendering reference documentation.
+    description: |
+      FILL IN: A (multi-line) description of how this method works.
+    # Which normalisation method this component prefers to use (required).
+    preferred_normalization: log_cp10k
+    # A reference key from the bibtex library at src/common/library.bib (required).
+    reference: bibtex_reference_key
+    # URL to the documentation for this method (required).
+    documentation_url: https://url.to/the/documentation
+    # URL to the code repository for this method (required).
+    repository_url: https://github.com/organisation/repository
+
+  # Component-specific parameters (optional)
+  arguments:
+    # - name: "--de_train"
+    #   type: "string"
+    #   default: "resources/neurips-2023-kaggle/de_train.parquet"
+    #   description: "Path to the training data."
+    - name: "--de_test"
+      type: "string"
+      default: "/viash_automount/resources/neurips-2023-kaggle/de_test.parquet"
+      description: "Path to the test data."
+    # - name: "--id_map"
+    #   type: "string"
+    #   default: "resources/neurips-2023-kaggle/id_map.csv"
+    #   description: "Path to the ID map."
+    - name: "--train_data_aug_dir"
+      type: "string"
+      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/prepared_data/"
+      description: "Directory for augmented training data."
+    - name: "--model_dir"
+      type: "string"
+      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/trained_models/"
+      description: "Model dir path."
+    - name: "--logs_dir"
+      type: "string"
+      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/trained_models/"
+      description: "Logs dir path."
+    - name: "--submission"
+      type: "string"
+      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/sample_submission.csv"
+      description: "Submission file path."
+    # - name: "--output"
+    #   type: "string"
+    #   default: "output.parquet"
+    #   description: "Output file path."
+
+  # Resources required to run the component
+  resources:
+    # The script of your component (required)
+    - type: python_script
+      path: my_script.py
+
+    - path: helper_script.py
+    # Additional resources your script needs (optional)
+    # - type: file
+    # - path: single_cell_perturbations/helper_functions.py
+    # - path: single_cell_perturbations/models.py
+    # - path: single_cell_perturbations/helper_classes.py
+    #   path: weights.pt
+
+platforms:
+  # Specifications for the Docker image for this component.
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    # Add custom dependencies here (optional). For more information, see
+    # https://viash.io/reference/config/platforms/docker/#setup .
+    setup:
+      - type: python
+        packages: [ fastparquet, pandas==2.1.3, pyarrow==14.0.1, tqdm==4.66.1, scikit-learn==1.3.2, torch==2.1.1, transformers==4.35.2, matplotlib==3.8.2 ]
+
+  # This platform allows running the component natively
+  - type: native
+  # Allows turning the component into a Nextflow module / pipeline.
+  - type: nextflow
+    directives:
+      label: [midtime,midmem,midcpu]
