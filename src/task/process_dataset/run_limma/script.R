@@ -7,7 +7,7 @@ library(edgeR)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk.h5ad",
+  input = "resources/neurips-2023-data/small_pseudobulk.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
@@ -59,7 +59,7 @@ for (cell_type in cell_types) {
   counts <- Matrix::t(cell_type_adata$X)
 
   d <- DGEList(counts)
-  design <- model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs)
+  design <- model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs %>% mutate_all(limma_trafo))
   keep <- filterByExpr(d, design)
   genes_to_keep <- rownames(d)[keep]
 
@@ -89,7 +89,6 @@ for (cell_type in cell_types) {
   d <- calcNormFactors(d)
 
   design <- model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs %>% mutate_all(limma_trafo))
-
   # Estimate dispersions
   d <- estimateDisp(d, design)
 
@@ -103,6 +102,7 @@ for (cell_type in cell_types) {
   ql_fits[[cell_type]] <- fit
 }
 
+successful_de_rows <- logical(nrow(new_obs))
 # run DE tests for each [cell_type, sm_name] pair
 de_results <- bind_rows(lapply(seq_len(nrow(new_obs)), function(row_i) {
   cat("Computing DE contrasts (", row_i, "/", nrow(new_obs), ")\n")
@@ -113,6 +113,18 @@ de_results <- bind_rows(lapply(seq_len(nrow(new_obs)), function(row_i) {
 
   # define contrast
   contrast_formula <- paste0("sm_name", limma_trafo(sm_name), " - sm_name", limma_trafo(par$control_compound))
+
+  # Check if both transformed names are in the model's coefficient names
+  transformed_sm_name <- limma_trafo(sm_name)
+  coef_names <- colnames(coef(fit))
+  if (!(paste0("sm_name", transformed_sm_name) %in% coef_names)) {
+    cat("Skipping contrast for ", transformed_sm_name, " due to missing coefficient.\n")
+    return(data.frame())  # Return an empty data frame if either compound is missing
+  }
+
+  # Mark this row as successfully computed
+  successful_de_rows[row_i] <<- TRUE
+
   contrast <- makeContrasts(contrasts = contrast_formula, levels = colnames(coef(fit)))
 
   # run contrast test
@@ -128,6 +140,7 @@ de_results <- bind_rows(lapply(seq_len(nrow(new_obs)), function(row_i) {
 
   return(test_results_df)
 }))
+# save de_results to csv
 
 # Transform DE results and prepare for writing
 de_results_final <- de_results %>%
@@ -140,6 +153,7 @@ de_results_final <- de_results %>%
   ) %>%
   as_tibble()
 
+new_obs <- new_obs[successful_de_rows, ]
 # Update row names in new_obs for easy reference
 rownames(new_obs) <- paste0(new_obs$cell_type, ", ", new_obs$sm_name)
 
@@ -156,7 +170,6 @@ layers <- map(setNames(layer_names, layer_names), ~ {
     select(-row_i) %>%
     as.matrix()
 })
-
 
 # Create an AnnData object with the organized data
 output <- anndata::AnnData(
