@@ -728,14 +728,14 @@ def predict(test_df, models, params, weights, le, new_names, original_y, reps):
     x_test = le.transform(test_df[["cell_type", "sm_name"]].values.flat).reshape(-1, 2)
 
     preds = []
-    # for model, param in zip(models, params):
-    for modeli in range(len(models)):
-        model = models[modeli]
-        param = params[modeli]
+    # for model, param n zip(models, params):
+    for model_i in range(len(models)):
+        model = models[model_i]
+        param = params[model_i]
         temp_pred = []
-        for i in range(reps):
+        for rep_i in range(reps):
             print(
-                f"Training model {modeli}/{len(models)}, repeat {i}/{par['reps']}",
+                f"NB266, Training model {model_i + 1}/{len(models)}, Repeat {rep_i + 1}/{reps}",
                 flush=True,
             )
             temp_pred.append(

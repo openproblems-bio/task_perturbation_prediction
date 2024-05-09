@@ -307,6 +307,17 @@ def model_8(
     )
     return model
 
+def load_models():
+    models = [
+        model_1,
+        model_2,
+        model_3,
+        model_5,
+        model_6,
+        model_7,
+        model_8,
+    ]
+    return models
 
 # -----------------------------------------------------------------------------
 # Weights
@@ -437,16 +448,29 @@ params_model_8 = {
     "value": 0.8885448573595669,
 }
 
-w1 = [
-    0.15224443321212433,
-    0.7152220796128623,
-    0.7547606691460997,
-    0.05786285275052854,
-    0.9602177109190158,
-    0.4968056740470425,
-    0.9881673272809887,
-]
+def load_params():
+    params = [
+        params_model_1,
+        params_model_2,
+        params_model_3,
+        params_model_5,
+        params_model_6,
+        params_model_7,
+        params_model_8,
+    ]
+    return params
 
+def load_weights():
+    w1 = [
+        0.15224443321212433,
+        0.7152220796128623,
+        0.7547606691460997,
+        0.05786285275052854,
+        0.9602177109190158,
+        0.4968056740470425,
+        0.9881673272809887,
+    ]
+    return w1
 
 
 def split_params_to_training_model(model_params):
@@ -477,70 +501,28 @@ def fit_and_predict_embedding_nn(x, y, test_x, model_constructor, best_params):
 
 
 
-def predict(test_df, le, new_names, original_y, reps):
+def predict(test_df, models, params, weights, le, new_names, original_y, reps):
     x_test = le.transform(test_df[["cell_type", "sm_name"]].values.flat).reshape(-1, 2)
-    
-    preds_model_1 = [
-        fit_and_predict_embedding_nn(
-            new_names, original_y, x_test, model_1, params_model_1
-        )
-        for i in range(reps)
-    ]
-    preds_model_2 = [
-        fit_and_predict_embedding_nn(
-            new_names, original_y, x_test, model_2, params_model_2
-        )
-        for i in range(reps)
-    ]
-    preds_model_3 = [
-        fit_and_predict_embedding_nn(
-            new_names, original_y, x_test, model_3, params_model_3
-        )
-        for i in range(reps)
-    ]
-    preds_model_5 = [
-        fit_and_predict_embedding_nn(
-            new_names, original_y, x_test, model_5, params_model_5
-        )
-        for i in range(reps)
-    ]
-    preds_model_6 = [
-        fit_and_predict_embedding_nn(
-            new_names, original_y, x_test, model_6, params_model_6
-        )
-        for i in range(reps)
-    ]
-    preds_model_7 = [
-        fit_and_predict_embedding_nn(
-            new_names, original_y, x_test, model_7, params_model_7
-        )
-        for i in range(reps)
-    ]
-    preds_model_8 = [
-        fit_and_predict_embedding_nn(
-            new_names, original_y, x_test, model_8, params_model_8
-        )
-        for i in range(reps)
-    ]
 
-    pred1 = np.median(preds_model_1, axis=0)
-    pred2 = np.median(preds_model_2, axis=0)
-    pred3 = np.median(preds_model_3, axis=0)
-    pred5 = np.median(preds_model_5, axis=0)
-    pred6 = np.median(preds_model_6, axis=0)
-    pred7 = np.median(preds_model_7, axis=0)
-    pred8 = np.median(preds_model_8, axis=0)
+    preds = []
+    for model_i in range(len(models)):
+        model = models[model_i]
+        param = params[model_i]
+        temp_pred = []
+        for rep_i in range(reps):
+            print(
+                f"NB264, Training model {model_i + 1}/{len(models)}, Repeat {rep_i + 1}/{reps}",
+                flush=True,
+            )
+            temp_pred.append(
+                fit_and_predict_embedding_nn(
+                    new_names, original_y, x_test, model, param
+                )
+            )
+        temp_pred = np.median(temp_pred, axis=0)
+        preds.append(temp_pred)
 
-    pred = (
-        w1[0] * pred1
-        + w1[1] * pred2
-        + w1[2] * pred3
-        + w1[3] * pred5
-        + w1[4] * pred6
-        + w1[5] * pred7
-        + w1[6] * pred8
-    ) / sum(w1)
-
+    pred = np.sum([w * p for w, p in zip(weights, preds)], axis=0) / sum(weights)
     return pred
 
 
@@ -556,8 +538,13 @@ def run_notebook_264(train_df, test_df, gene_names, reps):
     le.fit(original_x.flat)
     new_names = le.transform(original_x.flat).reshape(-1, 2)
 
+    # load models, params, and weights
+    models = load_models()
+    params = load_params()
+    weights = load_weights()
+
     # generate predictions
-    pred = predict(test_df, le, new_names, original_y, reps)
+    pred = predict(test_df, models, params, weights, le, new_names, original_y, reps)
 
     # clip predictions
     clipped_pred = np.clip(pred, mins, maxs)
