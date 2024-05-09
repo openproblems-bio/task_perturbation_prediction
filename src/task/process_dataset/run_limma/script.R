@@ -117,8 +117,9 @@ de_results <- bind_rows(lapply(seq_len(nrow(new_obs)), function(row_i) {
   # Check if both transformed names are in the model's coefficient names
   transformed_sm_name <- limma_trafo(sm_name)
   coef_names <- colnames(coef(fit))
+  cell_type_name <- as.character(cell_type)
   if (!(paste0("sm_name", transformed_sm_name) %in% coef_names)) {
-    cat("Skipping contrast for ", transformed_sm_name, " due to missing coefficient.\n")
+    cat("Skipping contrast for ", transformed_sm_name, ", ", cell_type_name, ", due to missing coefficient.\n")
     return(data.frame())  # Return an empty data frame if either compound is missing
   }
 
