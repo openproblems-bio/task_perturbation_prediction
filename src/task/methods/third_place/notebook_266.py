@@ -1,17 +1,23 @@
+# Change history
+# * Imported code from https://www.kaggle.com/code/jankowalski2000/3rd-place-solution?scriptVersionId=153141755
+# * Derive gene_names from train_df to to avoid reading in the sample_submission.csv file
+# * Make reps component arguments
+# * Auto-reformatted the code
+# * Restructured the code into a function `run_notebook_266()`
+
+import pandas as pd
+import numpy as np
+
 import tensorflow as tf
-import gc
-from tensorflow.keras.layers import (
-    Dense,
-    Dropout,
-    BatchNormalization,
-    Activation,
-    Embedding,
-    Flatten,
-    GaussianNoise,
-)
+from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, Activation, Embedding, Flatten, GaussianNoise
 from tensorflow.keras.models import Sequential
 
 from tensorflow.keras.optimizers.legacy import Adam
+from sklearn.preprocessing import LabelEncoder
+from sklearn.decomposition import TruncatedSVD
+
+import warnings
+warnings.filterwarnings("ignore")
 
 # -----------------------------------------------------------------------------
 # Helper functions
@@ -691,3 +697,89 @@ def load_weights():
     weights = list(weights.values())
 
     return weights
+
+def split_params_to_training_model(model_params):
+    model_params = model_params["params"]
+    training_keys = ["epochs", "bs"]
+    training_params = {k: model_params[k] for k in training_keys}
+    model_params = {
+        k: model_params[k] for k in model_params.keys() if k not in training_keys
+    }
+    return model_params, training_params
+
+def fit_and_predict_embedding_nn(x, y, test_x, model_constructor, best_params):
+    model_params, training_params = split_params_to_training_model(best_params)
+    n_dim = model_params["n_dim"]
+    d = TruncatedSVD(n_dim)
+    y = d.fit_transform(y)
+    model = model_constructor(**model_params)
+    model.fit(
+        x,
+        y,
+        epochs=training_params["epochs"],
+        batch_size=training_params["bs"],
+        verbose=0,
+        shuffle=True,
+    )
+    return d.inverse_transform(model.predict(test_x, batch_size=1))
+
+
+def predict(test_df, models, params, weights, le, new_names, original_y, reps):
+    x_test = le.transform(test_df[["cell_type", "sm_name"]].values.flat).reshape(-1, 2)
+
+    preds = []
+    # for model, param in zip(models, params):
+    for modeli in range(len(models)):
+        model = models[modeli]
+        param = params[modeli]
+        temp_pred = []
+        for i in range(reps):
+            print(
+                f"Training model {modeli}/{len(models)}, repeat {i}/{par['reps']}",
+                flush=True,
+            )
+            temp_pred.append(
+                fit_and_predict_embedding_nn(
+                    new_names, original_y, x_test, model, param
+                )
+            )
+        temp_pred = np.median(temp_pred, axis=0)
+        preds.append(temp_pred)
+
+    pred = np.sum([w * p for w, p in zip(weights, preds)], axis=0) / sum(weights)
+    return pred
+
+
+def run_notebook_266(train_df, test_df, pseudolabel, gene_names, reps, epochs):
+    # determine mins and maxs for later clipping
+    original_y = train_df.loc[:, gene_names].values
+    mins = original_y.min(axis=0)
+    maxs = original_y.max(axis=0)
+
+    # combine pseudolabels into train_df
+    train_df = pd.concat([train_df, pseudolabel]).reset_index(drop=True)
+    original_y = train_df.loc[:, gene_names].values
+
+    # determine label encoder
+    original_x = train_df[["cell_type", "sm_name"]].values
+    le = LabelEncoder()
+    le.fit(original_x.flat)
+    new_names = le.transform(original_x.flat).reshape(-1, 2)
+
+    # load models, params, and weights
+    models = load_models()
+    params = load_params(epochs=epochs)
+    weights = load_weights()
+
+    # generate predictions
+    pred = predict(test_df, models, params, weights, le, new_names, original_y, reps)
+
+    # clip predictions
+    clipped_pred = np.clip(pred, mins, maxs)
+
+    # format outputs
+    df = pd.DataFrame(clipped_pred, columns=gene_names)
+    df["id"] = range(len(df))
+    df = df.loc[:, ["id"] + gene_names]
+
+    return df

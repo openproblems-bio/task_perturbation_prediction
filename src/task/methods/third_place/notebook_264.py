@@ -3,7 +3,7 @@
 # * Derive gene_names from train_df to to avoid reading in the sample_submission.csv file
 # * Make reps component arguments
 # * Auto-reformatted the code
-#
+# * Restructured the code into a function `run_notebook_264()`
 
 # -----------------------------------------------------------------------------
 # Load dependencies
@@ -11,7 +11,6 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.preprocessing import LabelEncoder
 import tensorflow as tf
 import gc
 from tensorflow.keras.layers import (
@@ -26,26 +25,8 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.models import Sequential
 
 from tensorflow.keras.optimizers.legacy import Adam
+from sklearn.preprocessing import LabelEncoder
 from sklearn.decomposition import TruncatedSVD
-
-import warnings
-
-warnings.filterwarnings("ignore")
-
-
-## VIASH START
-par = {
-    "de_train": "resources/neurips-2023-kaggle/de_train.parquet",
-    "id_map": "resources/neurips-2023-kaggle/id_map.csv",
-    # "de_train": "resources/neurips-2023-data/de_train.parquet",
-    # "id_map": "resources/neurips-2023-data/id_map.csv",
-    "output": "output.parquet",
-    # lowering number of epochs and reps for testing purposes
-    "epochs": 10,
-    "reps": 2,
-}
-meta = {"resources_dir": "src/task/methods/third_place"}
-## VIASH END
 
 
 # -----------------------------------------------------------------------------
@@ -57,8 +38,8 @@ def reset_tensorflow_keras_backend():
     _ = gc.collect()
 
 
-def load_train_data():
-    train_df = pd.read_parquet(par["de_train"])
+def load_train_data(de_train):
+    train_df = pd.read_parquet(de_train)
     train_df = train_df.sample(frac=1.0, random_state=42)
     return train_df
 
@@ -466,16 +447,6 @@ w1 = [
     0.9881673272809887,
 ]
 
-# -----------------------------------------------------------------------------
-# Load data
-# -----------------------------------------------------------------------------
-
-train_df = load_train_data().reset_index(drop=True)
-original_x = train_df[["cell_type", "sm_name"]].values
-original_y = train_df.loc[:, "A1BG":].values
-le = LabelEncoder()
-le.fit(original_x.flat)
-new_names = le.transform(original_x.flat).reshape(-1, 2)
 
 
 def split_params_to_training_model(model_params):
@@ -505,12 +476,8 @@ def fit_and_predict_embedding_nn(x, y, test_x, model_constructor, best_params):
     return d.inverse_transform(model.predict(test_x, batch_size=1))
 
 
-reps = 10
 
-test_df = pd.read_csv(par["id_map"])
-
-
-def predict(test_df):
+def predict(test_df, le, new_names, original_y, reps):
     x_test = le.transform(test_df[["cell_type", "sm_name"]].values.flat).reshape(-1, 2)
     
     preds_model_1 = [
@@ -577,15 +544,27 @@ def predict(test_df):
     return pred
 
 
-mins = original_y.min(axis=0)
-maxs = original_y.max(axis=0)
+def run_notebook_264(train_df, test_df, gene_names, reps):
+    # determine mins and maxs for later clipping
+    original_y = train_df.loc[:, gene_names].values
+    mins = original_y.min(axis=0)
+    maxs = original_y.max(axis=0)
 
-pred = predict(test_df)
-clipped_pred = np.clip(pred, mins, maxs)
+    # determine label encoder
+    original_x = train_df[["cell_type", "sm_name"]].values
+    le = LabelEncoder()
+    le.fit(original_x.flat)
+    new_names = le.transform(original_x.flat).reshape(-1, 2)
 
-gene_names = train_df.loc[:, "A1BG":].columns.tolist()
-df = pd.DataFrame(clipped_pred, columns=gene_names)
-df["id"] = range(len(df))
-df = df.loc[:, ["id"] + gene_names]
+    # generate predictions
+    pred = predict(test_df, le, new_names, original_y, reps)
 
-# df.to_parquet(par["output"])
+    # clip predictions
+    clipped_pred = np.clip(pred, mins, maxs)
+
+    # format outputs
+    df = pd.DataFrame(clipped_pred, columns=gene_names)
+    df["id"] = range(len(df))
+    df = df.loc[:, ["id"] + gene_names]
+
+    return df

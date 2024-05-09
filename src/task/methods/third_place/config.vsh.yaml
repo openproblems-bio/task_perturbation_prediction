@@ -37,8 +37,8 @@ functionality:
   resources:
     - type: python_script
       path: script.py
-    - path: submission(14).csv
-    - path: helper.py
+    - path: notebook_264.py
+    - path: notebook_266.py
 
 platforms:
   - type: docker
