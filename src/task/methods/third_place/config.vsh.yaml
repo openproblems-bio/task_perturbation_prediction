@@ -30,8 +30,8 @@ functionality:
       default: 10
       description: "Number of repetitions to train the model."
       info:
-        # use only 2 reps during unit tests
-        test_default: 2
+        # use only 1 rep during unit tests
+        test_default: 1
 
   resources:
     - type: python_script
