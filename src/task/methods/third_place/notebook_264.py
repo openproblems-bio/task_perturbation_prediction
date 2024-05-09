@@ -12,7 +12,6 @@ import pandas as pd
 import numpy as np
 
 import tensorflow as tf
-import gc
 from tensorflow.keras.layers import (
     Dense,
     Dropout,
@@ -20,7 +19,6 @@ from tensorflow.keras.layers import (
     Activation,
     Embedding,
     Flatten,
-    GaussianNoise,
 )
 from tensorflow.keras.models import Sequential
 
@@ -32,28 +30,6 @@ from sklearn.decomposition import TruncatedSVD
 # -----------------------------------------------------------------------------
 # Define helper functions and parameters
 # -----------------------------------------------------------------------------
-def reset_tensorflow_keras_backend():
-    tf.keras.backend.clear_session()
-    tf.compat.v1.reset_default_graph()
-    _ = gc.collect()
-
-
-def load_train_data(de_train):
-    train_df = pd.read_parquet(de_train)
-    train_df = train_df.sample(frac=1.0, random_state=42)
-    return train_df
-
-
-def mean_rowwise_rmse(y_true, y_pred):
-    rowwise_rmse = np.sqrt(np.mean(np.square(y_true - y_pred), axis=1))
-    mrrmse_score = np.mean(rowwise_rmse)
-    return mrrmse_score
-
-
-def abs_error(true, pred):
-    return np.abs(true - pred).mean()
-
-
 def custom_mean_rowwise_rmse(y_true, y_pred):
     rmse_per_row = tf.sqrt(tf.reduce_mean(tf.square(y_true - y_pred), axis=1))
     mean_rmse = tf.reduce_mean(rmse_per_row)
@@ -63,8 +39,6 @@ def custom_mean_rowwise_rmse(y_true, y_pred):
 # -----------------------------------------------------------------------------
 # Models
 # -----------------------------------------------------------------------------
-
-
 def model_1(lr, emb_out, n_dim):
     tf.random.set_seed(42)
     model = Sequential(
@@ -307,6 +281,7 @@ def model_8(
     )
     return model
 
+
 def load_models():
     models = [
         model_1,
@@ -319,136 +294,137 @@ def load_models():
     ]
     return models
 
+
 # -----------------------------------------------------------------------------
-# Weights
+# Params
 # -----------------------------------------------------------------------------
-params_model_1 = {
-    "params": {
-        "epochs": 114,
-        "bs": 128,
-        "lr": 0.008457844054540857,
-        "emb_out": 22,
-        "n_dim": 50,
-    },
-    "value": 0.9060678655727635,
-}
-
-params_model_2 = {
-    "params": {
-        "epochs": 136,
-        "bs": 64,
-        "lr": 0.007787474024659863,
-        "emb_out": 10,
-        "dense_1": 384,
-        "dense_2": 1280,
-        "dropout_1": 0.4643149193312417,
-        "dropout_2": 0.10101884612160547,
-        "n_dim": 60,
-    },
-    "value": 0.9070240468092804,
-}
-
-params_model_3 = {
-    "params": {
-        "epochs": 157,
-        "bs": 64,
-        "lr": 0.004311857150745656,
-        "emb_out": 62,
-        "dense_1": 560,
-        "dense_2": 480,
-        "dense_3": 248,
-        "dense_4": 224,
-        "dropout_1": 0.4359908049836846,
-        "dropout_2": 0.34432694543970555,
-        "dropout_3": 0.01112409967333259,
-        "dropout_4": 0.23133616975077548,
-        "n_dim": 119,
-    },
-    "value": 0.9171315640806535,
-}
-
-params_model_4 = {
-    "params": {
-        "epochs": 147,
-        "bs": 64,
-        "lr": 0.005948541271442179,
-        "emb_out": 46,
-        "dense_1": 872,
-        "dense_2": 264,
-        "dense_3": 256,
-        "dropout_1": 0.17543603718794346,
-        "dropout_2": 0.3587657616370447,
-        "dropout_3": 0.12077512068514727,
-        "n_dim": 213,
-    },
-    "value": 0.9228638968500431,
-}
-
-params_model_5 = {
-    "params": {
-        "epochs": 122,
-        "bs": 32,
-        "lr": 0.004429076555977599,
-        "emb_out": 32,
-        "n_dim": 71,
-        "dropout_1": 0.40604535344002984,
-        "dropout_2": 0.178189970426619,
-    },
-    "value": 0.9083640103276015,
-}
-
-params_model_6 = {
-    "params": {
-        "epochs": 112,
-        "bs": 128,
-        "lr": 0.009773732221901085,
-        "emb_out": 60,
-        "dense_1": 436,
-        "dense_2": 416,
-        "n_dim": 126,
-        "dropout_1": 0.4024659444883379,
-        "dropout_2": 0.2573940194596736,
-    },
-    "value": 0.8909352668212382,
-}
-
-params_model_7 = {
-    "params": {
-        "epochs": 141,
-        "bs": 128,
-        "lr": 0.005530331519967936,
-        "emb_out": 48,
-        "dense_1": 712,
-        "dense_2": 400,
-        "dense_3": 232,
-        "dense_4": 216,
-        "dropout_1": 0.4903998136177629,
-        "dropout_2": 0.032371643764537134,
-        "dropout_3": 0.11138300987168903,
-        "dropout_4": 0.019885384663655765,
-        "n_dim": 100,
-    },
-    "value": 0.8978272722102707,
-}
-
-params_model_8 = {
-    "params": {
-        "epochs": 143,
-        "bs": 192,
-        "lr": 0.00971858172843266,
-        "emb_out": 48,
-        "dense_1": 312,
-        "dense_2": 344,
-        "dense_3": 248,
-        "dropout_1": 0.10974777738609129,
-        "dropout_2": 0.10106027333885811,
-        "dropout_3": 0.09775833250663657,
-        "n_dim": 100,
-    },
-    "value": 0.8885448573595669,
-}
-
 def load_params():
+    params_model_1 = {
+        "params": {
+            "epochs": 114,
+            "bs": 128,
+            "lr": 0.008457844054540857,
+            "emb_out": 22,
+            "n_dim": 50,
+        },
+        "value": 0.9060678655727635,
+    }
+
+    params_model_2 = {
+        "params": {
+            "epochs": 136,
+            "bs": 64,
+            "lr": 0.007787474024659863,
+            "emb_out": 10,
+            "dense_1": 384,
+            "dense_2": 1280,
+            "dropout_1": 0.4643149193312417,
+            "dropout_2": 0.10101884612160547,
+            "n_dim": 60,
+        },
+        "value": 0.9070240468092804,
+    }
+
+    params_model_3 = {
+        "params": {
+            "epochs": 157,
+            "bs": 64,
+            "lr": 0.004311857150745656,
+            "emb_out": 62,
+            "dense_1": 560,
+            "dense_2": 480,
+            "dense_3": 248,
+            "dense_4": 224,
+            "dropout_1": 0.4359908049836846,
+            "dropout_2": 0.34432694543970555,
+            "dropout_3": 0.01112409967333259,
+            "dropout_4": 0.23133616975077548,
+            "n_dim": 119,
+        },
+        "value": 0.9171315640806535,
+    }
+
+    params_model_4 = {
+        "params": {
+            "epochs": 147,
+            "bs": 64,
+            "lr": 0.005948541271442179,
+            "emb_out": 46,
+            "dense_1": 872,
+            "dense_2": 264,
+            "dense_3": 256,
+            "dropout_1": 0.17543603718794346,
+            "dropout_2": 0.3587657616370447,
+            "dropout_3": 0.12077512068514727,
+            "n_dim": 213,
+        },
+        "value": 0.9228638968500431,
+    }
+
+    params_model_5 = {
+        "params": {
+            "epochs": 122,
+            "bs": 32,
+            "lr": 0.004429076555977599,
+            "emb_out": 32,
+            "n_dim": 71,
+            "dropout_1": 0.40604535344002984,
+            "dropout_2": 0.178189970426619,
+        },
+        "value": 0.9083640103276015,
+    }
+
+    params_model_6 = {
+        "params": {
+            "epochs": 112,
+            "bs": 128,
+            "lr": 0.009773732221901085,
+            "emb_out": 60,
+            "dense_1": 436,
+            "dense_2": 416,
+            "n_dim": 126,
+            "dropout_1": 0.4024659444883379,
+            "dropout_2": 0.2573940194596736,
+        },
+        "value": 0.8909352668212382,
+    }
+
+    params_model_7 = {
+        "params": {
+            "epochs": 141,
+            "bs": 128,
+            "lr": 0.005530331519967936,
+            "emb_out": 48,
+            "dense_1": 712,
+            "dense_2": 400,
+            "dense_3": 232,
+            "dense_4": 216,
+            "dropout_1": 0.4903998136177629,
+            "dropout_2": 0.032371643764537134,
+            "dropout_3": 0.11138300987168903,
+            "dropout_4": 0.019885384663655765,
+            "n_dim": 100,
+        },
+        "value": 0.8978272722102707,
+    }
+
+    params_model_8 = {
+        "params": {
+            "epochs": 143,
+            "bs": 192,
+            "lr": 0.00971858172843266,
+            "emb_out": 48,
+            "dense_1": 312,
+            "dense_2": 344,
+            "dense_3": 248,
+            "dropout_1": 0.10974777738609129,
+            "dropout_2": 0.10106027333885811,
+            "dropout_3": 0.09775833250663657,
+            "n_dim": 100,
+        },
+        "value": 0.8885448573595669,
+    }
+
     params = [
         params_model_1,
         params_model_2,
@@ -460,6 +436,10 @@ def load_params():
     ]
     return params
 
+
+# -----------------------------------------------------------------------------
+# Weights
+# -----------------------------------------------------------------------------
 def load_weights():
     w1 = [
         0.15224443321212433,
@@ -473,6 +453,9 @@ def load_weights():
     return w1
 
 
+# -----------------------------------------------------------------------------
+# Predict functions
+# -----------------------------------------------------------------------------
 def split_params_to_training_model(model_params):
     model_params = model_params["params"]
     training_keys = ["epochs", "bs"]
@@ -498,7 +481,6 @@ def fit_and_predict_embedding_nn(x, y, test_x, model_constructor, best_params):
         shuffle=True,
     )
     return d.inverse_transform(model.predict(test_x, batch_size=1))
-
 
 
 def predict(test_df, models, params, weights, le, new_names, original_y, reps):

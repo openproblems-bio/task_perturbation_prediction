@@ -20,13 +20,9 @@ warnings.filterwarnings("ignore")
 
 ## VIASH START
 par = {
-    # "de_train": "resources/neurips-2023-kaggle/de_train.parquet",
-    # "id_map": "resources/neurips-2023-kaggle/id_map.csv",
     "de_train": "resources/neurips-2023-data/de_train.parquet",
     "id_map": "resources/neurips-2023-data/id_map.csv",
     "output": "output.parquet",
-    # lowering number of epochs and reps for testing purposes
-    "epochs": 10,
     "reps": 2,
 }
 meta = {"resources_dir": "src/task/methods/third_place"}
@@ -48,7 +44,20 @@ def main(par, meta):
     test_df = pd.read_csv(par["id_map"])
 
     # determine gene names
-    gene_names = train_df.loc[:, "A1BG":].columns.tolist()
+    # gene_names = train_df.loc[:, "A1BG":].columns.tolist()
+    gene_names = [
+        col
+        for col in train_df.columns
+        if col not in {
+            "cell_type",
+            "sm_name",
+            "sm_lincs_id",
+            "SMILES",
+            "split",
+            "control",
+            "index",
+        }
+    ]
 
     # clean up train data
     train_df = train_df.loc[:, ["cell_type", "sm_name"] + gene_names]
@@ -62,7 +71,7 @@ def main(par, meta):
     )
 
     # run notebook 266
-    df = run_notebook_266(train_df, test_df, pseudolabel, gene_names, par["reps"], par["epochs"])
+    df = run_notebook_266(train_df, test_df, pseudolabel, gene_names, par["reps"])
 
     df.to_parquet(par["output"])
 

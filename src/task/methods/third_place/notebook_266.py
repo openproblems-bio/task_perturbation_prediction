@@ -9,29 +9,33 @@ import pandas as pd
 import numpy as np
 
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, Activation, Embedding, Flatten, GaussianNoise
+from tensorflow.keras.layers import (
+    Dense,
+    Dropout,
+    BatchNormalization,
+    Activation,
+    Embedding,
+    Flatten,
+)
 from tensorflow.keras.models import Sequential
 
 from tensorflow.keras.optimizers.legacy import Adam
 from sklearn.preprocessing import LabelEncoder
 from sklearn.decomposition import TruncatedSVD
 
-import warnings
-warnings.filterwarnings("ignore")
 
 # -----------------------------------------------------------------------------
 # Helper functions
 # -----------------------------------------------------------------------------
-
 def custom_mean_rowwise_rmse(y_true, y_pred):
     rmse_per_row = tf.sqrt(tf.reduce_mean(tf.square(y_true - y_pred), axis=1))
     mean_rmse = tf.reduce_mean(rmse_per_row)
     return mean_rmse
 
+
 # -----------------------------------------------------------------------------
 # Models
 # -----------------------------------------------------------------------------
-
 def model_1(lr, emb_out, n_dim):
     tf.random.set_seed(42)
     model = Sequential(
@@ -274,6 +278,7 @@ def model_8(
     )
     return model
 
+
 def load_models():
     models = (
         [model_1]
@@ -291,11 +296,10 @@ def load_models():
 # -----------------------------------------------------------------------------
 # Parameter sets
 # -----------------------------------------------------------------------------
-
-def load_params(epochs):
+def load_params():
     params_model_1a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 128,
             "lr": 0.008457844054540857,
             "emb_out": 22,
@@ -304,12 +308,11 @@ def load_params(epochs):
         "value": 0.9060678655727635,
     }
 
-
     ####
 
     params_model_2a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 64,
             "lr": 0.007787474024659863,
             "emb_out": 10,
@@ -324,7 +327,7 @@ def load_params(epochs):
 
     params_model_2b = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 192,
             "lr": 0.00830447680398929,
             "emb_out": 32,
@@ -337,10 +340,9 @@ def load_params(epochs):
         "value": 1.0158228546558994,
     }
 
-
     params_model_2c = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 64,
             "lr": 0.006661059864181284,
             "emb_out": 22,
@@ -357,7 +359,7 @@ def load_params(epochs):
 
     params_model_3a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 64,
             "lr": 0.004311857150745656,
             "emb_out": 62,
@@ -374,10 +376,9 @@ def load_params(epochs):
         "value": 0.9171315640806535,
     }
 
-
     params_model_3b = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 64,
             "lr": 0.007915642160705914,
             "emb_out": 22,
@@ -394,12 +395,11 @@ def load_params(epochs):
         "value": 1.0557613871962215,
     }
 
-
     ####
 
     params_model_4a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 64,
             "lr": 0.005948541271442179,
             "emb_out": 46,
@@ -414,10 +414,9 @@ def load_params(epochs):
         "value": 0.9228638968500431,
     }
 
-
     params_model_4b = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 128,
             "lr": 0.006444109866334638,
             "emb_out": 62,
@@ -432,13 +431,11 @@ def load_params(epochs):
         "value": 0.8462075069648056,
     }
 
-
     #####
-
 
     params_model_5a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 32,
             "lr": 0.005430251128204367,
             "emb_out": 56,
@@ -451,7 +448,7 @@ def load_params(epochs):
 
     params_model_5b = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 192,
             "lr": 0.00528860262509972,
             "emb_out": 60,
@@ -462,10 +459,9 @@ def load_params(epochs):
         "value": 1.0125358317737336,
     }
 
-
     params_model_5c = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 32,
             "lr": 0.004429076555977599,
             "emb_out": 32,
@@ -476,12 +472,11 @@ def load_params(epochs):
         "value": 0.9083640103276015,
     }
 
-
     ####
 
     params_model_6a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 128,
             "lr": 0.0030468340279031702,
             "emb_out": 62,
@@ -494,10 +489,9 @@ def load_params(epochs):
         "value": 0.8388383786625531,
     }
 
-
     params_model_6b = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 128,
             "lr": 0.009773732221901085,
             "emb_out": 60,
@@ -510,10 +504,9 @@ def load_params(epochs):
         "value": 0.8909352668212382,
     }
 
-
     params_model_6c = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 160,
             "lr": 0.005742157072582258,
             "emb_out": 56,
@@ -526,12 +519,11 @@ def load_params(epochs):
         "value": 0.9921304350469378,
     }
 
-
     ####
 
     params_model_7a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 128,
             "lr": 0.0026256302897014814,
             "emb_out": 62,
@@ -550,7 +542,7 @@ def load_params(epochs):
 
     params_model_7b = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 128,
             "lr": 0.005530331519967936,
             "emb_out": 48,
@@ -567,13 +559,11 @@ def load_params(epochs):
         "value": 0.8978272722102707,
     }
 
-
     ####
-
 
     params_model_8a = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 192,
             "lr": 0.00971858172843266,
             "emb_out": 48,
@@ -588,10 +578,9 @@ def load_params(epochs):
         "value": 0.8885448573595669,
     }
 
-
     params_model_8b = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 192,
             "lr": 0.008078165473745607,
             "emb_out": 16,
@@ -608,7 +597,7 @@ def load_params(epochs):
 
     params_model_8c = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 160,
             "lr": 0.005427125417330768,
             "emb_out": 36,
@@ -625,7 +614,7 @@ def load_params(epochs):
 
     params_model_8d = {
         "params": {
-            "epochs": epochs,
+            "epochs": 200,
             "bs": 224,
             "lr": 0.0077454113093514835,
             "emb_out": 38,
@@ -639,7 +628,6 @@ def load_params(epochs):
         },
         "value": 0.837621399656469,
     }
-
 
     params = [
         params_model_1a,
@@ -666,9 +654,11 @@ def load_params(epochs):
 
     return params
 
+
 # -----------------------------------------------------------------------------
 # Model weights
 # -----------------------------------------------------------------------------
+
 
 def load_weights():
     weights = {
@@ -698,6 +688,10 @@ def load_weights():
 
     return weights
 
+
+# -----------------------------------------------------------------------------
+# Prediction functions
+# -----------------------------------------------------------------------------
 def split_params_to_training_model(model_params):
     model_params = model_params["params"]
     training_keys = ["epochs", "bs"]
@@ -706,6 +700,7 @@ def split_params_to_training_model(model_params):
         k: model_params[k] for k in model_params.keys() if k not in training_keys
     }
     return model_params, training_params
+
 
 def fit_and_predict_embedding_nn(x, y, test_x, model_constructor, best_params):
     model_params, training_params = split_params_to_training_model(best_params)
@@ -750,7 +745,7 @@ def predict(test_df, models, params, weights, le, new_names, original_y, reps):
     return pred
 
 
-def run_notebook_266(train_df, test_df, pseudolabel, gene_names, reps, epochs):
+def run_notebook_266(train_df, test_df, pseudolabel, gene_names, reps):
     # determine mins and maxs for later clipping
     original_y = train_df.loc[:, gene_names].values
     mins = original_y.min(axis=0)
@@ -768,7 +763,7 @@ def run_notebook_266(train_df, test_df, pseudolabel, gene_names, reps, epochs):
 
     # load models, params, and weights
     models = load_models()
-    params = load_params(epochs=epochs)
+    params = load_params()
     weights = load_weights()
 
     # generate predictions
