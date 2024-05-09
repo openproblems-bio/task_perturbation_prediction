@@ -8,6 +8,8 @@ print(f"tf version:{tf.__version__}")
 print(f"Num GPUs Available:{len(tf.config.list_physical_devices('GPU'))}")
 print(tf.config.list_physical_devices('GPU'))
 
+import scape
+print(f"scape version:{scape.__version__}")
 par = dict(
 	de_train = "resources/neurips-2023-data/de_train.parquet",
 	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
@@ -18,15 +20,6 @@ par = dict(
 )
 
 print(par)
-
-zip_path = f"{meta['resources_dir']}/scape.pyz"
-
-# Add the .zip file to sys.path
-if zip_path not in sys.path:
-    sys.path.append(zip_path)
-
-import scape
-print(f"scape version:{scape.__version__}")
 
 if not os.path.isdir(par['output_dir']):
 	os.makedirs(par['output_dir'])

@@ -12,20 +12,18 @@ functionality:
   resources:
     - type: python_script
       path: script.py
-    - path: scape.pyz
 platforms:
-  - type: native
   - type: docker
     image: ghcr.io/openproblems-bio/base_python:1.0.4
     setup:
       - type: python
-        packages: [ 
-          tensorflow~=2.14.0,
-          tensorflow-io-gcs-filesystem>=0.31.0,
-          pandas~=1.5.3,
-          scikit-learn~=1.2.2,
-          fastparquet~=2023.10.1,
-          ]
+        packages:
+          - tensorflow~=2.14.0
+          - tensorflow-io-gcs-filesystem>=0.31.0
+          - pandas~=1.5.3
+          - scikit-learn~=1.2.2
+          - fastparquet~=2023.10.1
+          - git+https://github.com/scapeML/scape.git
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]
