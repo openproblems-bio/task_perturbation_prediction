@@ -1,4 +1,4 @@
-import sys, os, fastparquet
+import sys, os, fastparquet, anndata, shutil
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -7,25 +7,50 @@ import tensorflow as tf
 print(f"tf version:{tf.__version__}")
 print(f"Num GPUs Available:{len(tf.config.list_physical_devices('GPU'))}")
 print(tf.config.list_physical_devices('GPU'))
-sys.path.insert(0, "./")
-import scape
-print(f"scape version:{scape.__version__}")
 
 par = dict(
 	de_train = "resources/neurips-2023-data/de_train.parquet",
-    lfc_train = "resources/neurips-2023-data/lfc_train.parquet",
+	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
+	lfc_train = "resources/neurips-2023-data/lfc_train.parquet",
 	id_map = "resources/neurips-2023-data/id_map.csv",
 	output = "resources/neurips-2023-data/output_rf.parquet",
 	output_dir = "resources/neurips-2023-data/tmp_result",
 )
 
-epochs = 300
+print(par)
 
-df_de = scape.io.load_slogpvals(par['de_train'])
+zip_path = f"{meta['resources_dir']}/scape.pyz"
 
-# create_pseudobulk_profiles(df_de, )
-# rna_fc = scape.compute_lfc(rna_pseudo, rna_pseudo_meta)
-df_lfc = scape.io.load_lfc(par['lfc_train'])
+# Add the .zip file to sys.path
+if zip_path not in sys.path:
+    sys.path.append(zip_path)
+
+import scape
+print(f"scape version:{scape.__version__}")
+
+if not os.path.isdir(par['output_dir']):
+	os.makedirs(par['output_dir'])
+
+# epochs = 300
+epochs = 2
+
+# epochs_enhanced = 800
+epochs_enhanced = 2
+
+df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
+
+# df_lfc = scape.io.load_lfc(par['lfc_train'])
+adata = anndata.read_h5ad(par["de_train_h5ad"])
+adata
+df_lfc= pd.concat(
+	[
+		pd.DataFrame(adata.layers["logFC"], index=adata.obs_names, columns=adata.var_names),
+		adata.obs[['cell_type', 'sm_name']],
+	],
+	axis=1
+).set_index(['cell_type', 'sm_name'])
+df_lfc
+df_lfc = df_lfc.loc[df_de.index, df_de.columns]
 
 # Make sure rows/columns are in the same order
 df_lfc = df_lfc.loc[df_de.index, df_de.columns]
@@ -52,7 +77,7 @@ for i, d in enumerate(drugs):
 		val_drugs=[d],
 		input_columns=top_genes,
 		epochs=epochs,
-		output_folder=f"{par["output_dir"]}/_models",
+		output_folder=f"{par['output_dir']}/_models",
 		config_file_name="config.pkl",
 		model_file_name=f"drug{i}.keras",
 		baselines=["zero", "slogpval_drug"],
@@ -96,21 +121,21 @@ df_lfc_c.shape
 
 enhanced_predictions = []
 for i, d in enumerate(top_drugs):
-    print(i, d)
-    scm = scape.model.create_default_model(n_genes, df_de_c, df_lfc_c)
-    result = scm.train(
-        val_cells=[cell], 
-        val_drugs=[d],
-        input_columns=top_genes,
-        epochs=800,
-        output_folder=f"{par["output_dir"]}/_models",
-        config_file_name="enhanced_config.pkl",
-        model_file_name=f"enhanced_drug{i}.keras",
-        baselines=["zero", "slogpval_drug"],
-    )
-    # Collect prediction in the OOF data
-    df_pred = scm.predict(df_sub_ix)
-    enhanced_predictions.append(df_pred)
+		print(i, d)
+		scm = scape.model.create_default_model(n_genes, df_de_c, df_lfc_c)
+		result = scm.train(
+				val_cells=[cell], 
+				val_drugs=[d],
+				input_columns=top_genes,
+				epochs=epochs_enhanced,
+				output_folder=f"{par['output_dir']}/_models",
+				config_file_name="enhanced_config.pkl",
+				model_file_name=f"enhanced_drug{i}.keras",
+				baselines=["zero", "slogpval_drug"],
+		)
+		# Collect prediction in the OOF data
+		df_pred = scm.predict(df_sub_ix)
+		enhanced_predictions.append(df_pred)
 
 df_sub_enhanced = pd.DataFrame(np.median(enhanced_predictions, axis=0), index=df_sub_ix.index, columns=df_de_c.columns)
 # df_sub_enhanced.to_csv("enhanced_predictions.csv")
