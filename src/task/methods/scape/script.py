@@ -10,6 +10,8 @@ print(tf.config.list_physical_devices('GPU'))
 
 import scape
 print(f"scape version:{scape.__version__}")
+
+## VIASH START
 par = dict(
 	de_train = "resources/neurips-2023-data/de_train.parquet",
 	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
@@ -18,8 +20,7 @@ par = dict(
 	output = "resources/neurips-2023-data/output_rf.parquet",
 	output_dir = "resources/neurips-2023-data/tmp_result",
 )
-
-print(par)
+## VIASH END
 
 if not os.path.isdir(par['output_dir']):
 	os.makedirs(par['output_dir'])

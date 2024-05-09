@@ -8,7 +8,13 @@ functionality:
     reference: pablormier2023scape
     documentation_url: https://github.com/scapeML/scape
     repository_url: https://github.com/scapeML/scape
-    preferred_normalization: counts
+  arguments:
+    - type: file
+      name: --output_dir
+      direction: output
+      description: Additional output directory for the model.
+      required: true
+      example: path/to/output_dir
   resources:
     - type: python_script
       path: script.py
