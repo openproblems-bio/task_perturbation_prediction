@@ -19,6 +19,8 @@ par = dict(
 	output_dir = "resources/neurips-2023-data/tmp_result",
 )
 
+epochs = 300
+
 df_de = scape.io.load_slogpvals(par['de_train'])
 
 # create_pseudobulk_profiles(df_de, )
@@ -49,7 +51,7 @@ for i, d in enumerate(drugs):
 		val_cells=[cell], 
 		val_drugs=[d],
 		input_columns=top_genes,
-		epochs=300,
+		epochs=epochs,
 		output_folder=f"{par["output_dir"]}/_models",
 		config_file_name="config.pkl",
 		model_file_name=f"drug{i}.keras",
@@ -101,7 +103,7 @@ for i, d in enumerate(top_drugs):
         val_drugs=[d],
         input_columns=top_genes,
         epochs=800,
-        output_folder="_models",
+        output_folder=f"{par["output_dir"]}/_models",
         config_file_name="enhanced_config.pkl",
         model_file_name=f"enhanced_drug{i}.keras",
         baselines=["zero", "slogpval_drug"],
