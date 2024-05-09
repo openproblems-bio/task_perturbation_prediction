@@ -375,11 +375,13 @@ par = {
   "de_test": "resources/neurips-2023-kaggle/de_test.parquet",
   "id_map": "resources/neurips-2023-kaggle/id_map.csv",
   "output": "output.parquet",
+  "epochs": 10
 }
 ## VIASH END
 print('Reading input files', flush=True)
 de_train = pd.read_parquet(par["de_train"])
 id_map = pd.read_csv(par["id_map"])
+
 gene_names = [col for col in de_train.columns if col not in {"cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control", "index"}]
 
 print('Preprocess data', flush=True)
@@ -424,7 +426,7 @@ if USE_GPU:
 print('Generate predictions', flush=True)
 # ... generate predictions ...
 
-n_replica = 10 
+n_replica = par["id_map"] 
 SUBMISSION_NAMES = {'dl40', 'dl200'}
 Y_submit_ensemble = []
 SUBMISSION_NAME = 'dl40'
