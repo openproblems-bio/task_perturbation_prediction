@@ -3,14 +3,15 @@ library(dplyr, warn.conflicts = FALSE)
 library(tidyr, warn.conflicts = FALSE)
 library(purrr, warn.conflicts = FALSE)
 library(tibble, warn.conflicts = FALSE)
+library(edgeR)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk_cleaned.h5ad",
+  input = "resources/neurips-2023-data/small_pseudobulk.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
-  output = "resources/neurips-2023-data/de_train.h5ad",
+  output = "resources/neurips-2023-data/de_train_qlf.h5ad",
   input_splits = c("train", "control", "public_test"),
   output_splits = c("train", "control", "public_test")
   # # for private data
@@ -45,103 +46,110 @@ limma_trafo <- function(value) {
   gsub("[^[:alnum:]]", "_", value)
 }
 
-# run limma voom and lmfit per cell type
-limma_fit_per_celltype <- list()
+# run glmQLFit per cell type
+ql_fits <- list()
 
-for (cell_type_i in seq_along(cell_types)) {
-  cell_type <- cell_types[[cell_type_i]]
-  cat("Running limma for cell type: ", cell_type, " (", cell_type_i, "/", length(cell_types), ")\n", sep = "")
+for (cell_type in cell_types) {
+  cat("Running glmQLFit for cell type: ", cell_type, "\n")
 
-  # subset to cell type
-  obs_filt <- adata$obs$cell_type == cell_type
-  if (!is.null(par$input_splits)) {
-    obs_filt <- obs_filt & adata$obs$split %in% par$input_splits
-  }
+  # subset data by cell type and split
+  obs_filt <- (adata$obs$cell_type == cell_type) & (adata$obs$split %in% par$input_splits)
   cell_type_adata <- adata[obs_filt, ]
 
-  # calc norm factors
-  d0 <- Matrix::t(cell_type_adata$X) %>%
-    edgeR::DGEList() %>%
-    edgeR::calcNormFactors()
+  # prepare count data
+  counts <- Matrix::t(cell_type_adata$X)
+  counts <- as.matrix(counts)
+
+  d <- DGEList(counts)
+
+  # Filter lowly expressed genes
+  keep <- filterByExpr(d, design = model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs))
+  d <- d[keep,, keep.lib.sizes=FALSE]
+
+
+  d <- calcNormFactors(d)
 
   # create design matrix
-  mm <- model.matrix(
-    ~ 0 + sm_name + donor_id + plate_name + library_id,
-    cell_type_adata$obs %>% mutate_all(limma_trafo)
-  )
+  design <- model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs %>% mutate_all(limma_trafo))
 
-  # voom transformation
-  y <- limma::voom(d0, design = mm, plot = FALSE)
+  # Estimate dispersions
+  d <- estimateDisp(d, design)
 
-  # run limma
-  fit <- limma::lmFit(y, mm)
+  # Check if dispersions are available
+  if(is.null(d$common.dispersion)) {
+    stop("Dispersion values could not be estimated.")
+  }
 
-  limma_fit_per_celltype[[cell_type]] <- fit
+  # fit model
+  fit <- glmQLFit(d, design, robust=TRUE)
+  ql_fits[[cell_type]] <- fit
 }
 
-# run limma DE for each cell type and compound
-de_df <- list_rbind(map(
-  seq_len(nrow(new_obs)),
-  function(row_i) {
-    cat("Computing DE contrasts (", row_i, "/", nrow(new_obs), ")\n", sep = "")
-    cell_type <- as.character(new_obs$cell_type[[row_i]])
-    sm_name <- as.character(new_obs$sm_name[[row_i]])
+# run DE tests for each [cell_type, sm_name] pair
+de_results <- bind_rows(lapply(seq_len(nrow(new_obs)), function(row_i) {
+  cat("Computing DE contrasts (", row_i, "/", nrow(new_obs), ")\n")
+  cell_type <- new_obs$cell_type[row_i]
+  sm_name <- new_obs$sm_name[row_i]
 
-    fit <- limma_fit_per_celltype[[cell_type]]
+  fit <- ql_fits[[cell_type]]
 
-    # run contrast fit
-    contrast_formula <- paste0(
-      "sm_name", limma_trafo(sm_name),
-      " - ",
-      "sm_name", limma_trafo(par$control_compound)
-    )
-    contr <- limma::makeContrasts(
-      contrasts = contrast_formula,
-      levels = colnames(coef(fit))
-    )
+  # define contrast
+  contrast_formula <- paste0("sm_name", limma_trafo(sm_name), " - sm_name", limma_trafo(par$control_compound))
+  contrast <- makeContrasts(contrasts = contrast_formula, levels = colnames(coef(fit)))
 
-    limma::contrasts.fit(fit, contr) %>%
-      limma::eBayes() %>%
-      limma::topTable(n = Inf, sort = "none") %>%
-      rownames_to_column("gene") %>%
-      mutate(row_i = row_i)
-  }
-))
+  # run contrast test
+  test_results <- glmQLFTest(fit, contrast = contrast)
 
-# transform data
-de_df2 <- de_df %>%
+  # Convert TopTags object to a data frame
+  test_results_df <- as.data.frame(topTags(test_results, n = Inf))
+
+  # Add cell type and sm_name columns
+  test_results_df <- test_results_df %>%
+    mutate(cell_type = cell_type, sm_name = sm_name, row_i = row_i)
+
+  return(test_results_df)
+}))
+
+# Assuming the first column of de_results needs to be set as 'gene'
+de_results <- rownames_to_column(de_results, var = "gene")
+
+# Transform DE results and prepare for writing
+de_results_final <- de_results %>%
   mutate(
-    # convert gene names to factor
-    gene = factor(gene),
-    # readjust p-values for multiple testing
-    adj.P.Value = p.adjust(P.Value, method = "BH"),
-    # compute sign log10 p-values
-    sign_log10_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, P.Value)),
-    is_de = P.Value < par$de_sig_cutoff,
-    is_de_adj = adj.P.Val < par$de_sig_cutoff
+    gene = factor(gene),  # Convert gene names to factor
+    adj.P.Value = p.adjust(PValue, method = "BH"),  # Adjust p-values
+    sign_log10_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, adj.P.Value)),  # Compute signed log10 p-values
+    is_de = PValue < par$de_sig_cutoff,  # Determine significant DE based on unadjusted p-value
+    is_de_adj = adj.P.Value < par$de_sig_cutoff  # Determine significant DE based on adjusted p-value
   ) %>%
   as_tibble()
 
+# Update row names in new_obs for easy reference
 rownames(new_obs) <- paste0(new_obs$cell_type, ", ", new_obs$sm_name)
-new_var <- data.frame(row.names = levels(de_df2$gene))
 
-# create layers from de_df
-layer_names <- c("is_de", "is_de_adj", "logFC", "P.Value", "adj.P.Value", "sign_log10_pval")
-layers <- map(setNames(layer_names, layer_names), function(layer_name) {
-  de_df2 %>%
-    select(gene, row_i, !!layer_name) %>%
+# Create variable features (var) DataFrame
+new_var <- data.frame(row.names = levels(de_results_final$gene))
+
+# Organize data into layers
+layer_names <- c("is_de", "is_de_adj", "logFC", "logCPM", "F", "PValue", "adj.P.Value", "FDR", "sign_log10_pval")
+layers <- map(setNames(layer_names, layer_names), ~ {
+  de_results_final %>%
+    select(gene, row_i, !!sym(.x)) %>%
     arrange(row_i) %>%
-    spread(gene, !!layer_name) %>%
+    pivot_wider(names_from = gene, values_from = !!sym(.x)) %>%
     select(-row_i) %>%
     as.matrix()
 })
 
-# create anndata object
+
+# Create an AnnData object with the organized data
 output <- anndata::AnnData(
   obs = new_obs,
   var = new_var,
   layers = setNames(layers, layer_names)
 )
 
-# write to file
+# Write the AnnData object to file with compression
 zz <- output$write_h5ad(par$output, compression = "gzip")
+cat("Data written to h5ad file at:", par$output, "\n")
+
