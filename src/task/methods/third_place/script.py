@@ -18,9 +18,11 @@ from sklearn.decomposition import TruncatedSVD
 ## VIASH START
 par = {
     "de_train": "resources/neurips-2023-kaggle/de_train.parquet",
-    "de_test": "resources/neurips-2023-kaggle/de_test.parquet",
     "id_map": "resources/neurips-2023-kaggle/id_map.csv",
     "output": "output.parquet",
+}
+meta = {
+    "resources_dir": "src/task/methods/third_place"
 }
 ## VIASH END
 
@@ -708,7 +710,7 @@ gene_names = [
     }
 ]
 
-pseudolabel = pd.read_csv("submission(14).csv")
+pseudolabel = pd.read_csv(meta["resources_dir"] + "/submission(14).csv")
 test_df = pd.read_csv(par["id_map"])
 pseudolabel = pd.concat(
     [test_df[["cell_type", "sm_name"]], pseudolabel.loc[:, "A1BG":]], axis=1
