@@ -69,7 +69,7 @@ functionality:
   resources:
     # The script of your component (required)
     - type: python_script
-      path: my_script.py
+      path: script.py
 
     - path: helper_script.py
     # Additional resources your script needs (optional)
