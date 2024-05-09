@@ -1,3 +1,6 @@
+# This script is based an IPython notebook:
+# https://github.com/AntoinePassemiers/Open-Challenges-Single-Cell-Perturbations/blob/master/op2-de-dl.ipynb
+
 import pandas as pd
 import os
 os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'  # Make PyTorch deterministic on GPU
@@ -12,6 +15,7 @@ import pandas as pd
 import tqdm
 import torch
 import category_encoders
+
 # local import
 def plant_seed(seed: int, USE_GPU:bool = True) -> None:
     """Set seed for reproducibility purposes.
