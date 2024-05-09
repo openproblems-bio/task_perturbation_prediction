@@ -7,7 +7,7 @@ library(edgeR)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/small_pseudobulk.h5ad",
+  input = "resources/neurips-2023-data/pseudobulk.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
@@ -46,11 +46,10 @@ limma_trafo <- function(value) {
   gsub("[^[:alnum:]]", "_", value)
 }
 
-# run glmQLFit per cell type
-ql_fits <- list()
+filtered_gene_lists <- list()
 
 for (cell_type in cell_types) {
-  cat("Running glmQLFit for cell type: ", cell_type, "\n")
+  cat("Filtering genes for cell type:", cell_type, "\n")
 
   # subset data by cell type and split
   obs_filt <- (adata$obs$cell_type == cell_type) & (adata$obs$split %in% par$input_splits)
@@ -58,18 +57,37 @@ for (cell_type in cell_types) {
 
   # prepare count data
   counts <- Matrix::t(cell_type_adata$X)
-  counts <- as.matrix(counts)
 
   d <- DGEList(counts)
+  design <- model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs)
+  keep <- filterByExpr(d, design)
+  genes_to_keep <- rownames(d)[keep]
 
-  # Filter lowly expressed genes
-  keep <- filterByExpr(d, design = model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs))
-  d <- d[keep,, keep.lib.sizes=FALSE]
+  # Store the filtered gene list
+  filtered_gene_lists[[cell_type]] <- genes_to_keep
+}
+
+# Calculate the intersection of genes across all cell types
+common_genes <- Reduce(intersect, filtered_gene_lists)
+cat("Number of common genes:", length(common_genes), "\n")
 
 
+# run glmQLFit per cell type
+ql_fits <- list()
+
+for (cell_type in cell_types) {
+  cat("Running glmQLFit for cell type:", cell_type, "using common genes\n")
+
+  # subset data by cell type and split again
+  obs_filt <- (adata$obs$cell_type == cell_type) & (adata$obs$split %in% par$input_splits)
+  cell_type_adata <- adata[obs_filt, ]
+
+  # prepare count data again, this time filtering to common genes
+  counts <- Matrix::t(cell_type_adata$X)
+  counts <- as.matrix(counts)
+  d <- DGEList(counts[common_genes, , drop = FALSE])
   d <- calcNormFactors(d)
 
-  # create design matrix
   design <- model.matrix(~ 0 + sm_name + donor_id, data = cell_type_adata$obs %>% mutate_all(limma_trafo))
 
   # Estimate dispersions
@@ -102,6 +120,7 @@ de_results <- bind_rows(lapply(seq_len(nrow(new_obs)), function(row_i) {
 
   # Convert TopTags object to a data frame
   test_results_df <- as.data.frame(topTags(test_results, n = Inf))
+  test_results_df$gene <- rownames(test_results_df)
 
   # Add cell type and sm_name columns
   test_results_df <- test_results_df %>%
@@ -109,9 +128,6 @@ de_results <- bind_rows(lapply(seq_len(nrow(new_obs)), function(row_i) {
 
   return(test_results_df)
 }))
-
-# Assuming the first column of de_results needs to be set as 'gene'
-de_results <- rownames_to_column(de_results, var = "gene")
 
 # Transform DE results and prepare for writing
 de_results_final <- de_results %>%
