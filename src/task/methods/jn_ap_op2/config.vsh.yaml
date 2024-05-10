@@ -15,7 +15,7 @@ functionality:
     repository_url: https://github.com/AntoinePassemiers/Open-Challenges-Single-Cell-Perturbations
   arguments:
     - type: integer
-      name: --epochs
+      name: --n_replica
       default: 10
       info:
         test_default: 1

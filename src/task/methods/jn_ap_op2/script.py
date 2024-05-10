@@ -375,7 +375,7 @@ par = {
   "de_test": "resources/neurips-2023-kaggle/de_test.parquet",
   "id_map": "resources/neurips-2023-kaggle/id_map.csv",
   "output": "output.parquet",
-  "epochs": 10
+  "n_replica": 1,
 }
 ## VIASH END
 print('Reading input files', flush=True)
@@ -433,7 +433,7 @@ SUBMISSION_NAME = 'dl40'
 for SUBMISSION_NAME in SUBMISSION_NAMES:
   #train the models and store them
   models = []
-  for i in range(n_replica):
+  for i in range(par["n_replica"] ):
       seed = i
       if SUBMISSION_NAME == 'dl40':
           model = train(X, torch.FloatTensor(data), np.arange(len(X)), seed, n_iter=40, USE_GPU=USE_GPU)
