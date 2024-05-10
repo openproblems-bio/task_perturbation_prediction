@@ -426,7 +426,7 @@ if USE_GPU:
 print('Generate predictions', flush=True)
 # ... generate predictions ...
 
-n_replica = par["id_map"] 
+n_replica = par["epochs"] 
 SUBMISSION_NAMES = {'dl40', 'dl200'}
 Y_submit_ensemble = []
 SUBMISSION_NAME = 'dl40'
