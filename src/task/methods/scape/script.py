@@ -27,10 +27,10 @@ print(f"par: {par}")
 if not os.path.isdir(par['output_dir']):
 	os.makedirs(par['output_dir'])
 
-epochs = 2
-epochs_enhanced = 2
-# epochs = 300
-# epochs_enhanced = 800
+# epochs = 2
+# epochs_enhanced = 2
+epochs = 300
+epochs_enhanced = 800
 
 # cell = "NK cells" # this might have to be adjusted with different dataset
 cell = par["cell"]
