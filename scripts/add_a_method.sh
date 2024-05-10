@@ -43,7 +43,8 @@ viash run src/task/methods/$method_id/config.vsh.yaml -- \
   --de_train "resources/neurips-2023-kaggle/de_train.parquet" \
   --de_train_h5ad "resources/neurips-2023-data/de_train.h5ad" \
   --id_map "resources/neurips-2023-kaggle/id_map.csv" \
-  --output "output/prediction.parquet"
+  --output "output/prediction.parquet" \
+  --output_dir "output/neurips-2023-data/tmp_result.2"
 
 # run evaluation metric
 viash run src/task/metrics/mean_rowwise_rmse/config.vsh.yaml -- \

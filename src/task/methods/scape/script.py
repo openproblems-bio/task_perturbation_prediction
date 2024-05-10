@@ -15,21 +15,25 @@ print(f"scape version:{scape.__version__}")
 par = dict(
 	de_train = "resources/neurips-2023-data/de_train.parquet",
 	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
-	lfc_train = "resources/neurips-2023-data/lfc_train.parquet",
+	# lfc_train = "resources/neurips-2023-data/lfc_train.parquet",
 	id_map = "resources/neurips-2023-data/id_map.csv",
-	output = "resources/neurips-2023-data/output_rf.parquet",
-	output_dir = "resources/neurips-2023-data/tmp_result",
+	output = "output/neurips-2023-data/output_rf.parquet",
+	output_dir = "output/neurips-2023-data/tmp_result",
+	cell = "NK cells",
 )
 ## VIASH END
+print(f"par: {par}")
 
 if not os.path.isdir(par['output_dir']):
 	os.makedirs(par['output_dir'])
 
-# epochs = 300
 epochs = 2
-
-# epochs_enhanced = 800
 epochs_enhanced = 2
+# epochs = 300
+# epochs_enhanced = 800
+
+# cell = "NK cells" # this might have to be adjusted with different dataset
+cell = par["cell"]
 
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
 
@@ -54,7 +58,6 @@ df_de.shape, df_lfc.shape
 n_genes = 64
 top_genes = scape.util.select_top_variable([df_de], k=n_genes)
 
-cell = "NK cells"
 drugs = df_de.loc[df_de.index.get_level_values("cell_type") == cell].index.get_level_values("sm_name").unique().tolist()
 len(drugs)
 
@@ -137,7 +140,7 @@ df_sub_enhanced
 
 df_focus = df_sub.copy()
 df_focus.update(df_sub_enhanced)
-df_focus.loc[("Myeloid cells", "Vorinostat"), "PMF1"]
+# df_focus.loc[("Myeloid cells", "Vorinostat"), "PMF1"]
 
 df_submission = 0.80 * df_focus + 0.20 * df_sub
 df_submission

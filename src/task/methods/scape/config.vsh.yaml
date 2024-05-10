@@ -15,6 +15,12 @@ functionality:
       description: Additional output directory for the model.
       required: true
       example: path/to/output_dir
+    - type: string
+      name: --cell
+      description: Pre-defined cell type held for pre-training.
+      required: false
+      example: NK cells
+      default: NK cells
   resources:
     - type: python_script
       path: script.py
