@@ -93,7 +93,6 @@ class NN(torch.nn.Module):
             cell types and compounds, this results in one channel for the cell type and
             one for the compound.
         n_output_channels: Number of channels outputed by the sample-centric MLP.
-        add_bms_layers: Whether to refine predictions using BMS layers.
         mlp1: Sample-centric MLP.
         mlp2: Gene-centric MLP.
         net1: Sparse MLP defined by the gene-pathway network.
@@ -101,7 +100,7 @@ class NN(torch.nn.Module):
         net3: Sparse MLP defined by the gene regulatory network.
     """
     
-    def __init__(self, n_genes: int, n_input_channels: int, add_bms_layers: bool = False):
+    def __init__(self, n_genes: int, n_input_channels: int):
         torch.nn.Module.__init__(self)
         
         # Total number of genes
@@ -113,9 +112,6 @@ class NN(torch.nn.Module):
         # Number of channels outputed by the first MLP = 2 (an arbitrary number)
         self.n_output_channels: int = 2
             
-        # Whether to refine predictions with BMS layers
-        self.add_bms_layers: bool = add_bms_layers
-        
         # No bias term is used in the full-connected layers, to encourage the model
         # to learn an output distribution for which the modal value is 0 (for most genes).
         bias = False
@@ -167,35 +163,9 @@ class NN(torch.nn.Module):
             torch.nn.Linear(h, 1, bias=bias)
         )
         
-        if self.add_bms_layers:
-            
-            # Gene-pathway network
-            self.net1 = torch.nn.Sequential(
-                BMSparseLinear(self.n_genes, n_pathways, torch.LongTensor(pathway_idx[:, [1, 0]])),
-                torch.nn.PReLU(n_pathways),
-                BMSparseLinear(n_pathways, self.n_genes, torch.LongTensor(pathway_idx)),
-                torch.nn.PReLU(self.n_genes),
-            )
-            
-            # Co-accessibility network
-            self.net2 = torch.nn.Sequential(
-                BMSparseLinear(self.n_genes, self.n_genes, torch.LongTensor(coacc_idx)),
-                torch.nn.PReLU(self.n_genes),
-                BMSparseLinear(self.n_genes, self.n_genes, torch.LongTensor(coacc_idx)),
-                torch.nn.PReLU(self.n_genes),
-            )
-            
-            # Gene regulatory network
-            self.net3 = torch.nn.Sequential(
-                BMSparseLinear(self.n_genes, self.n_genes, torch.LongTensor(grn_idx[:, [1, 0]])),
-                torch.nn.PReLU(self.n_genes),
-                BMSparseLinear(self.n_genes, self.n_genes, torch.LongTensor(grn_idx)),
-            )
-            
-        else:
-            self.net1 = None
-            self.net2 = None
-            self.net3 = None
+        self.net1 = None
+        self.net2 = None
+        self.net3 = None
         
         # Xavier initialization
         def init_weights(m):
@@ -234,13 +204,7 @@ class NN(torch.nn.Module):
         
         # Output is of shape (batch_size, n_genes)
         Y = Y.reshape(len(X), -1)
-        
-        # Refine predictions with BMS layers
-        if self.add_bms_layers:
-            Y = Y + self.net1(Y)
-            Y = Y + self.net2(Y)
-            Y = Y + self.net3(Y)
-        
+
         return Y
 
 def background_noise(
@@ -438,7 +402,7 @@ for SUBMISSION_NAME in par["submission_names"]:
       elif SUBMISSION_NAME == 'dl200':
           model = train(X, torch.FloatTensor(data), np.arange(len(X)), seed, n_iter=200, USE_GPU=USE_GPU)
       else:
-          model = train(X, torch.FloatTensor(data), np.arange(len(X)), seed, add_bms_layers=True, n_iter=40, USE_GPU=USE_GPU)
+          model = train(X, torch.FloatTensor(data), np.arange(len(X)), seed, n_iter=40, USE_GPU=USE_GPU)
       model.eval()
       models.append(model)
       torch.cuda.empty_cache()
