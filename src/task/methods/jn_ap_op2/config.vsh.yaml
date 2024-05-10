@@ -19,6 +19,12 @@ functionality:
       default: 10
       info:
         test_default: 1
+    - type: string
+      name: --submission_names
+      multiple: true
+      default: [dl40, dl200]
+      info:
+        test_default: [dl40]
   resources:
     - type: python_script
       path: script.py

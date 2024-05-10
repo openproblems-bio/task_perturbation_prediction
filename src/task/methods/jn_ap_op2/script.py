@@ -376,6 +376,7 @@ par = {
   "id_map": "resources/neurips-2023-kaggle/id_map.csv",
   "output": "output.parquet",
   "n_replica": 1,
+  "submission_names": ["dl40"]
 }
 ## VIASH END
 print('Reading input files', flush=True)
@@ -426,11 +427,8 @@ if USE_GPU:
 print('Generate predictions', flush=True)
 # ... generate predictions ...
 
-n_replica = par["epochs"] 
-SUBMISSION_NAMES = {'dl40', 'dl200'}
 Y_submit_ensemble = []
-SUBMISSION_NAME = 'dl40'
-for SUBMISSION_NAME in SUBMISSION_NAMES:
+for SUBMISSION_NAME in par["submission_names"]:
   #train the models and store them
   models = []
   for i in range(par["n_replica"] ):
