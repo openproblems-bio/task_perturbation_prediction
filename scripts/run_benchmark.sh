@@ -19,7 +19,9 @@ nextflow run . \
   --id neurips-2023-data \
   --dataset_info "$IN/neurips-2023-data/dataset_info.yaml" \
   --de_train "$IN/neurips-2023-data/de_train.parquet" \
+  --de_train_h5ad "$IN/neurips-2023-data/de_train.h5ad" \
   --de_test "$IN/neurips-2023-data/de_test.parquet" \
+  --de_test_h5ad "$IN/neurips-2023-data/de_test.h5ad" \
   --id_map "$IN/neurips-2023-data/id_map.csv"
 
   # Alternatively: could also replace everything starting from '--id' with:
