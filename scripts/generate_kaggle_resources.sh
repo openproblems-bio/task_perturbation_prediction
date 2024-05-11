@@ -38,7 +38,7 @@ viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --output "$OUT/score.h5ad"
 
 echo ">> Manually create meta files"
-echo > "$OUT/dataset_info.yaml" <<'EOF'
+cat > "$OUT/dataset_info.yaml" <<'EOF'
 dataset_id: neurips-2023-kaggle
 dataset_name: NeurIPS2023 scPerturb DGE (Kaggle)
 dataset_summary: Differential gene expression sign(logFC) * -log10(p-value) values
@@ -64,7 +64,7 @@ dataset_reference: TBD
 dataset_organism: homo_sapiens
 EOF
 
-echo > "$OUT/state.yaml" <<'EOF'
+cat > "$OUT/state.yaml" <<'EOF'
 id: neurips-2023-kaggle
 de_train: !file de_train.parquet
 de_test: !file de_test.parquet
