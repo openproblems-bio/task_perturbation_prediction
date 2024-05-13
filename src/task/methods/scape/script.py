@@ -20,6 +20,8 @@ par = dict(
 	output = "output/neurips-2023-data/output_rf.parquet",
 	output_dir = "output/neurips-2023-data/tmp_result",
 	cell = "NK cells",
+	epochs = 300,
+	epochs_enhanced = 800,
 )
 ## VIASH END
 print(f"par: {par}")
@@ -27,10 +29,8 @@ print(f"par: {par}")
 if not os.path.isdir(par['output_dir']):
 	os.makedirs(par['output_dir'])
 
-# epochs = 2
-# epochs_enhanced = 2
-epochs = 300
-epochs_enhanced = 800
+epochs = par["epochs"]
+epochs_enhanced = par["epochs_enhanced"]
 
 # cell = "NK cells" # this might have to be adjusted with different dataset
 cell = par["cell"]

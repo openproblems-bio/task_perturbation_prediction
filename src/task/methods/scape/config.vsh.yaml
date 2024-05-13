@@ -21,6 +21,18 @@ functionality:
       required: false
       example: NK cells
       default: NK cells
+    - type: integer
+      name: --epochs
+      description: Number of epochs for goarse training.
+      default: 300
+      info:
+        test_default: 2
+    - type: integer
+      name: --epochs_enhanced
+      description: Number of epochs for enhanced training.
+      default: 800
+      info:
+        test_default: 2
   resources:
     - type: python_script
       path: script.py
