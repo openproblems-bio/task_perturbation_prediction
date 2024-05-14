@@ -1,16 +1,14 @@
 import anndata as ad
 import subprocess
+import os
 
 ## VIASH START
 par = {
     "input": "resources/neurips-2023-data/pseudobulk.h5ad",
     "output": "resources/neurips-2023-data/pseudobulk_cleaned.h5ad"
 }
+meta = {"resources_dir": "src/task/process_dataset/clean_pseudobulk"}
 ## VIASH END
-
-
-print(">> Load dataset", flush=True)
-bulk_adata = ad.read_h5ad(par["input"])
 
 print(">> Load dataset", flush=True)
 bulk_adata = ad.read_h5ad(par["input"])
@@ -50,13 +48,13 @@ print(">> Save dataset for R script for gene filtering", flush=True)
 bulk_adata.write_h5ad(par["input"], compression="gzip")
 
 print(">> Filter out genes", flush=True)
-command = ["Rscript", "filter_genes.R", par["input"]]
+command = ["Rscript", os.path.join(meta["resources_dir"], "filter_genes.R"), par["input"]]
 
 result = subprocess.run(command, capture_output=True, text=True)
 
 # Check for errors
 if result.returncode != 0:
-    print("Error running R script:", result.stderr)
+    print("Error running R script:", result.stdout, flush=True)
 else:
     output = result.stdout
     filtered_genes = output.strip().split(",")

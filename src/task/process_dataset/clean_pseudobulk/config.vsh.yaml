@@ -25,10 +25,12 @@ functionality:
     - path: filter_genes.R
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.2
+    image: ghcr.io/openproblems-bio/base_r:1.0.2
     setup:
       - type: python
         packages: [ pyarrow ]
+      - type: r
+        cran: [ edgeR, limma, dplyr, tidyr, purrr, tibble ]
   - type: nextflow
     directives:
       label: [ midtime, midmem, lowcpu ]
