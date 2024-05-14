@@ -77,6 +77,8 @@ for i, d in enumerate(drugs):
 	# Collect prediction in the OOF data
 	df_pred = scm.predict(df_sub_ix)
 	df_pred = df_pred.loc[:, df_de.columns]
+	# remove df_pred index to save memory
+	df_pred.reset_index(drop=True, inplace=True)
 	base_predictions.append(df_pred)
 
 df_sub = pd.DataFrame(np.median(base_predictions, axis=0), index=df_sub_ix.index, columns=df_de.columns)
@@ -127,6 +129,8 @@ for i, d in enumerate(top_drugs):
 		)
 		# Collect prediction in the OOF data
 		df_pred = scm.predict(df_sub_ix)
+		# remove df_pred index to save memory
+		df_pred.reset_index(drop=True, inplace=True)
 		enhanced_predictions.append(df_pred)
 
 df_sub_enhanced = pd.DataFrame(np.median(enhanced_predictions, axis=0), index=df_sub_ix.index, columns=df_de_c.columns)
