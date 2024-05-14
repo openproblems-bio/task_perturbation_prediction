@@ -1,4 +1,4 @@
-import sys, os, fastparquet, anndata, shutil
+import sys, os, fastparquet, anndata
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -15,22 +15,18 @@ print(f"scape version:{scape.__version__}")
 par = dict(
 	de_train = "resources/neurips-2023-data/de_train.parquet",
 	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
-	# lfc_train = "resources/neurips-2023-data/lfc_train.parquet",
 	id_map = "resources/neurips-2023-data/id_map.csv",
 	output = "output/neurips-2023-data/output_rf.parquet",
 	output_dir = "output/neurips-2023-data/tmp_result",
 	cell = "NK cells",
-	epochs = 300,
-	epochs_enhanced = 800,
+	epochs = 2,
+	epochs_enhanced = 2,
 )
 ## VIASH END
 print(f"par: {par}")
 
 if not os.path.isdir(par['output_dir']):
 	os.makedirs(par['output_dir'])
-
-epochs = par["epochs"]
-epochs_enhanced = par["epochs_enhanced"]
 
 # cell = "NK cells" # this might have to be adjusted with different dataset
 cell = par["cell"]
@@ -40,7 +36,7 @@ df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], a
 # df_lfc = scape.io.load_lfc(par['lfc_train'])
 adata = anndata.read_h5ad(par["de_train_h5ad"])
 adata
-df_lfc= pd.concat(
+df_lfc = pd.concat(
 	[
 		pd.DataFrame(adata.layers["logFC"], index=adata.obs_names, columns=adata.var_names),
 		adata.obs[['cell_type', 'sm_name']],
@@ -48,7 +44,6 @@ df_lfc= pd.concat(
 	axis=1
 ).set_index(['cell_type', 'sm_name'])
 df_lfc
-df_lfc = df_lfc.loc[df_de.index, df_de.columns]
 
 # Make sure rows/columns are in the same order
 df_lfc = df_lfc.loc[df_de.index, df_de.columns]
@@ -73,7 +68,7 @@ for i, d in enumerate(drugs):
 		val_cells=[cell], 
 		val_drugs=[d],
 		input_columns=top_genes,
-		epochs=epochs,
+		epochs=par["epochs"],
 		output_folder=f"{par['output_dir']}/_models",
 		config_file_name="config.pkl",
 		model_file_name=f"drug{i}.keras",
@@ -124,7 +119,7 @@ for i, d in enumerate(top_drugs):
 				val_cells=[cell], 
 				val_drugs=[d],
 				input_columns=top_genes,
-				epochs=epochs_enhanced,
+				epochs=par["epochs_enhanced"],
 				output_folder=f"{par['output_dir']}/_models",
 				config_file_name="enhanced_config.pkl",
 				model_file_name=f"enhanced_drug{i}.keras",
