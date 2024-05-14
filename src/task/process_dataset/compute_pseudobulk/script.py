@@ -5,7 +5,7 @@ from scipy import sparse
 
 ## VIASH START
 par = {
-    "input": "resources/neurips-2023-data/sc_counts_cleaned.h5ad",
+    "input": "resources/neurips-2023-raw/sc_counts.h5ad",
     "output": "resources/neurips-2023-data/pseudobulk.h5ad",
 }
 ## VIASH END
@@ -59,9 +59,16 @@ def sum_by(adata: ad.AnnData, col: str) -> ad.AnnData:
 print(">> Load dataset", flush=True)
 sc_counts = ad.read_h5ad(par["input"])
 
+print(">> Keep only raw counts", flush=True)
+sc_counts.X = sc_counts.raw.X
+del sc_counts.raw
+
+print(">> Process dataset obs", flush=True)
+sc_counts.obs['control'] = sc_counts.obs['split'].eq("control")
+
 print(">> Create pseudobulk dataset", flush=True)
-bulk_adata = sum_by(sc_counts, 'plate_well_cell_type')
-bulk_adata.obs = bulk_adata.obs.drop(columns=['plate_well_cell_type'])
+bulk_adata = sum_by(sc_counts, 'plate_well_celltype_reannotated')
+bulk_adata.obs = bulk_adata.obs.drop(columns=['plate_well_celltype_reannotated'])
 
 print(">> Remove samples with no counts", flush=True)
 bulk_adata = bulk_adata[bulk_adata.X.todense().sum(axis=1) > 0]

@@ -13,7 +13,7 @@ functionality:
       type: file
       required: true
       direction: input
-      example: resources/neurips-2023-data/sc_counts_cleaned.h5ad
+      example: resources/neurips-2023-raw/sc_counts.h5ad
     - name: --output
       type: file
       required: true
