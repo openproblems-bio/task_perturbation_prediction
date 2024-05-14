@@ -12,6 +12,12 @@ par = {
 print(">> Load dataset", flush=True)
 bulk_adata = ad.read_h5ad(par["input"])
 
+print(">> Load dataset", flush=True)
+bulk_adata = ad.read_h5ad(par["input"])
+
+print(">> Filter out samples with cell_count_by_well_celltype <= 10", flush=True)
+bulk_adata = bulk_adata[bulk_adata.obs.cell_count_by_well_celltype > 10]
+
 print(">> Filter molecules", flush=True)
 # Alvocidib only T cells in only 2 donors, remove
 bulk_adata = bulk_adata[bulk_adata.obs.sm_name != "Alvocidib"]
