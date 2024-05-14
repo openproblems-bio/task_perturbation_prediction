@@ -22,7 +22,7 @@ workflow run_wf {
       key: "limma_train",
       fromState: { id, state ->
         [
-          input: state.pseudobulk,
+          input: state.pseudobulk_filtered,
           input_splits: ["train", "control", "public_test"],
           output_splits: ["train", "control", "public_test"]
         ]
@@ -34,7 +34,7 @@ workflow run_wf {
       key: "limma_test",
       fromState: { id, state ->
         [
-          input: state.pseudobulk,
+          input: state.pseudobulk_filtered,
           input_splits: ["train", "control", "public_test", "private_test"],
           output_splits: ["private_test"]
         ]
