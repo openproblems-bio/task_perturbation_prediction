@@ -15,8 +15,12 @@ import random
 from sklearn.model_selection import KFold as KF
 
 settings = { 
-        "model_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/trained_models/", 
-        "logs_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/results/"}
+        "model_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/trained_models/", 
+        "logs_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/results/"}
+
+# settings = { 
+#         "model_dir": "/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/trained_models/", 
+#         "logs_dir": "/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/results/"}
 
 
 class LogCoshLoss(nn.Module):
@@ -26,7 +30,8 @@ class LogCoshLoss(nn.Module):
 
     def forward(self, y_prime_t, y_t):
         ey_t = (y_t - y_prime_t)/3 # divide by 3 to avoid numerical overflow in cosh
-        return torch.mean(torch.log(torch.cosh(ey_t + 1e-12)))
+        clipped_ey_t = torch.clamp(ey_t, min=-50, max=50)
+        return torch.mean(torch.log(torch.cosh(clipped_ey_t + 1e-12)))
     
     
 class Dataset:
@@ -51,10 +56,17 @@ class Dataset:
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-dims_dict = {'conv': {'heavy': 13400, 'light': 4576, 'initial': 8992},
-                                    'rnn': {'linear': {'heavy': 99968, 'light': 24192, 'initial': 29568},
-                                           'input_shape': {'heavy': [779,142], 'light': [187,202], 'initial': [229,324]}
+# dims_dict = {'conv': {'heavy': 13400, 'light': 4576, 'initial': 8992},
+#                                     'rnn': {'linear': {'heavy': 99968, 'light': 24192, 'initial': 29568},
+#                                            'input_shape': {'heavy': [779,142], 'light': [187,202], 'initial': [229,324]}
+              
+#                              }}
+
+dims_dict = {'conv': {'heavy': 15624, 'light': 5312, 'initial': 10472},
+                                    'rnn': {'linear': {'heavy': 3072, 'light': 9728, 'initial': 29440},
+                                           'input_shape': {'heavy': [22, 5861], 'light': [74, 593], 'initial': [228, 379]}
                                            }}
+
 class Conv(nn.Module):
     def __init__(self, scheme):
         super(Conv, self).__init__()
@@ -76,7 +88,8 @@ class Conv(nn.Module):
                 nn.Linear(1024, 512),
                 nn.Dropout(0.3),
                 nn.ReLU())
-        self.head1 = nn.Linear(512, 18211)
+        # self.head1 = nn.Linear(512, 18211)
+        self.head1 = nn.Linear(512, 21265)
         self.loss1 = nn.MSELoss()
         self.loss2 = LogCoshLoss()
         self.loss3 = nn.L1Loss()
@@ -110,7 +123,8 @@ class LSTM(nn.Module):
             nn.Linear(1024, 512),
             nn.Dropout(0.3),
             nn.ReLU())
-        self.head1 = nn.Linear(512, 18211)
+        # self.head1 = nn.Linear(512, 18211)
+        self.head1 = nn.Linear(512, 21265)
         self.loss1 = nn.MSELoss()
         self.loss2 = LogCoshLoss()
         self.loss3 = nn.L1Loss()
@@ -150,7 +164,8 @@ class GRU(nn.Module):
             nn.Linear(1024, 512),
             nn.Dropout(0.3),
             nn.ReLU())
-        self.head1 = nn.Linear(512, 18211)
+        # self.head1 = nn.Linear(512, 18211)
+        self.head1 = nn.Linear(512, 21265)
         self.loss1 = nn.MSELoss()
         self.loss2 = LogCoshLoss()
         self.loss3 = nn.L1Loss()
