@@ -14,9 +14,14 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 import random
 from sklearn.model_selection import KFold as KF
 
+# settings = { 
+#         "model_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/trained_models/", 
+#         "logs_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/results/"}
+
+
 settings = { 
-        "model_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/trained_models/", 
-        "logs_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/results/"}
+        "model_dir": "resources/neurips-2023-data/trained_models/", 
+        "logs_dir": "resources/neurips-2023-data/results/"}
 
 # settings = { 
 #         "model_dir": "/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/trained_models/", 
@@ -341,10 +346,7 @@ def train_function(model, x_train, y_train, x_val, y_val, info_data, config, cli
     x_train_aug, y_train_aug = augment_data(x_train, y_train)
     x_train_aug = np.concatenate([x_train, x_train_aug], axis=0)
     y_train_aug = np.concatenate([y_train, y_train_aug], axis=0)
-    print(f"X_TRAIN:{x_train_aug.shape}")
-    print(f"Y_TRAIN:{y_train_aug.shape}")
     data_x_train = torch.FloatTensor(x_train_aug)
-    # TODO why 'train' in y_train_aug X_TRAIN:(1142, 1, 86416) Y_TRAIN:(1142, 21266)
     data_y_train = torch.FloatTensor(y_train_aug)
     data_x_val = torch.FloatTensor(x_val)
     data_y_val = torch.FloatTensor(y_val)
@@ -403,8 +405,9 @@ def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, conf
         os.makedirs(settings["model_dir"], exist_ok=True)
     if not os.path.exists(settings["logs_dir"]):
         os.makedirs(settings["logs_dir"], exist_ok=True)
-    for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
+    # for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
     # for scheme, clip_norm, input_features in zip(['initial', 'light'], config["CLIP_VALUES"], [X_vec, X_vec_light]):
+    for scheme, clip_norm, input_features in zip(['initial', 'light'], config["CLIP_VALUES"], [X_vec, X_vec_light]):
         seed_everything()
         models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm)
         trained_models[scheme].extend(models)
