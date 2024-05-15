@@ -8,21 +8,21 @@ functionality:
     documentation_url: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458661
     repository_url: https://github.com/Ambros-M/Single-Cell-Perturbations-2023
   arguments:
-    - type: integer
-      name: --n_replica
-      default: 10
-      info:
-        test_default: 1
     - type: string
-      name: --submission_names
-      multiple: true
-      default: [dl40, dl200]
-      info:
-        test_default: [dl40]
+      name: --de_train
+      default: "resources/neurips-2023-kaggle/de_train.parquet"
+    - type: string
+      name: --train_obs_zip
+      default: "resources/neurips-2023-kaggle/train_obs.csv.zip"
+    - type: string
+      name: --id_map
+      default: "resources/neurips-2023-kaggle/id_map.csv"
+    - type: string
+      name: --output
+      default: "output.parquet"
   resources:
     - type: python_script
       path: script.py
-
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_python:1.0.4
