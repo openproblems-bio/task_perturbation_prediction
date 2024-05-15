@@ -8,13 +8,13 @@ import os
 # import ipdb; ipdb.set_trace()
 ## VIASH START
 par = {
-  "de_train": "resources/neurips-2023-kaggle/de_train.parquet",
-  "de_test": "resources/neurips-2023-kaggle/de_test.parquet",
-  "id_map": "resources/neurips-2023-kaggle/id_map.csv",
-  "train_data_aug_dir": "resources/neurips-2023-kaggle/prepared_data/",
-  "model_dir": "resources/neurips-2023-kaggle/trained_models/",
-  "logs_dir": "resources/neurips-2023-kaggle/results/",
-  "submission": "resources/neurips-2023-kaggle/sample_submission.csv",
+  "de_train": "resources/neurips-2023-data/de_train.parquet",
+  "de_test": "resources/neurips-2023-data/de_test.parquet",
+  "id_map": "resources/neurips-2023-data/id_map.csv",
+  "train_data_aug_dir": "resources/neurips-2023-data/prepared_data/",
+  "model_dir": "resources/neurips-2023-data/trained_models/",
+  "logs_dir": "resources/neurips-2023-data/results/",
+  "submission": "resources/neurips-2023-data/sample_submission.csv",
   "output": "output.parquet",
 }
 ## VIASH END
@@ -24,9 +24,9 @@ par = {
 # meta = {"resources_dir": "src/task/methods/first_place"}
 sys.path.append(meta['resources_dir'])
 
-print(f"META PATH:{meta['resources_dir']}")
-print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-print(f"THIS IS THE PATH: {os.getcwd()}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+# print(f"META PATH:{meta['resources_dir']}")
+# print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+# print(f"THIS IS THE PATH: {os.getcwd()}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 from helper_script import seed_everything, combine_features, train_validate
 from helper_script import one_hot_encode, save_ChemBERTa_features
@@ -56,12 +56,11 @@ def prepare_data():
     ## Save data augmentation features
     print(par["train_data_aug_dir"])
     if not os.path.exists(par["train_data_aug_dir"]):
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         os.makedirs(par["train_data_aug_dir"], exist_ok=True)
 
-    if not os.path.exists(par["model_dir"]):
-        print("There wasnt model_dir")
-        os.makedirs(par["model_dir"], exist_ok=True)
+    # if not os.path.exists(par["model_dir"]):
+    #     print("There wasnt model_dir")
+    #     os.makedirs(par["model_dir"], exist_ok=True)
     mean_cell_type.to_csv(f'{par["train_data_aug_dir"]}mean_cell_type.csv', index=False)
     std_cell_type.to_csv(f'{par["train_data_aug_dir"]}std_cell_type.csv', index=False)
     mean_sm_name.to_csv(f'{par["train_data_aug_dir"]}mean_sm_name.csv', index=False)
@@ -82,7 +81,7 @@ def train():
     # with open("./config/train_config.json") as file:
     #     train_config = json.load(file)
         
-    train_config = {"LEARNING_RATES": [0.001, 0.001, 0.0003], "CLIP_VALUES": [5.0, 1.0, 1.0], "EPOCHS": 250, "KF_N_SPLITS": 5} #TODO change epochs to 250
+    train_config = {"LEARNING_RATES": [0.001, 0.001, 0.0003], "CLIP_VALUES": [5.0, 1.0, 1.0], "EPOCHS": 1, "KF_N_SPLITS": 2} #TODO change epochs to 250
     print("\nRead data and build features...")
     de_train = pd.read_parquet(par["de_train"])
     de_train = de_train.drop(columns=['split'])
