@@ -63,13 +63,13 @@ print(">> Keep only raw counts", flush=True)
 sc_counts.X = sc_counts.raw.X
 del sc_counts.raw
 
-print(">> Process dataset obs", flush=True)
-sc_counts.obs['control'] = sc_counts.obs['split'].eq("control")
+print(">> Fix splits after reannotation", flush=True)
 sc_counts.obs["cell_type_orig_updated"] = sc_counts.obs["cell_type_orig"].apply(lambda x: "T cells" if x.startswith("T ") else x)
 sc_counts.obs["sm_cell_type_orig"] = sc_counts.obs["sm_name"].astype(str) + "_" + sc_counts.obs["cell_type_orig_updated"].astype(str)
 mapping_to_split = sc_counts.obs.groupby("sm_cell_type_orig")["split"].apply(lambda x: x.unique()[0]).to_dict()
 sc_counts.obs["sm_cell_type"] = sc_counts.obs["sm_name"].astype(str) + "_" + sc_counts.obs["cell_type"].astype(str)
 sc_counts.obs["split"] = sc_counts.obs["sm_cell_type"].map(mapping_to_split)
+sc_counts.obs['control'] = sc_counts.obs['split'].eq("control")
 
 print(">> Create pseudobulk dataset", flush=True)
 bulk_adata = sum_by(sc_counts, 'plate_well_celltype_reannotated')
