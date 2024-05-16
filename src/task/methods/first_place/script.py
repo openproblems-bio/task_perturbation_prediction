@@ -16,7 +16,7 @@ par = {
   "model_dir": "resources/neurips-2023-data/trained_models/",
   "logs_dir": "resources/neurips-2023-data/results/",
   "submission": "resources/neurips-2023-data/sample_submission.csv",
-  "output_dir": "resources/neurips-2023-data/output_rf.parquet",
+#   "output_dir": "resources/neurips-2023-data/output_rf.parquet",
 }
 ## VIASH END
 
@@ -199,7 +199,7 @@ def predict():
     # df_sub.to_csv(f'{par["submission"]}')
     print(df_sub.head())
     # df_sub.to_parquet(par["output"])
-    fastparquet.write(par['output_dir'], df_sub)
+    fastparquet.write(par['output'], df_sub)
     print("\nDone.")
 
 prepare_data()

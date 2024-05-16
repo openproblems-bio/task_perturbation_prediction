@@ -32,10 +32,6 @@ functionality:
 
   # Component-specific parameters (optional)
   arguments:
-    - name: "--de_test"
-      type: "string"
-      default: "resources/neurips-2023-kaggle/de_test.parquet"
-      description: "Path to the test data."
     - name: "--train_data_aug_dir"
       type: "string"
       default: "resources/neurips-2023-data/prepared_data/"
@@ -48,12 +44,6 @@ functionality:
       type: "string"
       default: "resources/neurips-2023-data/trained_models/"
       description: "Logs dir path."
-
-    - name: --output_dir
-      type: file
-      direction: output
-      default: "resources/neurips-2023-data/output_rf.parquet"
-      description: "Additional output directory for the model."
 
   # Resources required to run the component
   resources:
