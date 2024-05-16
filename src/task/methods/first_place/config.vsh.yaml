@@ -32,38 +32,28 @@ functionality:
 
   # Component-specific parameters (optional)
   arguments:
-    # - name: "--de_train"
-    #   type: "string"
-    #   default: "resources/neurips-2023-kaggle/de_train.parquet"
-    #   description: "Path to the training data."
     - name: "--de_test"
       type: "string"
-      default: "/viash_automount/resources/neurips-2023-kaggle/de_test.parquet"
+      default: "resources/neurips-2023-kaggle/de_test.parquet"
       description: "Path to the test data."
-    # - name: "--id_map"
-    #   type: "string"
-    #   default: "resources/neurips-2023-kaggle/id_map.csv"
-    #   description: "Path to the ID map."
     - name: "--train_data_aug_dir"
       type: "string"
-      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/prepared_data/"
+      default: "resources/neurips-2023-data/prepared_data/"
       description: "Directory for augmented training data."
     - name: "--model_dir"
       type: "string"
-      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/trained_models/"
+      default: "resources/neurips-2023-data/trained_models/"
       description: "Model dir path."
     - name: "--logs_dir"
       type: "string"
-      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/trained_models/"
+      default: "resources/neurips-2023-data/trained_models/"
       description: "Logs dir path."
-    - name: "--submission"
-      type: "string"
-      default: "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/sample_submission.csv"
-      description: "Submission file path."
-    # - name: "--output"
-    #   type: "string"
-    #   default: "output.parquet"
-    #   description: "Output file path."
+
+    - name: --output_dir
+      type: file
+      direction: output
+      default: "resources/neurips-2023-data/output_rf.parquet"
+      description: "Additional output directory for the model."
 
   # Resources required to run the component
   resources:
@@ -72,13 +62,7 @@ functionality:
       path: script.py
 
     - path: helper_script.py
-    # Additional resources your script needs (optional)
-    # - type: file
-    # - path: single_cell_perturbations/helper_functions.py
-    # - path: single_cell_perturbations/models.py
-    # - path: single_cell_perturbations/helper_classes.py
-    #   path: weights.pt
-
+    
 platforms:
   # Specifications for the Docker image for this component.
   - type: docker
@@ -94,4 +78,4 @@ platforms:
   # Allows turning the component into a Nextflow module / pipeline.
   - type: nextflow
     directives:
-      label: [midtime,midmem,midcpu]
+      label: [midtime,midmem,highcpu, gpu]
