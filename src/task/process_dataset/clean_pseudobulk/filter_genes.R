@@ -24,7 +24,7 @@ filtered_gene_lists <- list()
 counts <- Matrix::t(adata$X)
 
 d <- DGEList(counts)
-design <- model.matrix(~ 0 + sm_cell_type + donor_id + plate_name, data = adata$obs %>% mutate_all(limma_trafo))
+design <- model.matrix(~ 0 + sm_cell_type + donor_id, data = adata$obs %>% mutate_all(limma_trafo))
 keep <- filterByExpr(d, design)
 filtered_genes <- rownames(d)[keep]
 
