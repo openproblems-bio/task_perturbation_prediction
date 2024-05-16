@@ -31,7 +31,7 @@ functionality:
 
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
     setup:
       - type: python
         packages: [ fastparquet, torch, pandas, category_encoders ]
@@ -39,4 +39,4 @@ platforms:
   - type: native
   - type: nextflow
     directives:
-      label: [ hightime, highmem, highcpu ]
+      label: [ hightime, highmem, highcpu, gpu ]
