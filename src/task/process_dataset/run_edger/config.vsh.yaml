@@ -1,13 +1,13 @@
 functionality:
-  name: run_limma
+  name: run_edger
   namespace: process_dataset
   info:
     type: process_dataset
     type_info:
-      label: Limma
-      summary: Run limma
+      label: EdgeR
+      summary: Run edgeR
       description: |
-        Run limma for the DGE regression task.
+        Run edgeR for the DGE regression task.
   arguments:
     - name: --input
       type: file

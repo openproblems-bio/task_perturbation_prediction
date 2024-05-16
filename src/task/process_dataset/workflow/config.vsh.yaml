@@ -43,7 +43,7 @@ functionality:
   dependencies:
     - name: process_dataset/clean_sc_counts
     - name: process_dataset/compute_pseudobulk
-    - name: process_dataset/run_limma
+    - name: process_dataset/run_edger
     - name: process_dataset/convert_h5ad_to_parquet
 platforms:
   - type: nextflow

@@ -18,8 +18,8 @@ workflow run_wf {
       toState: [pseudobulk_filtered: "output"]
     )
 
-    | run_limma.run(
-      key: "limma_train",
+    | run_edger.run(
+      key: "edger_train",
       fromState: { id, state ->
         [
           input: state.pseudobulk_filtered,
@@ -30,8 +30,8 @@ workflow run_wf {
       toState: [de_train_h5ad: "output"]
     )
 
-    | run_limma.run(
-      key: "limma_test",
+    | run_edger.run(
+      key: "edger_test",
       fromState: { id, state ->
         [
           input: state.pseudobulk_filtered,
