@@ -19,12 +19,16 @@ workflow run_wf {
     mean_across_compounds,
     sample,
     zeros,
-    random_forest
+    random_forest,
+    third_place,
+    jn_ap_op2,
+    scape
   ]
 
   // construct list of metrics
   metrics = [
-    mean_rowwise_rmse
+    mean_rowwise_error,
+    mean_cosine_sim
   ]
 
   /* **************************
@@ -66,6 +70,7 @@ workflow run_wf {
       fromState: { id, state, comp ->
         def new_args = [
           de_train: state.de_train,
+          de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
         ]
         if (comp.config.functionality.info.type == "control_method") {
