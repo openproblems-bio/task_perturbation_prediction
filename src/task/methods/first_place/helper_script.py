@@ -405,9 +405,9 @@ def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, conf
         os.makedirs(settings["model_dir"], exist_ok=True)
     if not os.path.exists(settings["logs_dir"]):
         os.makedirs(settings["logs_dir"], exist_ok=True)
-    # for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
+    for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
     # for scheme, clip_norm, input_features in zip(['initial', 'light'], config["CLIP_VALUES"], [X_vec, X_vec_light]):
-    for scheme, clip_norm, input_features in zip(['initial', 'light'], config["CLIP_VALUES"], [X_vec, X_vec_light]):
+    # for scheme, clip_norm, input_features in zip(['initial', 'light'], config["CLIP_VALUES"], [X_vec, X_vec_light]):
         seed_everything()
         models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm)
         trained_models[scheme].extend(models)

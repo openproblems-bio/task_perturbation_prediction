@@ -82,7 +82,7 @@ def train():
     # with open("./config/train_config.json") as file:
     #     train_config = json.load(file)
         
-    train_config = {"LEARNING_RATES": [0.001, 0.001, 0.0003], "CLIP_VALUES": [5.0, 1.0, 1.0], "EPOCHS": 1, "KF_N_SPLITS": 2} #TODO change epochs to 250
+    train_config = {"LEARNING_RATES": [0.001, 0.001, 0.0003], "CLIP_VALUES": [5.0, 1.0, 1.0], "EPOCHS": 250, "KF_N_SPLITS": 5} #TODO change epochs to 250
     print("\nRead data and build features...")
     de_train = pd.read_parquet(par["de_train"])
     de_train = de_train.drop(columns=['split'])
@@ -172,9 +172,9 @@ def predict():
     pred4 = weighted_average_prediction(test_vec, trained_models['initial'],\
                                         model_wise=test_config["MODEL_COEFS"], fold_wise=fold_weights)
     
-    # pred5 = average_prediction(test_vec_heavy, trained_models['heavy'])
-    # pred6 = weighted_average_prediction(test_vec_heavy, trained_models['heavy'],\
-    #                                 model_wise=test_config["MODEL_COEFS"], fold_wise=fold_weights)
+    pred5 = average_prediction(test_vec_heavy, trained_models['heavy'])
+    pred6 = weighted_average_prediction(test_vec_heavy, trained_models['heavy'],\
+                                    model_wise=test_config["MODEL_COEFS"], fold_wise=fold_weights)
     t1 = time.time()
     print("Prediction time: ", t1-t0, " seconds")
     print("\nEnsembling predictions and writing to file...")
@@ -184,13 +184,13 @@ def predict():
     submission = pd.DataFrame(index=df_sub_ix.index, columns=de_train.columns)
     # submission = sample_submission.copy()
     
-    submission[col] = 0.23*pred1 + 0.15*pred2 + 0.18*pred3 + 0.15*pred4 #+ 0.15*pred5 + 0.14*pred6
+    submission[col] = 0.23*pred1 + 0.15*pred2 + 0.18*pred3 + 0.15*pred4 + 0.15*pred5 + 0.14*pred6
     df1 = submission.copy()
     
-    submission[col] = 0.13*pred1 + 0.15*pred2 + 0.23*pred3 + 0.15*pred4 #+ 0.20*pred5 + 0.14*pred6
+    submission[col] = 0.13*pred1 + 0.15*pred2 + 0.23*pred3 + 0.15*pred4 + 0.20*pred5 + 0.14*pred6
     df2 = submission.copy()
     
-    submission[col] = 0.17*pred1 + 0.16*pred2 + 0.17*pred3 + 0.16*pred4 #+ 0.18*pred5 + 0.16*pred6
+    submission[col] = 0.17*pred1 + 0.16*pred2 + 0.17*pred3 + 0.16*pred4 + 0.18*pred5 + 0.16*pred6
     df3 = submission.copy()
     df_sub = 0.34*df1 + 0.33*df2 + 0.33*df3 # Final ensembling
     # if not os.path.exists(par["submission"]):
