@@ -17,6 +17,8 @@ functionality:
       default: "resources/neurips-2023-data/extra_output/"
       description: "Extra output directory. Will contain folders `prepared_data`, `trained_models`, and `logs`."
       direction: output
+      required: false
+      must_exist: false
     - name: --epochs
       type: integer
       default: 250

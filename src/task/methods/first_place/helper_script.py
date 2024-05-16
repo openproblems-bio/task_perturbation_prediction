@@ -1,9 +1,7 @@
 import os
 import json
 import time
-from argparse import Namespace
 import numpy as np
-import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 import torch.nn as nn
@@ -13,20 +11,6 @@ from sklearn.preprocessing import OneHotEncoder
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 import random
 from sklearn.model_selection import KFold as KF
-
-# settings = { 
-#         "model_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/trained_models/", 
-#         "logs_dir": "/viash_automount/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-data/results/"}
-
-
-settings = { 
-        "model_dir": "resources/neurips-2023-data/trained_models/", 
-        "logs_dir": "resources/neurips-2023-data/results/"}
-
-# settings = { 
-#         "model_dir": "/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/trained_models/", 
-#         "logs_dir": "/home/ttunjic/Code/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/results/"}
-
 
 class LogCoshLoss(nn.Module):
     """Loss function for regression tasks"""
@@ -55,9 +39,6 @@ class Dataset:
         else:
             return self.data_x[idx]
 
-# with open("./SETTINGS.json") as file:
-#     settings = json.load(file)
-    
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -373,7 +354,7 @@ def train_function(model, x_train, y_train, x_val, y_val, info_data, config, cli
     return model, results
 
 
-def cross_validate_models(X, y, kf_cv, cell_types_sm_names, config=None, scheme='initial', clip_norm=1.0):
+def cross_validate_models(X, y, kf_cv, cell_types_sm_names, model_dir, logs_dir, config=None, scheme='initial', clip_norm=1.0):
     trained_models = []
     for i,(train_idx,val_idx) in enumerate(kf_cv.split(X)):
         print(f"\nSplit {i+1}/{kf_cv.n_splits}...")
@@ -388,29 +369,28 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, config=None, scheme=
             model, results = train_function(model, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
             model.to('cpu')
             trained_models.append(model)
-            print(f'PATH OF THE MODEL EQUALS: {settings["model_dir"]}pytorch_{model.name}_{scheme}_fold{i}.pt')
-            torch.save(model.state_dict(), f'{settings["model_dir"]}pytorch_{model.name}_{scheme}_fold{i}.pt')
-            with open(f'{settings["logs_dir"]}{model.name}_{scheme}_fold{i}.json', 'w') as file:
+            print(f'PATH OF THE MODEL EQUALS: {model_dir}/pytorch_{model.name}_{scheme}_fold{i}.pt')
+            torch.save(model.state_dict(), f'{model_dir}/pytorch_{model.name}_{scheme}_fold{i}.pt')
+            with open(f'{logs_dir}/{model.name}_{scheme}_fold{i}.json', 'w') as file:
                 json.dump(results, file)
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
     return trained_models
 
-def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config):
+def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config, model_names, model_dir, logs_dir):
     kf_cv = KF(n_splits=config["KF_N_SPLITS"], shuffle=True, random_state=42)
     trained_models = {'initial': [], 'light': [], 'heavy': []}
-    print(settings["model_dir"])
-    if not os.path.exists(settings["model_dir"]):
+    print(model_dir)
+    if not os.path.exists(model_dir):
         print("MODEL DIR DID NOT EXIST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        os.makedirs(settings["model_dir"], exist_ok=True)
-    if not os.path.exists(settings["logs_dir"]):
-        os.makedirs(settings["logs_dir"], exist_ok=True)
+        os.makedirs(model_dir, exist_ok=True)
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir, exist_ok=True)
     for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
-    # for scheme, clip_norm, input_features in zip(['initial', 'light'], config["CLIP_VALUES"], [X_vec, X_vec_light]):
-    # for scheme, clip_norm, input_features in zip(['initial', 'light'], config["CLIP_VALUES"], [X_vec, X_vec_light]):
-        seed_everything()
-        models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm)
-        trained_models[scheme].extend(models)
+        if scheme in model_names:
+            seed_everything()
+            models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm, model_dir=model_dir, logs_dir=logs_dir)
+            trained_models[scheme].extend(models)
     return trained_models
 
 #### Inference utilities
@@ -447,7 +427,7 @@ def weighted_average_prediction(X_test, trained_models, model_wise=[0.25, 0.35, 
         all_preds.append(current_pred)
     return np.stack(all_preds, axis=1).sum(axis=1)
 
-def load_trained_models(path=settings["model_dir"], kf_n_splits=5):
+def load_trained_models(path, kf_n_splits=5):
     trained_models = {'initial': [], 'light': [], 'heavy': []}
     for scheme in ['initial', 'light', 'heavy']:
         for fold in range(kf_n_splits):
@@ -455,6 +435,6 @@ def load_trained_models(path=settings["model_dir"], kf_n_splits=5):
                 model = Model(scheme)
                 for weights_path in os.listdir(path):
                     if model.name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
-                        model.load_state_dict(torch.load(f'{path}{weights_path}', map_location='cpu'))
+                        model.load_state_dict(torch.load(f'{path}/{weights_path}', map_location='cpu'))
                         trained_models[scheme].append(model)
     return trained_models
