@@ -1,71 +1,55 @@
-# The API specifies which type of component this is.
-# It contains specifications for:
-#   - The input/output files
-#   - Common parameters
-#   - A unit test
 __merge__: ../../api/comp_method.yaml
 
 functionality:
-  # A unique identifier for your component (required).
-  # Can contain only lowercase letters or underscores.
   name: first_place
-
-  # Metadata for your component
   info:
-    # A relatively short label, used when rendering visualisations (required)
     label: First Place
-    # A one sentence summary of how this method works (required). Used when 
-    # rendering summary tables.
     summary: "FILL IN: A one sentence summary of this method."
-    # A multi-line description of how this component works (required). Used
-    # when rendering reference documentation.
     description: |
       FILL IN: A (multi-line) description of how this method works.
-    # Which normalisation method this component prefers to use (required).
-    preferred_normalization: log_cp10k
-    # A reference key from the bibtex library at src/common/library.bib (required).
     reference: bibtex_reference_key
-    # URL to the documentation for this method (required).
     documentation_url: https://url.to/the/documentation
-    # URL to the code repository for this method (required).
     repository_url: https://github.com/organisation/repository
 
-  # Component-specific parameters (optional)
   arguments:
-    - name: "--train_data_aug_dir"
-      type: "string"
-      default: "resources/neurips-2023-data/prepared_data/"
-      description: "Directory for augmented training data."
-    - name: "--model_dir"
-      type: "string"
-      default: "resources/neurips-2023-data/trained_models/"
-      description: "Model dir path."
-    - name: "--logs_dir"
-      type: "string"
-      default: "resources/neurips-2023-data/trained_models/"
-      description: "Logs dir path."
+    - name: "--extra_output"
+      type: "file"
+      default: "resources/neurips-2023-data/extra_output/"
+      description: "Extra output directory. Will contain folders `prepared_data`, `trained_models`, and `logs`."
+      direction: output
+    - name: --epochs
+      type: integer
+      default: 250
+      description: "Number of epochs to train."
+      info:
+        test_default: 1
+    - name: --kf_n_splits
+      type: integer
+      default: 5
+      description: "Number of splits for KFold."
+      info:
+        test_default: 2
+    - name: --models
+      type: string
+      default: [initial, light, heavy]
+      multiple: true
+      info:
+        test_default: [initial, light]
 
-  # Resources required to run the component
   resources:
-    # The script of your component (required)
     - type: python_script
       path: script.py
-
     - path: helper_script.py
     
 platforms:
-  # Specifications for the Docker image for this component.
   - type: docker
     image: ghcr.io/openproblems-bio/base_python:1.0.4
-    # Add custom dependencies here (optional). For more information, see
-    # https://viash.io/reference/config/platforms/docker/#setup .
+    run_args: ["--shm-size=2g"]
     setup:
       - type: python
         packages: [ fastparquet, pandas==2.1.3, pyarrow==14.0.1, tqdm==4.66.1, scikit-learn==1.3.2, torch==2.1.1, transformers==4.35.2, matplotlib==3.8.2 ]
 
-  # This platform allows running the component natively
   - type: native
-  # Allows turning the component into a Nextflow module / pipeline.
   - type: nextflow
     directives:
-      label: [midtime,midmem,highcpu, gpu]
+      label: [midtime,midmem,highcpu,midsharedmem,gpu]
