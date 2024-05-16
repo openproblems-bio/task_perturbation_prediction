@@ -8,7 +8,7 @@ library(parallel)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk.h5ad",
+  input = "resources/neurips-2023-data/pseudobulk_cleaned.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
