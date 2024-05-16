@@ -28,10 +28,10 @@ pd.set_option("min_rows", 6)
 ## Viash start
 
 par = dict(
-    de_train = "resources/neurips-2023-kaggle/de_train.parquet",
-    train_obs_zip = "resources/neurips-2023-kaggle/train_obs.csv.zip",
-    id_map = "resources/neurips-2023-kaggle/id_map.csv",
-    output = "output.parquet",
+    de_train_path = "/home/jovyan/git-repos/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/de_train.parquet",
+    train_obs_zip_path = "/home/jovyan/git-repos/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/train_obs.csv.zip",
+    id_map_path = "/home/jovyan/git-repos/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/id_map.csv",
+    output_path = "output.parquet",
 )
 
 
@@ -71,6 +71,46 @@ def t_score_to_de(t_score):
     p_value = norm.cdf(- np.abs(t_score)) * 2
     p_value = p_value.clip(1e-180, None)
     return - np.log10(p_value) * np.sign(t_score)
+
+## Loading data
+
+de_train = pd.read_parquet(par['de_train_path'])
+id_map = pd.read_csv(par['id_map_path'], index_col = 0)
+# display(id_map)
+
+# 18211 genes
+genes = de_train.columns[6:] 
+de_train_indexed = de_train.set_index(['cell_type', 'sm_name'])[genes]
+
+# All 146 sm_names
+sm_names = sorted(de_train.sm_name.unique())
+# Determine the 17 compounds (including the two control compounds) with data for almost all cell types
+train_sm_names = de_train.query("cell_type == 'B cells'").sm_name.sort_values().values
+# The other 129 sm_names
+test_sm_names = [sm for sm in sm_names if sm not in train_sm_names]
+# The three control sm_names
+controls3 = ['Dabrafenib', 'Belinostat', 'Dimethyl Sulfoxide']
+
+# All 6 cell types
+cell_types = ['NK cells', 'T cells CD4+', 'T cells CD8+', 'T regulatory cells', 'B cells', 'Myeloid cells']
+# Determine the 4 cell types with data for almost all compounds
+# ['NK cells', 'T cells CD4+', 'T cells CD8+', 'T regulatory cells']
+train_cell_types = de_train.query("sm_name == 'Vorinostat'").cell_type.sort_values().values
+# The other 2 cell types: ['B cells', 'Myeloid cells']
+test_cell_types = [ct for ct in cell_types if ct not in train_cell_types]
+        
+with zipfile.ZipFile(par['train_obs_zip_path']) as z:
+    with z.open('train_obs.csv') as f:
+        adata_obs = pd.read_csv(f)
+
+# Cell counts
+cell_count = adata_obs.groupby(['cell_type', 'sm_name']).size()
+avg_cell_count = cell_count[~cell_count.index.get_level_values('sm_name').isin(controls3)].groupby('cell_type').mean()
+
+# Cell type ratios (extrapolated from 17 train_sm_names)
+temp = adata_obs.groupby(['cell_type', 'sm_name']).size().unstack().loc[cell_types]
+cell_type_ratio = temp[list(train_sm_names) + ['Dimethyl Sulfoxide']].sum(axis=1)
+cell_type_ratio /= cell_type_ratio.sum()
 
 ## Model fitting functions
 
@@ -451,6 +491,7 @@ removed_compounds = []
 predictors = [fit_predict_py_boost, fit_predict_ridge_recommender, fit_predict_knn_recommender, fit_predict_extratrees] 
 de_oof_dict, mrrmse_noise_list = {}, []
 for predictor in predictors:
+    print(fit_predict_py_boost)
     cross_val_log10pvalue(predictor)
 
 # Ensemble the oof predictions
@@ -458,7 +499,7 @@ de_oof = sum(de_oof_dict.values()) / len(de_oof_dict)
 de_true = de_train_indexed.reindex_like(de_oof)
 print(f"# Ensemble MRRMSE: {mean_rowwise_rmse(de_true, de_oof):.3f}")
 
-def submit(output):
+def submit(output_path):
     """Refit the selected models and write the submission file."""
     
     # Drop outliers from training
@@ -475,12 +516,12 @@ def submit(output):
         
     # Create the submission dataframe
     submission = pd.DataFrame(de_pred.values, columns=genes, index=id_map.index)
-    display(submission)
+    #display(submission)
     print(f'Variance of submission: {submission.values.var():.2f},   min = {submission.values.min():.2f}, max = {submission.values.max():.2f}')
 
     # Write the files
-    de_oof.to_csv('de_oof.csv')
-    submission.to_csv('submission.csv')        
+    # de_oof.to_csv('de_oof.csv')
+    submission.to_csv(output_path)        
 
 predictors = [fit_predict_py_boost] 
-submit(output)
+submit(par[output_path])
