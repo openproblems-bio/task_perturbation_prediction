@@ -54,7 +54,7 @@ result = subprocess.run(command, capture_output=True, text=True)
 
 # Check for errors
 if result.returncode != 0:
-    print("Error running R script:", result.stdout, flush=True)
+    print("Error running R script:", result.stderr, flush=True)
 else:
     output = result.stdout
     filtered_genes = output.strip().split(",")
