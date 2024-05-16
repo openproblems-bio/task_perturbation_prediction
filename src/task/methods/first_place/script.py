@@ -197,6 +197,7 @@ def predict():
     #     os.mkdir(par["submission"])
     df_sub = df_sub.reset_index(drop=True)
     # df_sub.to_csv(f'{par["submission"]}')
+    df_sub['id']= df_sub.index
     print(df_sub.head())
     # df_sub.to_parquet(par["output"])
     fastparquet.write(par['output'], df_sub)
