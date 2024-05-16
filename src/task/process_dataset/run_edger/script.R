@@ -4,10 +4,11 @@ library(tidyr, warn.conflicts = FALSE)
 library(purrr, warn.conflicts = FALSE)
 library(tibble, warn.conflicts = FALSE)
 library(edgeR)
+library(parallel)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/small_pseudobulk.h5ad",
+  input = "resources/neurips-2023-data/pseudobulk.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
@@ -15,11 +16,13 @@ par <- list(
   input_splits = c("train", "control", "public_test"),
   output_splits = c("train", "control", "public_test")
   # # for private data
-  # output = "resources/neurips-2023-data/de_test.h5ad",
-  # input_splits = c("train", "control", "public_test", "private_test"),
-  # output_splits = c("private_test")
+#   output = "resources/neurips-2023-data/de_test.h5ad",
+#   input_splits = c("train", "control", "public_test", "private_test"),
+#   output_splits = c("private_test")
 )
 ## VIASH END
+
+num_cores <- detectCores() - 1
 
 # load data
 adata <- anndata::read_h5ad(par$input)
@@ -51,12 +54,19 @@ adata <- adata[obs_filt, ]
 
 counts <- Matrix::t(adata$X)
 counts <- as.matrix(counts)
+start_time <- Sys.time()
 d <- DGEList(counts)
 d <- calcNormFactors(d)
 
 design <- model.matrix(~ 0 + sm_cell_type + donor_id, data = adata$obs %>% mutate_all(limma_trafo))
 # Estimate dispersions
 d <- estimateDisp(d, design)
+end_time <- Sys.time()
+total_duration <- end_time - start_time
+total_seconds <- as.numeric(total_duration, units="secs")
+minutes <- as.integer(total_seconds %/% 60)
+seconds <- as.integer(total_seconds %% 60)
+cat(sprintf("Time in steps before fitting: %d minutes and %d seconds\n", minutes, seconds))
 
 # fit model
 start_time <- Sys.time()
@@ -66,13 +76,14 @@ total_duration <- end_time - start_time
 total_seconds <- as.numeric(total_duration, units="secs")
 minutes <- as.integer(total_seconds %/% 60)
 seconds <- as.integer(total_seconds %% 60)
-cat(sprintf("Total processing time: %d minutes and %d seconds\n", minutes, seconds))
+cat(sprintf("Total fitting time: %d minutes and %d seconds\n", minutes, seconds))
 
 # Initialize list to store DE results
 de_results_list <- list()
 
+start_time <- Sys.time()
 # Iterate over rows of new_obs to compute contrasts
-for (i in seq_len(nrow(new_obs))) {
+de_results_list <- mclapply(seq_len(nrow(new_obs)), function(i) {
   cat("Computing DE contrasts for row:", i, "of", nrow(new_obs), "\n")
   current_obs <- new_obs[i, ]
   sm_cell_type <- current_obs$sm_cell_type
@@ -93,8 +104,8 @@ for (i in seq_len(nrow(new_obs))) {
   test_results_df$row_i <- i
 
   # Store results
-  de_results_list[[i]] <- test_results_df
-}
+    return(test_results_df)
+}, mc.cores = num_cores)
 
 # Combine results from all iterations
 de_results <- bind_rows(de_results_list)
@@ -107,6 +118,13 @@ de_results_final <- de_results %>%
     is_de_adj = adj.P.Value < par$de_sig_cutoff
   ) %>%
   as_tibble()
+
+end_time <- Sys.time()
+total_duration <- end_time - start_time
+total_seconds <- as.numeric(total_duration, units="secs")
+minutes <- as.integer(total_seconds %/% 60)
+seconds <- as.integer(total_seconds %% 60)
+cat(sprintf("Total contrasts time: %d minutes and %d seconds\n", minutes, seconds))
 
 # Organize data into layers
 layer_names <- c("is_de", "is_de_adj", "logFC", "logCPM", "F", "PValue", "adj.P.Value", "FDR", "sign_log10_pval")
