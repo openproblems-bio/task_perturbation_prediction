@@ -60,7 +60,7 @@ functionality:
       path: script.py
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
     setup:
       - type: python
         packages:
@@ -72,4 +72,4 @@ platforms:
           - git+https://github.com/scapeML/scape.git
   - type: nextflow
     directives:
-      label: [ hightime, highmem, highcpu ]
+      label: [ hightime, highmem, highcpu, gpu ]
