@@ -12,13 +12,13 @@ par <- list(
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
-#   output = "resources/neurips-2023-data/de_train.h5ad",
-#   input_splits = c("train", "control", "public_test"),
-#   output_splits = c("train", "control", "public_test")
+  output = "resources/neurips-2023-data/de_train.h5ad",
+  input_splits = c("train", "control", "public_test"),
+  output_splits = c("train", "control", "public_test")
   # # for private data
-  output = "resources/neurips-2023-data/de_test.h5ad",
-  input_splits = c("train", "control", "public_test", "private_test"),
-  output_splits = c("private_test")
+#   output = "resources/neurips-2023-data/de_test.h5ad",
+#   input_splits = c("train", "control", "public_test", "private_test"),
+#   output_splits = c("private_test")
 )
 meta <- list(
   cpus = 10
