@@ -17,6 +17,9 @@ meta = {
 ## VIASH END
 
 temp_dir = tempfile.TemporaryDirectory(dir=meta["temp_dir"]).name
+# check if temp_dir exists
+if not os.path.exists(temp_dir):
+    os.makedirs(temp_dir)
 atexit = atexit.register(lambda: shutil.rmtree(temp_dir))
 
 print(">> Load dataset", flush=True)
