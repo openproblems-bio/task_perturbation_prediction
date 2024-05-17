@@ -38,7 +38,7 @@ print(f"par: {par}")
 model_dir = par["output_dir"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
 
 # remove temp dir on exit
-if par["output_dir"]:
+if not par["output_dir"]:
 	import atexit
 	atexit.register(lambda: shutil.rmtree(model_dir))
 

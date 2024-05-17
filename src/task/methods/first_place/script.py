@@ -31,7 +31,7 @@ model_dir = f"{extra_output}/model_dir"
 logs_dir = f"{extra_output}/logs"
 
 # remove temp dir on exit
-if par["extra_output"]:
+if not par["extra_output"]:
 	import atexit
 	atexit.register(lambda: shutil.rmtree(extra_output))
 
