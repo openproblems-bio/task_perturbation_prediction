@@ -3,6 +3,8 @@ name: build
 on:
   push:
     branches: [ 'main' ]
+  workflow_dispatch:
+
 
 jobs:
   # phase 1
@@ -10,12 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
+      version: ${{ steps.version.outputs.version }}
       component_matrix: ${{ steps.set_matrix.outputs.matrix }}
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: viash-io/viash-actions/setup@v5
+
+    - name: Determine version tag from branch name
+      id: version
+      run: |
+        echo "version=$(echo $GITHUB_REF | sed 's/refs\/heads\/\(.*\)/\1_build/')" >> $GITHUB_OUTPUT
 
     - name: Remove target folder from .gitignore
       run: |
@@ -24,7 +32,7 @@ jobs:
 
     - uses: viash-io/viash-actions/ns-build@v5
       with:
-        config_mod: .functionality.version := 'main_build'
+        config_mod: .functionality.version := '${{ steps.version.outputs.version }}'
         parallel: true
 
     - name: Deploy to target branch
@@ -32,7 +40,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: .
-        publish_branch: main_build
+        publish_branch: ${{ steps.version.outputs.version }}
 
     - id: ns_list
       uses: viash-io/viash-actions/ns-list@v5
@@ -72,7 +80,7 @@ jobs:
     - name: Build container
       uses: viash-io/viash-actions/ns-build@v5
       with:
-        config_mod: .functionality.version := 'main_build'
+        config_mod: .functionality.version := '${{ matrix.component.version }}'
         platform: docker
         src: ${{ matrix.component.dir }}
         setup: build
@@ -87,7 +95,7 @@ jobs:
     - name: Push container
       uses: viash-io/viash-actions/ns-build@v5
       with:
-        config_mod: .functionality.version := 'main_build'
+        config_mod: .functionality.version := '${{ matrix.component.version }}'
         platform: docker
         src: ${{ matrix.component.dir }}
         setup: push
