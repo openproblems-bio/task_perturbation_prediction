@@ -87,7 +87,7 @@ jobs:
     - name: Build container
       uses: viash-io/viash-actions/ns-build@v5
       with:
-        config_mod: .functionality.version := '${{ matrix.component.version }}'
+        config_mod: .functionality.version := '${{ needs.list.outputs.version }}'
         platform: docker
         src: ${{ matrix.component.dir }}
         setup: build
@@ -102,7 +102,7 @@ jobs:
     - name: Push container
       uses: viash-io/viash-actions/ns-build@v5
       with:
-        config_mod: .functionality.version := '${{ matrix.component.version }}'
+        config_mod: .functionality.version := '${{ needs.list.outputs.version }}'
         platform: docker
         src: ${{ matrix.component.dir }}
         setup: push
