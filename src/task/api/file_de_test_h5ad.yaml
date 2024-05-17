@@ -6,10 +6,6 @@ info:
   file_type: h5ad
   slots:
     obs:
-      - name: id
-        type: integer
-        description: Index of the test observation
-        required: true
       - name: cell_type
         type: string
         description: "The annotated cell type of each cell based on RNA expression."
