@@ -4,7 +4,10 @@ on:
   push:
     branches: [ 'main' ]
   workflow_dispatch:
-
+    inputs:
+      version:
+        description: 'Version name to use for the build. If not specified, `${BRANCH_NAME}_build` will be used.'
+        required: false
 
 jobs:
   # phase 1
@@ -23,7 +26,11 @@ jobs:
     - name: Determine version tag from branch name
       id: version
       run: |
-        echo "version=$(echo $GITHUB_REF | sed 's/refs\/heads\/\(.*\)/\1_build/')" >> $GITHUB_OUTPUT
+        if [ -z "$INPUT_VERSION" ]; then
+          echo "version=$(echo $GITHUB_REF | sed 's/refs\/heads\/\(.*\)/\1_build/')" >> $GITHUB_OUTPUT
+        else
+          echo "version=$INPUT_VERSION" >> $GITHUB_OUTPUT
+        fi
 
     - name: Remove target folder from .gitignore
       run: |
