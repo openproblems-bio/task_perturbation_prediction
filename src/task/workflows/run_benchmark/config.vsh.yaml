@@ -4,10 +4,6 @@ functionality:
   argument_groups:
     - name: Inputs
       arguments:
-        - name: "--dataset_info"
-          type: file
-          required: true
-          example: resources/neurips-2023-data/dataset_info.yaml
         - name: "--de_train"
           __merge__: ../../api/file_de_train_parquet.yaml
           required: true
@@ -65,8 +61,6 @@ functionality:
     - type: file
       path: "../../api/task_info.yaml"
   dependencies:
-    # - name: common/check_dataset_schema
-    #   repository: openproblemsv2
     - name: common/extract_metadata
       repository: openproblemsv2
     - name: control_methods/zeros

@@ -42,7 +42,8 @@ viash run src/task/control_methods/sample/config.vsh.yaml -- \
 echo ">> Run metric"
 viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.parquet" \
-  --de_test "$OUT/de_test.parquet" \
+  --method_id "sample" \
+  --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"
 
 echo ">> Uploading results to S3"

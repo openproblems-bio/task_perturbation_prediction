@@ -42,11 +42,15 @@ workflow run_wf {
       [id, state + ["_meta": [join_id: id]]]
     }
 
-    // read the dataset info
-    | map { id, state ->
-      def dataset_info = readYaml(state.dataset_info)
-      [id, state + [dataset_info: dataset_info]]
-    }
+    // extract the dataset metadata
+    | extract_metadata.run(
+      fromState: [input: "de_train_h5ad"],
+      toState: { id, output, state ->
+        state + [
+          dataset_info: readYaml(output.output).uns
+        ]
+      }
+    )
 
   /***************************
    * RUN METHODS AND METRICS *
@@ -97,7 +101,8 @@ workflow run_wf {
       },
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: [
-        de_test: "de_test",
+        de_test_h5ad: "de_test_h5ad",
+        method_id: "method_id",
         prediction: "method_output",
       ],
       // use 'toState' to publish that component's outputs to the overall state

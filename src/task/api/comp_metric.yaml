@@ -8,12 +8,16 @@ functionality:
       description: |
         A metric to compare two predictions.
   arguments:
-    - name: --de_test
-      __merge__: file_de_test_parquet.yaml
+    - name: --de_test_h5ad
+      __merge__: file_de_test_h5ad.yaml
       required: true
       direction: input
     - name: --prediction
       __merge__: file_prediction.yaml
+      required: true
+      direction: input
+    - name: --method_id
+      type: string
       required: true
       direction: input
     - name: --output
