@@ -57,7 +57,7 @@ d0 <- Matrix::t(adata[obs_filt, ]$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
-design_matrix <- model.matrix(~ sm_cell_type + donor_id, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
+design_matrix <- model.matrix(~ 0 + sm_cell_type + donor_id, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
 
 # Voom transformation and lmFit
 v <- limma::voom(d0, design = design_matrix, plot = FALSE)
