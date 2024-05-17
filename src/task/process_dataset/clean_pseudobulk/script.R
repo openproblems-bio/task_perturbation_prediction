@@ -69,7 +69,7 @@ genes_to_keep <- lapply(
     counts <- Matrix::t(input_ct$X)
 
     d <- DGEList(counts)
-    design <- model.matrix(~ 0 + sm_name + donor_id, data = input_ct$obs %>% mutate_all(limma_trafo))
+    design <- model.matrix(~ 0 + sm_name + plate_name, data = input_ct$obs %>% mutate_all(limma_trafo))
     keep <- filterByExpr(d, design)
     
     rownames(d)[keep]
