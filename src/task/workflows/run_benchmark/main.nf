@@ -91,7 +91,11 @@ workflow run_wf {
           method_id: comp.config.functionality.name,
           method_output: output.output
         ]
-      }
+      },
+      
+      auto: [
+        publish: "state"
+      ]
     )
 
     // run all metrics
