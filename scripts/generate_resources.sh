@@ -11,7 +11,7 @@ if [[ ! -f "$IN/sc_counts.h5ad" ]]; then
   echo ">> Downloading 'sc_counts.h5ad'"
   aws s3 cp --no-sign-request \
     s3://openproblems-bio/public/neurips-2023-competition/sc_counts_reannotated_with_counts.h5ad \
-    "$IN/sc_counts.h5ad"
+    "$IN/sc_counts_reannotated_with_counts.h5ad"
 fi
 
 echo ">> Running 'process_dataset' workflow"
@@ -20,7 +20,7 @@ nextflow run \
   -profile docker \
   -resume \
   --id neurips-2023-data \
-  --sc_counts "$IN/sc_counts.h5ad" \
+  --sc_counts "$IN/sc_counts_reannotated_with_counts.h5ad" \
   --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
   --dataset_id "neurips-2023-data" \
   --dataset_name "NeurIPS2023 scPerturb DGE" \
