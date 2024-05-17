@@ -18,7 +18,6 @@ functionality:
       description: "Extra output directory. Will contain folders `prepared_data`, `trained_models`, and `logs`."
       direction: output
       required: false
-      must_exist: false
     - name: --epochs
       type: integer
       default: 250
