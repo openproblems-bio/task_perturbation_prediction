@@ -20,8 +20,10 @@ workflow run_wf {
     sample,
     zeros,
     random_forest,
+    first_place,
     third_place,
-    jn_ap_op2
+    jn_ap_op2,
+    scape
   ]
 
   // construct list of metrics
