@@ -16,6 +16,10 @@ functionality:
           __merge__: ../../api/file_de_test_parquet.yaml
           required: true
           direction: input
+        - name: "--de_test_h5ad"
+          __merge__: ../../api/file_de_test_h5ad.yaml
+          required: true
+          direction: input
         - name: "--id_map"
           __merge__: ../../api/file_id_map.yaml
           required: true

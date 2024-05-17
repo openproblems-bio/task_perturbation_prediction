@@ -44,6 +44,7 @@ workflow run_wf {
 
     // extract the dataset metadata
     | extract_metadata.run(
+      key: "dataset_uns",
       fromState: [input: "de_train_h5ad"],
       toState: { id, output, state ->
         state + [
@@ -134,6 +135,7 @@ workflow run_wf {
 
     // extract the scores
     | extract_metadata.run(
+      key: "score_uns",
       fromState: [input: "metric_output"],
       toState: { id, output, state ->
         state + [
