@@ -20,8 +20,8 @@ workflow run_wf {
     sample,
     zeros,
     random_forest,
-    first_place,
-    third_place,
+    lstm_gru_cnn_ensemble,
+    nn_retraining_with_pseudolabels,
     jn_ap_op2,
     scape
   ]

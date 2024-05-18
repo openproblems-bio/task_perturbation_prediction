@@ -14,7 +14,7 @@ par = {
     "extra_output": None
 }
 meta = {
-    "resources_dir": "src/task/methods/first_place",
+    "resources_dir": "src/task/methods/lstm_gru_cnn_ensemble",
     "temp_dir": "/tmp"
 }
 ## VIASH END

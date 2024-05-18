@@ -3,7 +3,7 @@ functionality:
   name: mean_cosine_sim
   info:
     metrics:
-      - name: mean_socine_sim
+      - name: mean_cosine_sim
         label: Mean Cosine Similarity
         summary: The mean of cosine similarities per row (perturbation).
         description: |

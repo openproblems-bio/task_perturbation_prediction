@@ -3,6 +3,7 @@ functionality:
   name: scape
   info:
     label: ScAPE
+    rank: 16
     summary: Neural network model for drug effect prediction
     description: |
       ScAPE is utilises a neural network (NN) model to estimate drug effects on gene expression in
