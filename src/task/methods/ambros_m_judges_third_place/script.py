@@ -27,9 +27,9 @@ pd.set_option("min_rows", 6)
 
 ## VIASH START
 par = dict(
-    de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
+    de_train = "resources/neurips-2023-data/de_train.parquet",
     id_map = "resources/neurips-2023-data/id_map.csv",
-    output_path = "output.parquet",
+    output = "output.parquet",
 )
 ## VIASH END
 
@@ -73,8 +73,8 @@ def t_score_to_de(t_score):
 
 ## Loading data
 
-de_train = pd.read_parquet(par['de_train_path'])
-id_map = pd.read_csv(par['id_map_path'], index_col = 0)
+de_train = pd.read_parquet(par['de_train'])
+id_map = pd.read_csv(par['id_map'], index_col = 0)
 # display(id_map)
 
 # 18211 genes
@@ -98,7 +98,7 @@ train_cell_types = de_train.query("sm_name == 'Vorinostat'").cell_type.sort_valu
 # The other 2 cell types: ['B cells', 'Myeloid cells']
 test_cell_types = [ct for ct in cell_types if ct not in train_cell_types]
         
-with zipfile.ZipFile(par['train_obs_zip_path']) as z:
+with zipfile.ZipFile(par['train_obs_zip']) as z:
     with z.open('train_obs.csv') as f:
         adata_obs = pd.read_csv(f)
 
@@ -523,4 +523,4 @@ def submit(output_path):
     submission.to_csv(output_path)        
 
 predictors = [fit_predict_py_boost] 
-submit(par[output_path])
+submit(par[output])
