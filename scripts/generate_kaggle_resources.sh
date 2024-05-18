@@ -19,8 +19,17 @@ viash run src/task/process_dataset/convert_kaggle_h5ad_to_parquet/config.vsh.yam
   --input_train "$OUT/2023-09-12_de_by_cell_type_train.h5ad" \
   --input_test "$OUT/2023-09-12_de_by_cell_type_test.h5ad" \
   --output_train "$OUT/de_train.parquet" \
+  --output_train_h5ad "$OUT/de_train.h5ad" \
   --output_test "$OUT/de_test.parquet" \
-  --output_id_map "$OUT/id_map.csv"
+  --output_test_h5ad "$OUT/de_test.h5ad" \
+  --output_id_map "$OUT/id_map.csv" \
+  --dataset_id neurips-2023-kaggle \
+  --dataset_name "NeurIPS2023 scPerturb DGE (Kaggle)" \
+  --dataset_summary 'Original Kaggle dataset' \
+  --dataset_description 'Original Kaggle dataset' \
+  --dataset_url TBD \
+  --dataset_reference TBD \
+  --dataset_organism homo_sapiens
 
 echo ">> Run method"
 viash run src/task/control_methods/sample/config.vsh.yaml -- \
@@ -32,8 +41,18 @@ viash run src/task/control_methods/sample/config.vsh.yaml -- \
 echo ">> Run metric"
 viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.parquet" \
-  --de_test "$OUT/de_test.parquet" \
+  --method_id "sample" \
+  --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"
+
+cat > "$OUT/state.yaml" <<'EOF'
+id: neurips-2023-kaggle
+de_train: !file de_train.parquet
+de_test: !file de_test.parquet
+de_train_h5ad: !file de_train.h5ad
+de_test_h5ad: !file de_test.h5ad
+id_map: !file id_map.csv
+EOF
 
 echo ">> Uploading results to S3"
 aws s3 sync --profile op2 \

@@ -10,14 +10,8 @@ OUT=resources/neurips-2023-data
 if [[ ! -f "$IN/sc_counts.h5ad" ]]; then
   echo ">> Downloading 'sc_counts.h5ad'"
   aws s3 cp --no-sign-request \
-    s3://openproblems-bio/public/neurips-2023-competition/sc_counts.h5ad \
-    "$IN/sc_counts.h5ad"
-fi
-if [[ ! -f "$IN/lincs_id_compound_mapping.parquet" ]]; then
-  echo ">> Downloading 'lincs_id_compound_mapping.parquet'"
-  aws s3 cp --no-sign-request \
-    s3://saturn-kaggle-datasets/open-problems-single-cell-perturbations-optional/lincs_id_compound_mapping.parquet \
-    "$IN/lincs_id_compound_mapping.parquet"
+    s3://openproblems-bio/public/neurips-2023-competition/sc_counts_reannotated_with_counts.h5ad \
+    "$IN/sc_counts_reannotated_with_counts.h5ad"
 fi
 
 echo ">> Running 'process_dataset' workflow"
@@ -26,8 +20,7 @@ nextflow run \
   -profile docker \
   -resume \
   --id neurips-2023-data \
-  --sc_counts "$IN/sc_counts.h5ad" \
-  --lincs_id_compound_mapping "$IN/lincs_id_compound_mapping.parquet" \
+  --sc_counts "$IN/sc_counts_reannotated_with_counts.h5ad" \
   --dataset_id "neurips-2023-data" \
   --dataset_name "NeurIPS2023 scPerturb DGE" \
   --dataset_url "TBD" \
@@ -48,7 +41,8 @@ viash run src/task/control_methods/sample/config.vsh.yaml -- \
 echo ">> Run metric"
 viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.parquet" \
-  --de_test "$OUT/de_test.parquet" \
+  --method_id "sample" \
+  --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"
 
 echo ">> Uploading results to S3"

@@ -19,7 +19,11 @@ workflow run_wf {
     mean_across_compounds,
     sample,
     zeros,
-    random_forest
+    random_forest,
+    first_place,
+    third_place,
+    jn_ap_op2,
+    scape
   ]
 
   // construct list of metrics
@@ -38,11 +42,16 @@ workflow run_wf {
       [id, state + ["_meta": [join_id: id]]]
     }
 
-    // read the dataset info
-    | map { id, state ->
-      def dataset_info = readYaml(state.dataset_info)
-      [id, state + [dataset_info: dataset_info]]
-    }
+    // extract the dataset metadata
+    | extract_metadata.run(
+      key: "dataset_uns",
+      fromState: [input: "de_train_h5ad"],
+      toState: { id, output, state ->
+        state + [
+          dataset_info: readYaml(output.output).uns
+        ]
+      }
+    )
 
   /***************************
    * RUN METHODS AND METRICS *
@@ -82,7 +91,11 @@ workflow run_wf {
           method_id: comp.config.functionality.name,
           method_output: output.output
         ]
-      }
+      },
+      
+      auto: [
+        publish: "state"
+      ]
     )
 
     // run all metrics
@@ -93,7 +106,8 @@ workflow run_wf {
       },
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: [
-        de_test: "de_test",
+        de_test_h5ad: "de_test_h5ad",
+        method_id: "method_id",
         prediction: "method_output",
       ],
       // use 'toState' to publish that component's outputs to the overall state
@@ -125,6 +139,7 @@ workflow run_wf {
 
     // extract the scores
     | extract_metadata.run(
+      key: "score_uns",
       fromState: [input: "metric_output"],
       toState: { id, output, state ->
         state + [
