@@ -73,7 +73,6 @@ functionality:
     - name: control_methods/mean_outcome
     - name: control_methods/mean_across_celltypes
     - name: control_methods/mean_across_compounds
-    - name: methods/random_forest
     - name: methods/nn_retraining_with_pseudolabels
     - name: methods/scape
     - name: methods/jn_ap_op2
