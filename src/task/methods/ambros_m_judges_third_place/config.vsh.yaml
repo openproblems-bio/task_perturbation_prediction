@@ -19,10 +19,10 @@ functionality:
       scores in cross-validation and the leaderboard.
     documentation_url: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458661
     repository_url: https://github.com/Ambros-M/Single-Cell-Perturbations-2023
-arguments:
-  - type: file
-    name: --train_obs_zip
-    default: "resources/neurips-2023-kaggle/train_obs.csv.zip"
+  arguments:
+    - type: file
+      name: --train_obs_zip
+      default: "resources/neurips-2023-kaggle/train_obs.csv.zip"
   resources:
     - type: python_script
       path: script.py
