@@ -1,31 +1,31 @@
 import torch
 import torch.nn as nn
 import torch.optim
- 
+import os
+from sklearn.cluster import KMeans
+import copy
+from torch.nn.utils import clip_grad_norm_
+from tqdm import tqdm
+import pickle
 
 ## VIASH START
 par = {
-  "de_train": "resources/neurips-2023-kaggle/de_train.parquet",
-  "de_test": "resources/neurips-2023-kaggle/de_test.parquet",
-  "id_map": "resources/neurips-2023-kaggle/id_map.csv",
+  "de_train": "resources/neurips-2023-data/de_train.parquet",
+  "de_test": "resources/neurips-2023-data/de_test.parquet",
+  "id_map": "resources/neurips-2023-data/id_map.csv",
   "output": "output.parquet",
+}
+meta = {
+    "resources_dir": "src/task/methods/lb2",
 }
 ## VIASH END
 
 import sys
 sys.path.append(meta['resources_dir'])
 
-import sys
-
 from utils import *
-from sklearn.cluster import KMeans
-import copy
-from torch.nn.utils import clip_grad_norm_
-from tqdm import tqdm
-import pickle
-import argparse
 from models import CustomTransformer_mean_std, CustomTransformer_mean  # Can be changed to other models in models.py
-import os
+
 
 
 def train_epoch(model, dataloader, optimizer, criterion, device='cpu'):
@@ -75,17 +75,16 @@ def validate_sampling_strategy(sampling_strategy):
 
 
 def train_func(X_train, Y_reduced, X_val, Y_val, n_components, num_epochs, batch_size, label_reducer, scaler,
-               d_model=128, early_stopping=5000, device='cpu', mean_std=
-               'mean_std'):
+               d_model=128, early_stopping=5000, device='cpu', mean_std='mean_std'):
     best_mrrmse = float('inf')
     best_model = None
     best_val_loss = float('inf')
     best_epoch = 0
     if mean_std == 'mean_std':
-        model = CustomTransformer_mean_std(num_features=X_train.shape[1], num_labels=n_components, d_model=d_model).to(
+        model = CustomTransformer_mean_std(num_features=X_train.shape[1], num_targets=Y_reduced.shape[1], num_labels=n_components, d_model=d_model).to(
             device)
     elif mean_std == 'mean':
-        model = CustomTransformer_mean(num_features=X_train.shape[1], num_labels=n_components, d_model=d_model).to(
+        model = CustomTransformer_mean(num_features=X_train.shape[1], num_targets=Y_reduced.shape[1], num_labels=n_components, d_model=d_model).to(
             device)
 
     dataset = TensorDataset(torch.tensor(X_train, dtype=torch.float32).to(device),
@@ -96,7 +95,7 @@ def train_func(X_train, Y_reduced, X_val, Y_val, n_components, num_epochs, batch
                                                   Y_val,
                                                   dtype=torch.float32).to(device)),
                                 batch_size=batch_size, shuffle=False)
-    if n_components < 18211:
+    if n_components < X_train.shape[1]:
         lr = 1e-3
 
     else:
@@ -255,7 +254,7 @@ def train_non_k_means_strategy(n_components_list, d_models_list, one_hot_encode_
                        f'{output_folder}/transformer_model_{n_components}_{d_model}.pt')
 
 
-def main1(sampling_strategy = "k-means", output_folder = 'trained_models_kmeans_mean_std'):
+def main1(sampling_strategy = "k-means", output_folder = 'trained_models_kmeans_mean_std', n_components_list = None):
     # # Set up command-line argument parser
     # parser = argparse.ArgumentParser(description="Your script description here.")
     # parser.add_argument('--config', type=str, help="Path to the YAML config file.", default='config_train.yaml')
@@ -283,7 +282,6 @@ def main1(sampling_strategy = "k-means", output_folder = 'trained_models_kmeans_
     # num_epochs = config.get('num_epochs', 20000)
     # early_stopping = config.get('early_stopping', 5000)
 
-    n_components_list = [18211]
     d_models_list = [128]  # embedding dimensions for the transformer models
     batch_size = 32
     data_file = par['de_train']
@@ -322,8 +320,6 @@ def main1(sampling_strategy = "k-means", output_folder = 'trained_models_kmeans_
 
 
 import copy
-
-import argparse
 
 @torch.no_grad()
 def predict_test(data, models, n_components_list, d_list, batch_size, device='cpu', outname='traineddata'):
@@ -364,7 +360,7 @@ def predict_test(data, models, n_components_list, d_list, batch_size, device='cp
     return
 
 
-def main2( models_dir = 'trained_models_nonkmeans'):
+def main2(models_dir = 'trained_models_nonkmeans', n_components_list = None):
     # Set up command-line argument parser
     # parser = argparse.ArgumentParser(description="Your script description here.")
     # parser.add_argument('--config', type=str, help="Path to the YAML config file.", default='config_train.yaml')
@@ -387,13 +383,11 @@ def main2( models_dir = 'trained_models_nonkmeans'):
     # device = config.get('device', 'cpu')
     # models_dir = config.get('dir', 'model_1_mean_std_only')
 
-    n_components_list = [18211]
     d_models_list = [128]  # embedding dimensions for the transformer models
     batch_size = 32
     data_file =  par["de_train"]
     id_map_file =  par["id_map"]
     device = 'cpu'
-
 
     # Prepare augmented data
     if 'std' in models_dir:
@@ -414,9 +408,8 @@ def main2( models_dir = 'trained_models_nonkmeans'):
     for n_components in n_components_list:
         for d_model in d_models_list:
             label_reducer, scaler, transformer_model = load_transformer_model(n_components,
-                                                                              input_features=
-                                                                              one_hot_encode_features.shape[
-                                                                                  1],
+                                                                              input_features=one_hot_encode_features.shape[1],
+                                                                              num_targets=targets.shape[1],
                                                                               d_model=d_model,
                                                                               models_folder=f'{models_dir}',
                                                                               device=device,mean_std=mean_std)
@@ -509,14 +502,20 @@ def main3():
 
 use_pre = False
 if use_pre == False:
-    main1("k-means", "trained_models_kmeans_mean_std") #df1
-    main2("trained_models_kmeans_mean_std") 
-    main1("k-means", "trained_models_kmeans_mean_std_trueuncommon") #df2
-    main2("trained_models_kmeans_mean_std_trueuncommon") 
-    main1("k-means", "trained_models_kmeans_mean") #df3
-    main2("trained_models_kmeans_mean")
-    main1("random", "trained_models_nonkmeans_mean") #df4
-    main2("trained_models_nonkmeans_mean")
+    import pandas as pd
+    de_train = pd.read_parquet(par["de_train"])
+    de_train.drop(columns=["cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"], inplace=True)
+    n_components_list = [de_train.shape[1]]
+    del de_train
+
+    main1("k-means", "trained_models_kmeans_mean_std", n_components_list) #df1
+    main2("trained_models_kmeans_mean_std", n_components_list) 
+    main1("k-means", "trained_models_kmeans_mean_std_trueuncommon", n_components_list) #df2
+    main2("trained_models_kmeans_mean_std_trueuncommon", n_components_list) 
+    main1("k-means", "trained_models_kmeans_mean", n_components_list) #df3
+    main2("trained_models_kmeans_mean", n_components_list)
+    main1("random", "trained_models_nonkmeans_mean", n_components_list) #df4
+    main2("trained_models_nonkmeans_mean", n_components_list)
     main3()
 else:
     main3()

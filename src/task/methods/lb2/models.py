@@ -36,9 +36,9 @@ class CustomTransformer(nn.Module):
 
 
 class CustomTransformer_mean_std(nn.Module):  # mean + std
-    def __init__(self, num_features, num_labels, d_model=128, num_heads=8, num_layers=6, dropout=0.3):
+    def __init__(self, num_features, num_targets, num_labels, d_model=128, num_heads=8, num_layers=6, dropout=0.3):
         super(CustomTransformer_mean_std, self).__init__()
-        self.num_target_encodings = 18211 * 4
+        self.num_target_encodings = num_targets * 4
         self.num_sparse_features = num_features - self.num_target_encodings
 
         self.sparse_feature_embedding = nn.Linear(self.num_sparse_features, d_model)
@@ -71,9 +71,9 @@ class CustomTransformer_mean_std(nn.Module):  # mean + std
         return x
 
 class CustomTransformer_mean(nn.Module):  # mean + std
-    def __init__(self, num_features, num_labels, d_model=128, num_heads=8, num_layers=6, dropout=0.3):
+    def __init__(self, num_features, num_targets, num_labels, d_model=128, num_heads=8, num_layers=6, dropout=0.3):
         super(CustomTransformer_mean, self).__init__()
-        self.num_target_encodings = 18211 * 2
+        self.num_target_encodings = num_targets * 2
         self.num_sparse_features = num_features - self.num_target_encodings
 
         self.sparse_feature_embedding = nn.Linear(self.num_sparse_features, d_model)
