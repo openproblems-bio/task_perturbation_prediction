@@ -16,12 +16,6 @@ functionality:
     repository_url: https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main
 
   arguments:
-    - name: "--extra_output"
-      type: "file"
-      default: "outputs/$id/extra_output"
-      description: "Extra output directory. Will contain folders `prepared_data`, `trained_models`, and `logs`."
-      direction: output
-      required: false
     - name: --epochs
       type: integer
       default: 250
