@@ -25,14 +25,13 @@ warnings.simplefilter('ignore', FutureWarning)
 np.set_printoptions(linewidth=195, edgeitems=3)
 pd.set_option("min_rows", 6)
 
-## Viash start
-
+## VIASH START
 par = dict(
-    de_train_path = "/home/jovyan/git-repos/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/de_train.parquet",
-    train_obs_zip_path = "/home/jovyan/git-repos/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/train_obs.csv.zip",
-    id_map_path = "/home/jovyan/git-repos/task-dge-perturbation-prediction/resources/neurips-2023-kaggle/id_map.csv",
+    de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
+    id_map = "resources/neurips-2023-data/id_map.csv",
     output_path = "output.parquet",
 )
+## VIASH END
 
 
 ## Utility functions
