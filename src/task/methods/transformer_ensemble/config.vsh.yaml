@@ -41,10 +41,6 @@ platforms:
     setup:
       - type: python
         packages:
-          - anndata
-          - torch==2.1.0
-          - torchvision==0.16.0
-          - torchaudio==2.1.0
           - fastparquet
           - pyarrow
           - pandas~=2.0.3
@@ -56,4 +52,4 @@ platforms:
           - lion-pytorch
   - type: nextflow
     directives:
-      label: [ midtime, highmem, highcpu ]
+      label: [ midtime, highmem, highcpu, gpu ]
