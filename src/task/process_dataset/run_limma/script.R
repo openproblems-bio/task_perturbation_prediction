@@ -8,7 +8,7 @@ library(future)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk.h5ad",
+  input = "resources/neurips-2023-data/pseudobulk_cleaned.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
   # for public data
@@ -16,9 +16,9 @@ par <- list(
   input_splits = c("train", "control", "public_test"),
   output_splits = c("train", "control", "public_test")
   # # for private data
-  # output = "resources/neurips-2023-data/de_test.h5ad",
-  # input_splits = c("train", "control", "public_test", "private_test"),
-  # output_splits = c("private_test")
+#   output = "resources/neurips-2023-data/de_test.h5ad",
+#   input_splits = c("train", "control", "public_test", "private_test"),
+#   output_splits = c("private_test")
 )
 meta <- list(
   cpus = 10
@@ -57,7 +57,7 @@ d0 <- Matrix::t(adata[obs_filt, ]$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
-design_matrix <- model.matrix(~ 0 + sm_cell_type + donor_id, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
+design_matrix <- model.matrix(~ 0 + sm_cell_type + plate_name, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
 
 # Voom transformation and lmFit
 v <- limma::voom(d0, design = design_matrix, plot = FALSE)
@@ -107,7 +107,8 @@ de_df2 <- de_df %>%
     # readjust p-values for multiple testing
     adj.P.Value = p.adjust(P.Value, method = "BH"),
     # compute sign log10 p-values
-    sign_log10_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, P.Value)),
+    sign_log10_nonadj_pval = sign(logFC) * -log10(ifelse(P.Value == 0, .Machine$double.eps, P.Value)),
+    sign_log10_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, adj.P.Value)),
     is_de = P.Value < par$de_sig_cutoff,
     is_de_adj = adj.P.Val < par$de_sig_cutoff
   ) %>%
@@ -117,7 +118,7 @@ rownames(new_obs) <- paste0(new_obs$cell_type, ", ", new_obs$sm_name)
 new_var <- data.frame(row.names = levels(de_df2$gene))
 
 # create layers from de_df
-layer_names <- c("is_de", "is_de_adj", "logFC", "P.Value", "adj.P.Value", "sign_log10_pval")
+layer_names <- c("is_de", "is_de_adj", "logFC", "P.Value", "adj.P.Value", "sign_log10_pval", "sign_log10_nonadj_pval")
 layers <- map(setNames(layer_names, layer_names), function(layer_name) {
   de_df2 %>%
     select(gene, row_i, !!layer_name) %>%
@@ -127,11 +128,16 @@ layers <- map(setNames(layer_names, layer_names), function(layer_name) {
     as.matrix()
 })
 
+# copy uns
+uns_names <- c("dataset_id", "dataset_name", "dataset_url", "dataset_reference", "dataset_summary", "dataset_description", "dataset_organism")
+new_uns <- adata$uns[uns_names]
+
 # create anndata object
 output <- anndata::AnnData(
   obs = new_obs,
   var = new_var,
-  layers = setNames(layers, layer_names)
+  layers = setNames(layers, layer_names),
+  uns = new_uns
 )
 
 # write to file
