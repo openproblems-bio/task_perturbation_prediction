@@ -1,4 +1,4 @@
-import sys, os, fastparquet, anndata, shutil, argparse
+import sys, os, fastparquet, anndata, shutil
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -19,14 +19,15 @@ par = dict(
 	id_map = "resources/neurips-2023-data/id_map.csv",
 	output = "output/neurips-2023-data/output_rf.parquet",
 	output_model = None,
-	# cell = "NK cells",
-	cell = "lol",
+	cell = "NK cells",
 	epochs = 2,
 	epochs_enhanced = 2,
 	n_genes = 10,
 	n_genes_enhanced = 10,
-	n_drugs = 5,
-	min_n_top_drugs = 0,
+	# n_drugs = 5,
+	n_drugs = None,
+	# min_n_top_drugs = 0,
+	min_n_top_drugs = 50,
 )
 meta = dict(
 	temp_dir = "/tmp"
@@ -47,12 +48,23 @@ if not par["output_model"]:
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
 
-# if held-out cell type is not in the data, select a random cell type
-if par["cell"] not in df_de.index.get_level_values("cell_type").unique():
-	print(f"Input cell type ({par['cell']}) not found in the data.")
-	par["cell"] = np.random.choice(df_de.index.get_level_values("cell_type").unique())
-	print(f"Randomly selecting a cell type from the data: {par['cell']}.")
+def confirm_celltype(cell, sm_name=None):
+	global df_de
+	cells = None
+	if sm_name is None:
+		cells = df_de.index.get_level_values("cell_type").unique()
+	else:
+		cells = df_de[df_de.index.get_level_values('sm_name')==sm_name].index.get_level_values("cell_type").unique()
 
+	if cell in cells:
+		return cell
+	else:
+		print(f"Input cell type ({cell}) not found in the" + f"drug {sm_name}" if sm_name is not None else "" + " data.")
+		cell_ = np.random.choice(cells)
+		print(f"Randomly selecting a cell type from the data: {cell_}.")
+		return cell_
+
+par["cell"] = confirm_celltype(par["cell"])
 
 # load logfc
 adata = anndata.read_h5ad(par["de_train_h5ad"])
@@ -85,8 +97,9 @@ base_predictions = []
 for i, d in enumerate(drugs):
 	print(i, d)
 	scm = scape.model.create_default_model(par["n_genes"], df_de, df_lfc)
+	cell = confirm_celltype(par["cell"], d)
 	result = scm.train(
-		val_cells=[par["cell"]], 
+		val_cells=[cell], 
 		val_drugs=[d],
 		input_columns=top_genes,
 		epochs=par["epochs"],
@@ -133,8 +146,9 @@ enhanced_predictions = []
 for i, d in enumerate(top_drugs):
 		print(i, d)
 		scm = scape.model.create_default_model(par["n_genes_enhanced"], df_de_c, df_lfc_c)
+		cell = confirm_celltype(par["cell"], d)
 		result = scm.train(
-				val_cells=[par["cell"]], 
+				val_cells=[cell], 
 				val_drugs=[d],
 				input_columns=top_genes,
 				epochs=par["epochs_enhanced"],
