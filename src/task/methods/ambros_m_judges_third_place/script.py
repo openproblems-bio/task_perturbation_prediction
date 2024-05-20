@@ -26,6 +26,8 @@ meta = dict(
 sys.path.append(meta["resources_dir"])
 from helper import fit_predict_py_boost, fit_predict_ridge_recommender, fit_predict_knn_recommender, fit_predict_extratrees, cross_val_log10pvalue, mean_rowwise_rmse
 
+
+
 ## Loading data
 
 de_train = pd.read_parquet(par['de_train'])
@@ -78,11 +80,12 @@ cell_type_ratio /= cell_type_ratio.sum()
 removed_compounds = []
 
 # Cross-validate the four models (saving the oof predictions)
+
 predictors = [fit_predict_py_boost, fit_predict_ridge_recommender, fit_predict_knn_recommender, fit_predict_extratrees] 
 de_oof_dict, mrrmse_noise_list = {}, []
 for predictor in predictors:
     print(fit_predict_py_boost)
-    cross_val_log10pvalue(predictor)
+    cross_val_log10pvalue(train_sm_names, genes, cell_type_ratio, train_cell_types, de_train, de_train_indexed, de_oof_dict, mrrmse_noise_list, removed_compounds, predictor)
 
 # Ensemble the oof predictions
 de_oof = sum(de_oof_dict.values()) / len(de_oof_dict)
@@ -96,7 +99,7 @@ predictors = [fit_predict_py_boost]
 de_tr = de_train_indexed.query("~sm_name.isin(@removed_compounds)")
 
 # Fit all models and average their predictions
-pred_list = [fit_predict(de_tr, id_map) for fit_predict in predictors]
+pred_list = [fit_predict(de_tr, id_map, train_sm_names, genes, cell_type_ratio) for fit_predict in predictors]
 de_pred = sum(pred_list) / len(pred_list)
 
 # Test for missing values

@@ -46,8 +46,7 @@ def t_score_to_de(t_score):
     p_value = p_value.clip(1e-180, None)
     return - np.log10(p_value) * np.sign(t_score)
 
-
-def fit_predict_py_boost(de_tr, id_map):
+def fit_predict_py_boost(de_tr, id_map, train_sm_names, genes, cell_type_ratio):
     """Fit the model and predict.
     
     Parameters:
@@ -84,20 +83,20 @@ def fit_predict_py_boost(de_tr, id_map):
     # sm_mean has shape (143, 18211) and contains the means of 3 or 4 values each
     sm_mean = Yt_train_red[X_train_categorical['cell_type'].isin(cell_types_tr)].groupby('sm_name').mean()
     X_train_encoded = np.hstack([ct_mean.reindex(X_train_categorical['cell_type']).values,
-                                 sm_mean.reindex(X_train_categorical['sm_name']).values])
+                                sm_mean.reindex(X_train_categorical['sm_name']).values])
     X_test_encoded =  np.hstack([ct_mean.reindex(id_map['cell_type']).values,
-                                 sm_mean.reindex(id_map['sm_name']).values])
+                                sm_mean.reindex(id_map['sm_name']).values])
     
     # Fit the model
     model = GradientBoosting('mse',
-                             ntrees=ntrees, 
-                             lr=lr, 
-                             max_depth=max_depth,
-                             subsample=subsample,
-                             colsample=colsample,
-                             min_data_in_leaf=1,
-                             min_gain_to_split=0,
-                             verbose=10000)           
+                            ntrees=ntrees, 
+                            lr=lr, 
+                            max_depth=max_depth,
+                            subsample=subsample,
+                            colsample=colsample,
+                            min_data_in_leaf=1,
+                            min_gain_to_split=0,
+                            verbose=10000)           
     model.fit(X_train_encoded, Yt_train_red)
 
     # Predict
@@ -107,7 +106,7 @@ def fit_predict_py_boost(de_tr, id_map):
 
     return de_pred
 
-def fit_predict_ridge_recommender(de_tr, id_map):
+def fit_predict_ridge_recommender(de_tr, id_map, train_sm_names, genes, cell_type_ratio):
     """Fit the model and predict.
     
     Parameters:
@@ -116,8 +115,8 @@ def fit_predict_ridge_recommender(de_tr, id_map):
     
     Returns:
     de_pred: prediction dataframes of shape (n_samples, 18211), double index matching id_map
-             If a compound occurs in id_map but not in de_tr, the corresponding row
-             of de_pred will be filled with np.nan
+            If a compound occurs in id_map but not in de_tr, the corresponding row
+            of de_pred will be filled with np.nan
     """
     # Hyperparameters
     n_components_in, n_components_out = 7, 70
@@ -181,7 +180,7 @@ def fit_predict_ridge_recommender(de_tr, id_map):
     de_pred = pd.DataFrame(Y_test_pred, index=pd.MultiIndex.from_frame(id_map), columns=genes)
     return de_pred
 
-def fit_predict_knn_recommender(de_tr, id_map):
+def fit_predict_knn_recommender(de_tr, id_map, train_sm_names, genes, cell_type_ratio):
     """Fit the model and predict.
     
     Parameters:
@@ -190,8 +189,8 @@ def fit_predict_knn_recommender(de_tr, id_map):
     
     Returns:
     de_pred: prediction dataframes of shape (n_samples, 18211), double index matching id_map
-             If a compound occurs in id_map but not in de_tr, the corresponding row
-             of de_pred will be filled with np.nan
+            If a compound occurs in id_map but not in de_tr, the corresponding row
+            of de_pred will be filled with np.nan
     """
     # Hyperparameters
     n_components_in, n_components_out = 7, 70
@@ -226,12 +225,12 @@ def fit_predict_knn_recommender(de_tr, id_map):
 
     for sm1, sm2 in combinations(train_sm_names, 2):
         a = (2 * Yt_train_red.query("sm_name == @sm1").reset_index('sm_name', drop=True)
-             + Yt_train_red.query("sm_name == @sm2").reset_index('sm_name', drop=True)) / 3
+            + Yt_train_red.query("sm_name == @sm2").reset_index('sm_name', drop=True)) / 3
         a.dropna(inplace=True)
         a = pd.concat([a], keys=[f"{sm1}+{sm2} a"], names=['sm_name'])
         a = a.reorder_levels(['cell_type', 'sm_name'])
         b = (Yt_train_red.query("sm_name == @sm1").reset_index('sm_name', drop=True)
-             + 2 * Yt_train_red.query("sm_name == @sm2").reset_index('sm_name', drop=True)) / 3
+            + 2 * Yt_train_red.query("sm_name == @sm2").reset_index('sm_name', drop=True)) / 3
         b.dropna(inplace=True)
         b = pd.concat([b], keys=[f"{sm1}+{sm2} b"], names=['sm_name'])
         b = b.reorder_levels(['cell_type', 'sm_name'])
@@ -288,7 +287,7 @@ def fit_predict_knn_recommender(de_tr, id_map):
     de_pred = pd.DataFrame(Y_test_pred, index=pd.MultiIndex.from_frame(id_map), columns=genes)
     return de_pred
 
-def fit_predict_extratrees(de_tr, id_map):
+def fit_predict_extratrees(de_tr, id_map, train_sm_names, genes, cell_type_ratio):
     """Fit the model and predict.
     
     Parameters:
@@ -297,8 +296,8 @@ def fit_predict_extratrees(de_tr, id_map):
     
     Returns:
     de_pred: prediction dataframes of shape (n_samples, 18211), double index matching id_map
-             If a compound occurs in id_map but not in de_tr, the corresponding row
-             of de_pred will be filled with np.nan
+            If a compound occurs in id_map but not in de_tr, the corresponding row
+            of de_pred will be filled with np.nan
     """
     # Hyperparameters
     n_components_in, n_components_out = 35, 200
@@ -323,12 +322,12 @@ def fit_predict_extratrees(de_tr, id_map):
     ct_mean = Yt_train_red_in[X_train_categorical['sm_name'].isin(train_sm_names)].groupby('cell_type').mean() # shape (6, n_components), means of 13 or 14 values each
     sm_mean = Yt_train_red_in[X_train_categorical['cell_type'].isin(cell_types_tr)].groupby('sm_name').mean() # shape (143, n_components), means of 3 or 4 values each
     X_train_encoded = np.hstack([ct_mean.reindex(X_train_categorical['cell_type']).values,
-                                 sm_mean.reindex(X_train_categorical['sm_name']).values,
-                                 sm_mean.reindex(X_train_categorical['sm_name']).values * np.sqrt(cell_type_ratio.reindex(X_train_categorical['cell_type']).values.reshape(-1, 1))
+                                sm_mean.reindex(X_train_categorical['sm_name']).values,
+                                sm_mean.reindex(X_train_categorical['sm_name']).values * np.sqrt(cell_type_ratio.reindex(X_train_categorical['cell_type']).values.reshape(-1, 1))
                                 ])
     X_test_encoded =  np.hstack([ct_mean.reindex(id_map['cell_type']).values,
-                                 sm_mean.reindex(id_map['sm_name']).values,
-                                 sm_mean.reindex(id_map['sm_name']).values * np.sqrt(cell_type_ratio.reindex(id_map['cell_type']).values.reshape(-1, 1))
+                                sm_mean.reindex(id_map['sm_name']).values,
+                                sm_mean.reindex(id_map['sm_name']).values * np.sqrt(cell_type_ratio.reindex(id_map['cell_type']).values.reshape(-1, 1))
                                 ])
 
     # Train the model
@@ -345,8 +344,7 @@ def fit_predict_extratrees(de_tr, id_map):
     de_pred = de_pred.reindex(id_map)
     return de_pred
 
-
-def cross_val_log10pvalue(predictor, noise=0):
+def cross_val_log10pvalue(train_sm_names, genes, cell_type_ratio, train_cell_types, de_train, de_train_indexed, de_oof_dict, mrrmse_noise_list, removed_compounds, predictor, noise=0):
     """Cross-validate a machine-learning model
     
     Parameters:
@@ -388,7 +386,7 @@ def cross_val_log10pvalue(predictor, noise=0):
             de_tr = t_score_to_de(de_to_t_score(de_tr) + rng.normal(scale=noise, size=de_tr.shape))
     
         # Fit the model and predict validation log10pvalues
-        de_pred = predictor(de_tr, de_va.index.to_frame())
+        de_pred = predictor(de_tr, de_va.index.to_frame(), train_sm_names, genes, cell_type_ratio)
         
         # Update out-of-fold predictions and score
         de_oof_list.append(de_pred)
