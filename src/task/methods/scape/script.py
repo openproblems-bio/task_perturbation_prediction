@@ -1,4 +1,4 @@
-import sys, os, fastparquet, anndata, shutil
+import sys, os, fastparquet, anndata, shutil, argparse
 print(sys.executable)
 print(os.getcwd())
 import pandas as pd
@@ -19,7 +19,8 @@ par = dict(
 	id_map = "resources/neurips-2023-data/id_map.csv",
 	output = "output/neurips-2023-data/output_rf.parquet",
 	output_model = None,
-	cell = "NK cells",
+	# cell = "NK cells",
+	cell = "lol",
 	epochs = 2,
 	epochs_enhanced = 2,
 	n_genes = 10,
@@ -47,6 +48,7 @@ if not par["output_model"]:
 
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
+
 
 def confirm_celltype(df_de, cell, sm_name=None):
 	cells = None
