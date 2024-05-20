@@ -46,7 +46,6 @@ functionality:
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
-    run_args: [--gpus all]
     setup:
       - type: python
         packages:
