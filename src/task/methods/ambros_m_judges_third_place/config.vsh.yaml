@@ -33,43 +33,13 @@ functionality:
       path: script.py
 platforms:
   - type: docker
-    image: nvcr.io/nvidia/pytorch:22.12-py3
+    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+    run_args: [--gpus all]
     setup:
-      # dependencies required by openproblems
-      - type: apt
-        packages:
-          - procps
       - type: python
         packages:
-          - anndata~=0.8.0
-          - scanpy
-          - pyyaml
-          - requests
-          - jsonschema
-      # component dependencies
-      - type: python
-        packages:
-          - array-api-compat==1.4
-          - async-generator==1.10
           - colorama
-          - cupy-cuda11x
-          - exceptiongroup==1.2.0
-          - fastrlock==0.8.2
-          - llvmlite==0.39.1
-          - natsort==8.4.0
-          - pandas==2.0.0
-          - plotly==5.18.0
           - py-boost==0.4.3
-          - pyarrow==14.0.1
-          - pynndescent==0.5.11
-          - scanpy==1.9.6
-          - scipy==1.10.1
-          - session-info==1.0.0
-          - stdlib-list==0.10.0
-          - tenacity==8.2.3
-          - treelite==3.9.1
-          - treelite-runtime==3.9.1
-          - umap-learn==0.5.5
   - type: native
   - type: nextflow
     directives:
