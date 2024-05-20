@@ -16,6 +16,7 @@ par = dict(
     de_train = "resources/neurips-2023-data/de_train.parquet",
     id_map = "resources/neurips-2023-data/id_map.csv",
     train_obs_zip = "resources/neurips-2023-kaggle/train_obs.csv.zip",
+    predictor_names = ["py_boost"],
     output = "output.parquet",
 )
 meta = dict(
@@ -24,12 +25,9 @@ meta = dict(
 ## VIASH END
 
 sys.path.append(meta["resources_dir"])
-from helper import fit_predict_py_boost, fit_predict_ridge_recommender, fit_predict_knn_recommender, fit_predict_extratrees, cross_val_log10pvalue, mean_rowwise_rmse
+from helper import predictors
 
-
-
-## Loading data
-
+print("Loading data\n", flush=True)
 de_train = pd.read_parquet(par['de_train'])
 id_map = pd.read_csv(par['id_map'], index_col = 0)
 # display(id_map)
@@ -79,27 +77,12 @@ cell_type_ratio /= cell_type_ratio.sum()
 #                      'Scriptaid', 'UNII-BXU45ZH6LI', 'Vorinostat']
 removed_compounds = []
 
-# Cross-validate the four models (saving the oof predictions)
-
-predictors = [fit_predict_py_boost, fit_predict_ridge_recommender, fit_predict_knn_recommender, fit_predict_extratrees] 
-de_oof_dict, mrrmse_noise_list = {}, []
-for predictor in predictors:
-    print(fit_predict_py_boost)
-    cross_val_log10pvalue(train_sm_names, genes, cell_type_ratio, train_cell_types, de_train, de_train_indexed, de_oof_dict, mrrmse_noise_list, removed_compounds, predictor)
-
-# Ensemble the oof predictions
-de_oof = sum(de_oof_dict.values()) / len(de_oof_dict)
-de_true = de_train_indexed.reindex_like(de_oof)
-print(f"# Ensemble MRRMSE: {mean_rowwise_rmse(de_true, de_oof):.3f}")
-
-# select predictors
-predictors = [fit_predict_py_boost]
-
 # Drop outliers from training
 de_tr = de_train_indexed.query("~sm_name.isin(@removed_compounds)")
 
 # Fit all models and average their predictions
-pred_list = [fit_predict(de_tr, id_map, train_sm_names, genes, cell_type_ratio) for fit_predict in predictors]
+pred_list = [predictors[p](de_tr, id_map, train_sm_names, genes, cell_type_ratio)
+             for p in par["predictor_names"]]
 de_pred = sum(pred_list) / len(pred_list)
 
 # Test for missing values
@@ -113,4 +96,6 @@ submission = pd.DataFrame(de_pred.values, columns=genes, index=id_map.index)
 print(f'Variance of submission: {submission.values.var():.2f},   min = {submission.values.min():.2f}, max = {submission.values.max():.2f}')
 
 # Write the files
+# submission.reset_index(drop=True, inplace=True)
+submission.reset_index(names="id", inplace=True)
 submission.to_parquet(par["output"])

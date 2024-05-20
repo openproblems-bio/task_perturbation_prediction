@@ -25,6 +25,14 @@ functionality:
       name: --train_obs_zip
       default: "resources/neurips-2023-kaggle/train_obs.csv.zip"
       example: "resources/neurips-2023-kaggle/train_obs.csv.zip"
+    - type: string
+      name: --predictor_names
+      multiple: true
+      choices: [py_boost, ridge_recommender, knn_recommender, predict_extratrees]
+      default: [py_boost]
+      description: Which predictor(s) to use.
+      info:
+        test_default: [knn_recommender]
   resources:
     - type: python_script
       path: script.py

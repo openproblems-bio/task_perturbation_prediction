@@ -408,3 +408,10 @@ def cross_val_log10pvalue(train_sm_names, genes, cell_type_ratio, train_cell_typ
     mrrmse_noise_list.append((name, noise, mrrmse))
     print()
     return
+
+predictors = {
+    "py_boost": fit_predict_py_boost,
+    "ridge_recommender": fit_predict_ridge_recommender,
+    "knn_recommender": fit_predict_knn_recommender,
+    "extratrees": fit_predict_extratrees,
+}
