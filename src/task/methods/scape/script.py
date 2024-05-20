@@ -96,7 +96,7 @@ base_predictions = []
 for i, d in enumerate(drugs):
 	print(i, d)
 	scm = scape.model.create_default_model(par["n_genes"], df_de, df_lfc)
-	cell = confirm_celltype(par["cell"], d)
+	cell = confirm_celltype(df_de, par["cell"], d)
 	result = scm.train(
 		val_cells=[cell], 
 		val_drugs=[d],
