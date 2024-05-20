@@ -52,4 +52,4 @@ platforms:
           - lion-pytorch
   - type: nextflow
     directives:
-      label: [ midtime, highmem, highcpu, gpu ]
+      label: [ midtime, veryhighmem, highcpu, gpu ]
