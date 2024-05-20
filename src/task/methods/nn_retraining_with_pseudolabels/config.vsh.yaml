@@ -4,7 +4,7 @@ functionality:
   name: nn_retraining_with_pseudolabels
   info:
     label: NN retraining with pseudolabels
-    rank: 3
+    neurips2023_rank: 3
     summary: Neural networks with pseudolabeling and ensemble modelling
     description: |
       The prediction system is two staged, so I publish two versions of the notebook.

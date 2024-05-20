@@ -4,7 +4,7 @@ functionality:
   name: transformer_ensemble
   info:
     label: Transformer Ensemble
-    rank: 2
+    neurips2023_rank: 2
     summary: An ensemble of four transformer models, trained on diverse feature sets, with a cluster-based sampling strategy and robust validation for optimal performance.
     description: |
       This method employs an ensemble of four transformer models,
