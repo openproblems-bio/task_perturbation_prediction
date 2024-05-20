@@ -1,23 +1,26 @@
 __merge__: ../../api/comp_method.yaml
 
 functionality:
-  name: ambros_m_judges_third_place
+  name: pyboost
   info:
-    label: An ensemble model developed by AmbrosM
+    label: Py-boost
     rank: 18
-    summary: "Ensemble comprised of four models: a py-boost model, an ExtraTrees model, and two recommender system models."
+    summary: "Py-boost predicting t-scores"
     description: |
-      An ensemble of four models for single-cell perturbation prediction: 
-      Py-boost (a ridge regression-based recommender system),
-      ExtraTrees (a decision tree ensemble with target-encoded features),
-      a k-nearest neighbors recommender system, and a ridge regression model. 
+      An ensemble of four models was considered: 
+      
+      * Py-boost (a ridge regression-based recommender system)
+      * ExtraTrees (a decision tree ensemble with target-encoded features)
+      * a k-nearest neighbors recommender system
+      * a ridge regression model
+
       Each model offered distinct strengths and weaknesses: ExtraTrees and
       knn were unable to extrapolate beyond the training data, while ridge
       regression provided extrapolation capability. To enhance model performance,
       data augmentation techniques were used, including averaging differential
       expressions for compound mixtures and adjusting cell counts to reduce biases.
-      The final ensemble combined predictions from all models, achieving competitive
-      scores in cross-validation and the leaderboard.
+
+      In the end, only the py-boost model is used for generating predictions.
     documentation_url: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458661
     repository_url: https://github.com/Ambros-M/Single-Cell-Perturbations-2023
   arguments:
