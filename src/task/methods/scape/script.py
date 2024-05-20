@@ -63,7 +63,7 @@ def confirm_celltype(df_de, cell, sm_name=None):
 		print(f"Randomly selecting a cell type from the data: {cell_}.")
 		return cell_
 
-par["cell"] = confirm_celltype(par["cell"])
+par["cell"] = confirm_celltype(df_de, par["cell"])
 
 # load logfc
 adata = anndata.read_h5ad(par["de_train_h5ad"])
