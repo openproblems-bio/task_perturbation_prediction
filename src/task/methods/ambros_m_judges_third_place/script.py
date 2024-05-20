@@ -24,6 +24,7 @@ pd.set_option("min_rows", 6)
 par = dict(
     de_train = "resources/neurips-2023-data/de_train.parquet",
     id_map = "resources/neurips-2023-data/id_map.csv",
+    train_obs_zip = "resources/neurips-2023-kaggle/train_obs.csv.zip",
     output = "output.parquet",
 )
 ## VIASH END
@@ -92,7 +93,7 @@ cell_types = ['NK cells', 'T cells CD4+', 'T cells CD8+', 'T regulatory cells', 
 train_cell_types = de_train.query("sm_name == 'Vorinostat'").cell_type.sort_values().values
 # The other 2 cell types: ['B cells', 'Myeloid cells']
 test_cell_types = [ct for ct in cell_types if ct not in train_cell_types]
-        
+
 with zipfile.ZipFile(par['train_obs_zip']) as z:
     with z.open('train_obs.csv') as f:
         adata_obs = pd.read_csv(f)
@@ -493,29 +494,25 @@ de_oof = sum(de_oof_dict.values()) / len(de_oof_dict)
 de_true = de_train_indexed.reindex_like(de_oof)
 print(f"# Ensemble MRRMSE: {mean_rowwise_rmse(de_true, de_oof):.3f}")
 
-def submit(output_path):
-    """Refit the selected models and write the submission file."""
-    
-    # Drop outliers from training
-    de_tr = de_train_indexed.query("~sm_name.isin(@removed_compounds)")
-    
-    # Fit all models and average their predictions
-    pred_list = [fit_predict(de_tr, id_map) for fit_predict in predictors]
-    de_pred = sum(pred_list) / len(pred_list)
-        
-    # Test for missing values
-    if de_pred.isna().any().any():
-        print("Warning: This submission contains missing values. "
-              "Don't submit it!")
-        
-    # Create the submission dataframe
-    submission = pd.DataFrame(de_pred.values, columns=genes, index=id_map.index)
-    #display(submission)
-    print(f'Variance of submission: {submission.values.var():.2f},   min = {submission.values.min():.2f}, max = {submission.values.max():.2f}')
+# select predictors
+predictors = [fit_predict_py_boost]
 
-    # Write the files
-    # de_oof.to_csv('de_oof.csv')
-    submission.to_csv(output_path)        
+# Drop outliers from training
+de_tr = de_train_indexed.query("~sm_name.isin(@removed_compounds)")
 
-predictors = [fit_predict_py_boost] 
-submit(par['output'])
+# Fit all models and average their predictions
+pred_list = [fit_predict(de_tr, id_map) for fit_predict in predictors]
+de_pred = sum(pred_list) / len(pred_list)
+
+# Test for missing values
+if de_pred.isna().any().any():
+    print("Warning: This submission contains missing values. "
+            "Don't submit it!")
+
+# Create the submission dataframe
+submission = pd.DataFrame(de_pred.values, columns=genes, index=id_map.index)
+
+print(f'Variance of submission: {submission.values.var():.2f},   min = {submission.values.min():.2f}, max = {submission.values.max():.2f}')
+
+# Write the files
+submission.to_parquet(par["output"])
