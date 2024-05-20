@@ -2,14 +2,10 @@ import numpy as np
 import pandas as pd
 from colorama import Fore, Style
 from scipy.stats import norm
-from sklearn.linear_model import Ridge
 from sklearn.decomposition import PCA
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.ensemble import ExtraTreesRegressor
 from itertools import combinations
-from py_boost import GradientBoosting
 
 def mean_rowwise_rmse(y_true, y_pred):
     """Competition metric
@@ -58,6 +54,8 @@ def fit_predict_py_boost(de_tr, id_map, train_sm_names, genes, cell_type_ratio):
     
     https://pypi.org/project/py-boost/
     """
+    from py_boost import GradientBoosting
+
     # Hyperparameters
     n_components = 50
     max_depth = 10
@@ -118,6 +116,7 @@ def fit_predict_ridge_recommender(de_tr, id_map, train_sm_names, genes, cell_typ
             If a compound occurs in id_map but not in de_tr, the corresponding row
             of de_pred will be filled with np.nan
     """
+    from sklearn.linear_model import Ridge
     # Hyperparameters
     n_components_in, n_components_out = 7, 70
     factor_ct = 0.34
@@ -192,6 +191,8 @@ def fit_predict_knn_recommender(de_tr, id_map, train_sm_names, genes, cell_type_
             If a compound occurs in id_map but not in de_tr, the corresponding row
             of de_pred will be filled with np.nan
     """
+    from sklearn.neighbors import KNeighborsRegressor
+
     # Hyperparameters
     n_components_in, n_components_out = 7, 70
     factor_ct = 0.32
@@ -299,6 +300,8 @@ def fit_predict_extratrees(de_tr, id_map, train_sm_names, genes, cell_type_ratio
             If a compound occurs in id_map but not in de_tr, the corresponding row
             of de_pred will be filled with np.nan
     """
+    from sklearn.ensemble import ExtraTreesRegressor
+
     # Hyperparameters
     n_components_in, n_components_out = 35, 200
     max_features = 0.2
