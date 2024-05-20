@@ -48,8 +48,7 @@ if not par["output_model"]:
 # load log pvals
 df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
 
-def confirm_celltype(cell, sm_name=None):
-	global df_de
+def confirm_celltype(df_de, cell, sm_name=None):
 	cells = None
 	if sm_name is None:
 		cells = df_de.index.get_level_values("cell_type").unique()
