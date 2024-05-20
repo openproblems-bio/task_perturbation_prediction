@@ -39,6 +39,7 @@ platforms:
           - anndata==0.10.3
           - array-api-compat==1.4
           - async-generator==1.10
+          - colorama
           - cupy-cuda11x==12.2.0
           - exceptiongroup==1.2.0
           - fastrlock==0.8.2
