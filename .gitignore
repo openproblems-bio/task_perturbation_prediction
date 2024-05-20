@@ -7,3 +7,4 @@ target
 .DS_Store
 output
 trace-*
+.ipynb_checkpoints
