@@ -3,12 +3,8 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from colorama import Fore, Back, Style
-from numpy.polynomial import Polynomial
-from scipy.stats import norm, skew, kurtosis
-import scipy
+from colorama import Fore, Style
+from scipy.stats import norm
 from sklearn.linear_model import Ridge
 from sklearn.decomposition import PCA
 from sklearn.pipeline import make_pipeline
@@ -16,7 +12,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import ExtraTreesRegressor
 from itertools import combinations
-import cupy as cp
 from py_boost import GradientBoosting
 import warnings
 import zipfile
