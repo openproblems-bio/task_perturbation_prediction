@@ -4,6 +4,7 @@ functionality:
   name: ambros_m_judges_third_place
   info:
     label: An ensemble model developed by AmbrosM
+    rank: 18
     summary: "Ensemble comprised of four models: a py-boost model, an ExtraTrees model, and two recommender system models."
     description: |
       An ensemble of four models for single-cell perturbation prediction: 
@@ -34,13 +35,24 @@ platforms:
   - type: docker
     image: nvcr.io/nvidia/pytorch:22.12-py3
     setup:
+      # dependencies required by openproblems
+      - type: apt
+        packages:
+          - procps
       - type: python
         packages:
-          - anndata
+          - anndata~=0.8.0
+          - scanpy
+          - pyyaml
+          - requests
+          - jsonschema
+      # component dependencies
+      - type: python
+        packages:
           - array-api-compat==1.4
           - async-generator==1.10
           - colorama
-          - cupy-cuda118
+          - cupy-cuda11x
           - exceptiongroup==1.2.0
           - fastrlock==0.8.2
           - llvmlite==0.39.1
