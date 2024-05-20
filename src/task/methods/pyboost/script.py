@@ -20,7 +20,7 @@ par = dict(
     output = "output.parquet",
 )
 meta = dict(
-    resources_dir = "src/task/methods/ambros_m_judges_third_place"
+    resources_dir = "src/task/methods/pyboost"
 )
 ## VIASH END
 
