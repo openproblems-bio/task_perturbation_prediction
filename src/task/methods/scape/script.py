@@ -145,7 +145,7 @@ enhanced_predictions = []
 for i, d in enumerate(top_drugs):
 		print(i, d)
 		scm = scape.model.create_default_model(par["n_genes_enhanced"], df_de_c, df_lfc_c)
-		cell = confirm_celltype(par["cell"], d)
+		cell = confirm_celltype(df_de, par["cell"], d)
 		result = scm.train(
 				val_cells=[cell], 
 				val_drugs=[d],
