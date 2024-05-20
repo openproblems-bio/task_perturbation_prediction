@@ -23,6 +23,10 @@ functionality:
     - type: file
       name: --train_obs_zip
       default: "resources/neurips-2023-kaggle/train_obs.csv.zip"
+      example: "resources/neurips-2023-kaggle/train_obs.csv.zip"
+  test_resources:
+    - path: /resources/neurips-2023-kaggle/train_obs.csv.zip
+      dest: resources/neurips-2023-kaggle/train_obs.csv.zip
   resources:
     - type: python_script
       path: script.py

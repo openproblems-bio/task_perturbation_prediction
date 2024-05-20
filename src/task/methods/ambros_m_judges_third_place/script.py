@@ -523,4 +523,4 @@ def submit(output_path):
     submission.to_csv(output_path)        
 
 predictors = [fit_predict_py_boost] 
-submit(par[output])
+submit(par['output'])
