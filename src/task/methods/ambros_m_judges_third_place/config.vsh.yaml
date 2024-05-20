@@ -25,12 +25,13 @@ functionality:
       name: --train_obs_zip
       default: "resources/neurips-2023-kaggle/train_obs.csv.zip"
       example: "resources/neurips-2023-kaggle/train_obs.csv.zip"
-  test_resources:
-    - path: /resources/neurips-2023-kaggle/train_obs.csv.zip
-      dest: resources/neurips-2023-kaggle/train_obs.csv.zip
   resources:
     - type: python_script
       path: script.py
+    - path: helper.py
+  test_resources:
+    - path: /resources/neurips-2023-kaggle/train_obs.csv.zip
+      dest: resources/neurips-2023-kaggle/train_obs.csv.zip
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
