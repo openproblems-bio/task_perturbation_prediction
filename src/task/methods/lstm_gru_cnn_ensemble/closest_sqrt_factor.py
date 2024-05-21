@@ -29,3 +29,14 @@ def closest_sqrt_factor(x):
         if x % factor == 0:
             other_factor = x // factor
             return min(factor, other_factor, key=lambda f: abs(f - math.sqrt(x)))
+
+def find_balanced_divisors(n, threshold=50):
+    current_n = n
+    while True:
+        divisor1 = closest_sqrt_factor(current_n)
+        divisor2 = current_n//divisor1
+        if divisor2 != (current_n/divisor1):
+            raise ValueError(f"divisor2 is not an integer: {divisor2}")
+        if abs(divisor1 - divisor2) < threshold:
+            return current_n, [min(divisor1, divisor2), max(divisor1, divisor2)]
+        current_n += 1
