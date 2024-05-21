@@ -38,5 +38,5 @@ def find_balanced_divisors(n, threshold=50):
         if divisor2 != (current_n/divisor1):
             raise ValueError(f"divisor2 is not an integer: {divisor2}")
         if abs(divisor1 - divisor2) < threshold:
-            return current_n, [min(divisor1, divisor2), max(divisor1, divisor2)]
+            return current_n, [divisor1, divisor2]
         current_n += 1
