@@ -21,11 +21,11 @@ de_test_X = de_test.layers["sign_log10_pval"]
 prediction = prediction[genes]
 
 print("Clipping values", flush=True)
-threshold_05 = np.log10(0.05)
+threshold_05 = -np.log10(0.05)
 de_test_X_clipped_05 = np.clip(de_test_X, -threshold_05, threshold_05)
 prediction_clipped_05 = np.clip(prediction.values, -threshold_05, threshold_05)
 
-threshold_01 = np.log10(0.01)
+threshold_01 = -np.log10(0.01)
 de_test_X_clipped_01 = np.clip(de_test_X, -threshold_01, threshold_01)
 prediction_clipped_01 = np.clip(prediction.values, -threshold_01, threshold_01)
 
