@@ -114,9 +114,7 @@ for argset in argsets:
         )
 
     print(f"> Predict model", flush=True)
-    unseen_data = torch.tensor(one_hot_test, dtype=torch.float32).to(
-        device
-    )  # Replace X_unseen with your new data
+    unseen_data = torch.tensor(one_hot_test, dtype=torch.float32).to(device)
 
     num_features = one_hot_encode_features.shape[1]
     num_targets = targets.shape[1]
@@ -129,8 +127,7 @@ for argset in argsets:
     num_samples = len(unseen_data)
     transformed_data = []
     for i in range(0, num_samples, batch_size):
-        batch_unseen_data = unseen_data[i : i + batch_size]
-        batch_result = transformer_model(batch_unseen_data)
+        batch_result = transformer_model(unseen_data[i : i + batch_size])
         transformed_data.append(batch_result)
     transformed_data = torch.vstack(transformed_data)
     if scaler:

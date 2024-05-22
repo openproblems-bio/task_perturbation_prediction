@@ -8,27 +8,6 @@ from sklearn.preprocessing import StandardScaler
 import pickle
 from models import *
 
-def load_transformer_model(n_components, input_features, num_targets, d_model, models_folder='trained_models', device='cuda',
-                           mean_std='mean_std'):
-    # transformer_model = CustomTransformer(num_features=input_features, num_labels=n_components, d_model=d_model).to(
-    #     device)
-    if mean_std == 'mean_std':
-        transformer_model = CustomTransformer_mean_std(num_features=input_features, num_targets=num_targets, num_labels=n_components,
-                                                       d_model=d_model).to(
-            device)
-    else:
-        transformer_model = CustomTransformer_mean(num_features=input_features, num_targets=num_targets, num_labels=n_components,
-                                                   d_model=d_model).to(
-            device)
-    # transformer_model = CustomDeeperModel(input_features, d_model, n_components).to(device)
-    transformer_model.load_state_dict(transformer_model[2].state_dict())
-    transformer_model.eval()
-    if n_components == input_features:
-        return None, None, transformer_model
-    label_reducer = pickle.load(open(f'{models_folder}/label_reducer_{n_components}_{d_model}.pkl', 'rb'))
-    scaler = pickle.load(open(f'{models_folder}/scaler_{n_components}_{d_model}.pkl', 'rb'))
-    return label_reducer, scaler, transformer_model
-
 
 def reduce_labels(Y, n_components):
     if n_components == Y.shape[1]:

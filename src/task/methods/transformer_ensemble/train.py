@@ -154,7 +154,6 @@ def train_transformer_k_means_learning(X, Y, n_components, num_epochs, batch_siz
     for cluster_id in range(num_clusters):
         # Find the indices of data points in the current cluster
         cluster_indices = np.where(clusters == cluster_id)[0]
-        print(len(cluster_indices))
         if len(cluster_indices) >= 20:
             # Split the data points in the cluster into training and validation
             train_indices, val_indices = train_test_split(cluster_indices, test_size=validation_percentage,
