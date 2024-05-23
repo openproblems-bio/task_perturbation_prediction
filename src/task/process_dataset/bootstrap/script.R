@@ -14,9 +14,9 @@ par <- list(
   output_train_h5ad = "output/de_train_filtered_*.h5ad",
   output_test_parquet = "output/de_test_filtered_*.parquet",
   output_test_h5ad = "output/de_test_filtered_*.h5ad",
-  bootstrap_num_replicates = 10,
-  bootstrap_obs_fraction = .95,
-  bootstrap_var_fraction = .95
+  num_replicates = 10,
+  obs_fraction = .95,
+  var_fraction = .95
 )
 ## VIASH END
 
@@ -26,18 +26,18 @@ train_h5ad <- anndata::read_h5ad(par$train_h5ad)
 test_parquet <- arrow::read_parquet(par$test_parquet)
 test_h5ad <- anndata::read_h5ad(par$test_h5ad)
 
-for (i in seq_len(par$bootstrap_num_replicates)) {
+for (i in seq_len(par$num_replicates)) {
   cat("Generating replicate", i, "\n", sep = "")
 
   # sample indices
   obs_ix <- sample.int(
     nrow(train_h5ad),
-    round(nrow(train_parquet) * par$bootstrap_obs_fraction, 0),
+    round(nrow(train_parquet) * par$obs_fraction, 0),
     replace = FALSE
   )
   var_ix <- sample.int(
     ncol(train_h5ad),
-    round(ncol(train_parquet) * par$bootstrap_var_fraction, 0),
+    round(ncol(train_parquet) * par$var_fraction, 0),
     replace = FALSE
   )
 
