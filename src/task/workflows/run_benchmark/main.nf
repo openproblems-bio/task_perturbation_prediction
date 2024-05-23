@@ -64,6 +64,37 @@ workflow run_wf {
    ***************************/
   score_ch = dataset_ch
 
+    // Bootstrap the dataset (if necessary)
+    | bootstrap.run(
+      runIf: { id, state -> state.bootstrap_fraction },
+
+      fromState: [
+        input_parquet: "de_train",
+        input_h5ad: "de_train_h5ad",
+        bootstrap_num_replicates: "bootstrap_num_replicates",
+        bootstrap_sample_fraction: "bootstrap_sample_fraction"
+      ],
+
+      toState: [
+        de_train: "output_parquet",
+        de_train_h5ad: "output_h5ad"
+      ]
+    )
+
+    // flatten bootstraps (if necessary)
+    | flatMap { id, state -> 
+      if (!state.bootstrap_fraction) {
+        return [[id, state]]
+      }
+
+      [state.de_train, state.de_train_h5ad]
+        .transpose()
+        .withIndex()
+        .collect{ el, idx ->
+          [id + "_bootstrap" + idx, state + [de_train: el[0], de_train_h5ad: el[1]]]
+        }
+    }
+
     // run all methods
     | runEach(
       components: methods,
