@@ -8,8 +8,11 @@ id: dge_perturbation_task
 input_states: s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/**/state.yaml
 output_state: "state.yaml"
 publish_dir: "$publish_dir"
-bootstrap_num_replicates: 10
-bootstrap_sample_fraction: 0.95
+settings:
+  bootstrap: true
+  bootstrap_num_replicates: 10
+  bootstrap_obs_fraction: 0.99
+  bootstrap_var_fraction: 0.99
 HERE
 
 tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \

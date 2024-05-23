@@ -46,12 +46,16 @@ for (i in seq_len(par$bootstrap_num_replicates)) {
   output_test_h5ad <- test_h5ad[, var_ix]
 
   # subset parquet
-  parquet_cols <- c(
+  train_parquet_cols <- c(
     intersect(colnames(train_parquet), colnames(train_h5ad$obs)),
     colnames(output_train_h5ad)
   )
-  output_train_parquet <- train_parquet[obs_ix, parquet_cols]
-  output_test_parquet <- test_parquet[, parquet_cols]
+  test_parquet_cols <- c(
+    intersect(colnames(test_parquet), colnames(test_h5ad$obs)),
+    colnames(output_test_h5ad)
+  )
+  output_train_parquet <- train_parquet[obs_ix, train_parquet_cols]
+  output_test_parquet <- test_parquet[, test_parquet_cols]
 
   # write output
   output_train_parquet_path <- gsub("\\*", i, par$output_train_parquet)

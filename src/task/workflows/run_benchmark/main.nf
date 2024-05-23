@@ -1,3 +1,31 @@
+// construct list of methods
+methods = [
+  ground_truth,
+  mean_outcome,
+  mean_across_celltypes,
+  mean_across_compounds,
+  sample,
+  zeros,
+  lstm_gru_cnn_ensemble,
+  nn_retraining_with_pseudolabels,
+  jn_ap_op2,
+  scape,
+  transformer_ensemble,
+  pyboost.run(
+    args: [
+      train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
+    ]
+  )
+]
+
+// construct list of metrics
+metrics = [
+  mean_rowwise_error,
+  mean_cosine_sim,
+  mean_correlation
+]
+
+
 workflow auto {
   findStates(params, meta.config)
     | meta.workflow.run(
@@ -10,33 +38,6 @@ workflow run_wf {
   input_ch
 
   main:
-
-  // construct list of methods
-  methods = [
-    ground_truth,
-    mean_outcome,
-    mean_across_celltypes,
-    mean_across_compounds,
-    sample,
-    zeros,
-    lstm_gru_cnn_ensemble,
-    nn_retraining_with_pseudolabels,
-    jn_ap_op2,
-    scape,
-    transformer_ensemble,
-    pyboost.run(
-      args: [
-        train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
-      ]
-    )
-  ]
-
-  // construct list of metrics
-  metrics = [
-    mean_rowwise_error,
-    mean_cosine_sim,
-    mean_correlation
-  ]
 
   /* **************************
    * PREPARE DATASET AND TASK *
@@ -80,7 +81,7 @@ workflow run_wf {
 
       toState: [
         de_train: "output_train_parquet",
-        de_train_h5ad: "output_train_h5ad"
+        de_train_h5ad: "output_train_h5ad",
         de_test: "output_test_parquet",
         de_test_h5ad: "output_test_h5ad"
       ]
