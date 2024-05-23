@@ -28,28 +28,39 @@ test_h5ad <- anndata::read_h5ad(par$test_h5ad)
 
 for (i in seq_len(par$bootstrap_num_replicates)) {
   cat("Generating replicate", i, "\n", sep = "")
+
+  # sample indices
   obs_ix <- sample.int(
-    nrow(train_parquet),
+    nrow(train_h5ad),
     round(nrow(train_parquet) * par$bootstrap_obs_fraction, 0),
     replace = FALSE
   )
   var_ix <- sample.int(
-    ncol(train_parquet),
+    ncol(train_h5ad),
     round(ncol(train_parquet) * par$bootstrap_var_fraction, 0),
     replace = FALSE
   )
-  output_train_parquet <- train_parquet[obs_ix, var_ix]
+
+  # subset h5ad
   output_train_h5ad <- train_h5ad[obs_ix, var_ix]
-  output_test_parquet <- test_parquet[, var_ix]
   output_test_h5ad <- test_h5ad[, var_ix]
 
+  # subset parquet
+  parquet_cols <- c(
+    intersect(colnames(train_parquet), colnames(train_h5ad$obs)),
+    colnames(output_train_h5ad)
+  )
+  output_train_parquet <- train_parquet[obs_ix, parquet_cols]
+  output_test_parquet <- test_parquet[, parquet_cols]
+
+  # write output
   output_train_parquet_path <- gsub("\\*", i, par$output_train_parquet)
   output_train_h5ad_path <- gsub("\\*", i, par$output_train_h5ad)
   output_test_parquet_path <- gsub("\\*", i, par$output_test_parquet)
   output_test_h5ad_path <- gsub("\\*", i, par$output_test_h5ad)
 
-  zzz <- output$write_h5ad(output_train_h5ad_path, compression = "gzip")
+  zzz <- output_train_h5ad$write_h5ad(output_train_h5ad_path, compression = "gzip")
   arrow::write_parquet(output_train_parquet, output_train_parquet_path)
-  zzz <- output$write_h5ad(output_test_h5ad_path, compression = "gzip")
+  zzz <- output_test_h5ad$write_h5ad(output_test_h5ad_path, compression = "gzip")
   arrow::write_parquet(output_test_parquet, output_test_parquet_path)
 }

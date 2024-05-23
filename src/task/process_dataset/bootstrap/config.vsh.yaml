@@ -38,21 +38,25 @@ functionality:
           required: true
           direction: output
           multiple: true
+          example: [de_train_bootstrap.parquet]
         - name: --output_train_h5ad
           type: file
           required: true
           direction: output
           multiple: true
+          example: [de_train_bootstrap.h5ad]
         - name: --output_test_parquet
           type: file
           required: true
           direction: output
           multiple: true
+          example: [de_test_bootstrap.parquet]
         - name: --output_test_h5ad
           type: file
           required: true
           direction: output
           multiple: true
+          example: [de_test_bootstrap.h5ad]
     - name: Arguments
       arguments:
         - name: --bootstrap_num_replicates
