@@ -17,7 +17,7 @@ settings:
 HERE
 
 tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
-  --revision main_build \
+  --revision add_bootstrapping_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \
   --workspace 53907369739130 \
