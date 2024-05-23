@@ -66,32 +66,45 @@ workflow run_wf {
 
     // Bootstrap the dataset (if necessary)
     | bootstrap.run(
-      runIf: { id, state -> state.bootstrap_fraction },
+      runIf: { id, state -> state.bootstrap },
 
       fromState: [
-        input_parquet: "de_train",
-        input_h5ad: "de_train_h5ad",
+        train_parquet: "de_train",
+        train_h5ad: "de_train_h5ad",
+        test_parquet: "de_test",
+        test_h5ad: "de_test_h5ad",
         bootstrap_num_replicates: "bootstrap_num_replicates",
-        bootstrap_sample_fraction: "bootstrap_sample_fraction"
+        bootstrap_obs_fraction: "bootstrap_obs_fraction",
+        bootstrap_var_fraction: "bootstrap_var_fraction"
       ],
 
       toState: [
-        de_train: "output_parquet",
-        de_train_h5ad: "output_h5ad"
+        de_train: "output_train_parquet",
+        de_train_h5ad: "output_train_h5ad"
+        de_test: "output_test_parquet",
+        de_test_h5ad: "output_test_h5ad"
       ]
     )
 
     // flatten bootstraps (if necessary)
     | flatMap { id, state -> 
-      if (!state.bootstrap_fraction) {
+      if (!state.bootstrap) {
         return [[id, state]]
       }
 
-      [state.de_train, state.de_train_h5ad]
+      return [state.de_train, state.de_train_h5ad, state.de_test, state.de_test_h5ad]
         .transpose()
         .withIndex()
         .collect{ el, idx ->
-          [id + "_bootstrap" + idx, state + [de_train: el[0], de_train_h5ad: el[1]]]
+          [
+            id + "_bootstrap" + idx,
+            state + [
+              de_train: el[0],
+              de_train_h5ad: el[1],
+              de_test: el[2],
+              de_test_h5ad: el[3]
+            ]
+          ]
         }
     }
 
