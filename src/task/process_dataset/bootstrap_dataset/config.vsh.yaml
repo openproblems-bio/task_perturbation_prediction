@@ -1,0 +1,53 @@
+functionality:
+  name: bootstrap_dataset
+  namespace: process_dataset
+  info:
+    type: process_dataset
+    type_info:
+      label: Bootstrap
+      summary: A component to generate bootstraps of a dataset.
+      description: |
+        This component generates bootstraps of a dataset. It takes as input a parquet file and an h5ad file and generates bootstraps of the dataset. The bootstraps are saved as parquet and h5ad files.
+  arguments:
+    - name: --input_parquet
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-kaggle/de_train.parquet
+    - name: --input_h5ad
+      type: file
+      required: true
+      direction: input
+      example: resources/neurips-2023-kaggle/de_train.h5ad
+    - name: --output_parquet
+      type: file
+      required: true
+      direction: output
+      multiple: true
+    - name: --output_h5ad
+      type: file
+      required: true
+      direction: output
+      multiple: true
+    - name: --bootstrap_num_replicates
+      type: integer
+      required: true
+      example: 10
+      description: Number of bootstraps to generate.
+    - name: --bootstrap_sample_fraction
+      type: double
+      required: true
+      example: 0.95
+      description: Fraction of the dataset to include in each bootstrap.
+  resources:
+    - type: r_script
+      path: script.R
+platforms:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
+    setup:
+      - type: r
+        cran: [ dplyr, tidyr, purrr, tibble, arrow ]
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, lowcpu ]
