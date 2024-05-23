@@ -207,9 +207,7 @@ workflow stability_wf {
     
     | bootstrap.run(
       fromState: [
-        train_parquet: "de_train",
         train_h5ad: "de_train_h5ad",
-        test_parquet: "de_test",
         test_h5ad: "de_test_h5ad",
         num_replicates: "stability_num_replicates",
         obs_fraction: "stability_obs_fraction",
@@ -217,16 +215,14 @@ workflow stability_wf {
       ],
 
       toState: [
-        de_train: "output_train_parquet",
         de_train_h5ad: "output_train_h5ad",
-        de_test: "output_test_parquet",
         de_test_h5ad: "output_test_h5ad"
       ]
     )
 
-    // flatten bootstraps (if necessary)
+    // flatten bootstraps
     | flatMap { id, state -> 
-      return [state.de_train, state.de_train_h5ad, state.de_test, state.de_test_h5ad]
+      return [state.de_train_h5ad, state.de_test_h5ad]
         .transpose()
         .withIndex()
         .collect{ el, idx ->
@@ -234,14 +230,24 @@ workflow stability_wf {
             id + "_bootstrap" + idx,
             state + [
               replicate: idx,
-              de_train: el[0],
-              de_train_h5ad: el[1],
-              de_test: el[2],
-              de_test_h5ad: el[3]
+              de_train_h5ad: el[0],
+              de_test_h5ad: el[1]
             ]
           ]
         }
     }
+
+    | convert_h5ad_to_parquet.run(
+      fromState: [
+        input_train: "de_train_h5ad",
+        input_test: "de_test_h5ad"
+      ],
+      toState: [
+        de_train: "output_train",
+        de_test: "output_test",
+        id_map: "output_id_map"
+      ]
+    )
 
     | benchmark_wf
 
