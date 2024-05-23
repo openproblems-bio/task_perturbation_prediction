@@ -5,7 +5,7 @@ import numpy as np
 ## VIASH START
 par = {
     "de_test_h5ad": "resources/neurips-2023-kaggle/de_test.h5ad",
-    "prediction": "resources/neurips-2023-kaggle/output_mean_compounds.parquet",
+    "prediction": "resources/neurips-2023-kaggle/prediction.parquet",
     "method_id": "foo",
     "output": "resources/neurips-2023-data/score.h5ad",
 }
@@ -27,8 +27,9 @@ for i in range(de_test_X.shape[0]):
     y_i = de_test_X[i,]
     y_hat_i = prediction.iloc[i]
 
-    r_i = y_i.rank()
-    r_hat_i = y_hat_i.rank()
+    # compute ranks
+    r_i = y_i.argsort().argsort()
+    r_hat_i = y_hat_i.argsort().argsort()
 
     pearson = np.corrcoef(y_i, y_hat_i)[0, 1]
     spearman = np.corrcoef(r_i, r_hat_i)[0, 1]
