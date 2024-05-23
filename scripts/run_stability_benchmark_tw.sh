@@ -8,6 +8,7 @@ id: dge_perturbation_task
 input_states: s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/**/state.yaml
 output_state: "state.yaml"
 publish_dir: "$publish_dir"
+rename_keys: "de_train:de_train,de_train_h5ad:de_train_h5ad,de_test:de_test,de_test_h5ad:de_test_h5ad,id_map:id_map"
 settings:
   stability: true
   stability_num_replicates: 10
