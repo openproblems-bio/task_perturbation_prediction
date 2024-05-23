@@ -8,13 +8,15 @@ library(purrr, warn.conflicts = FALSE)
 par <- list(
   train_parquet = "resources/neurips-2023-kaggle/de_train.parquet",
   train_h5ad = "resources/neurips-2023-kaggle/de_train.h5ad",
+  test_parquet = "resources/neurips-2023-kaggle/de_test.parquet",
+  test_h5ad = "resources/neurips-2023-kaggle/de_test.h5ad",
   output_train_parquet = "output/de_train_filtered_*.parquet",
   output_train_h5ad = "output/de_train_filtered_*.h5ad",
   output_test_parquet = "output/de_test_filtered_*.parquet",
   output_test_h5ad = "output/de_test_filtered_*.h5ad",
-  bootstrap_num_replicates = NULL,
-  bootstrap_obs_fraction = NULL,
-  bootstrap_var_fraction = NULL
+  bootstrap_num_replicates = 10,
+  bootstrap_obs_fraction = .95,
+  bootstrap_var_fraction = .95
 )
 ## VIASH END
 
@@ -23,11 +25,6 @@ train_parquet <- arrow::read_parquet(par$train_parquet)
 train_h5ad <- anndata::read_h5ad(par$train_h5ad)
 test_parquet <- arrow::read_parquet(par$test_parquet)
 test_h5ad <- anndata::read_h5ad(par$test_h5ad)
-
-# fill in defaults
-bootstrap_num_replicates <- par$bootstrap_num_replicates %||% 1
-bootstrap_obs_fraction <- par$bootstrap_obs_fraction %||% 1
-bootstrap_var_fraction <- par$bootstrap_var_fraction %||% 1
 
 for (i in seq_len(par$bootstrap_num_replicates)) {
   cat("Generating replicate", i, "\n", sep = "")
