@@ -9,11 +9,7 @@ input_states: s3://openproblems-bio/public/neurips-2023-competition/workflow-res
 output_state: "state.yaml"
 publish_dir: "$publish_dir"
 rename_keys: "de_train:de_train,de_train_h5ad:de_train_h5ad,de_test:de_test,de_test_h5ad:de_test_h5ad,id_map:id_map"
-settings:
-  stability: true
-  stability_num_replicates: 10
-  stability_obs_fraction: 0.99
-  stability_var_fraction: 0.99
+settings: '{"stability": true, "stability_obs_fraction": 0.99, "stability_var_fraction": 0.99}'
 HERE
 
 tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
