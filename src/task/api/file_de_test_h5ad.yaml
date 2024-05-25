@@ -100,3 +100,8 @@ info:
         description: The organism of the sample in the dataset.
         required: false
         multiple: true
+      - name: single_cell_obs
+        type: dataframe
+        description: |
+          A dataframe with the cell-level metadata.
+        required: true

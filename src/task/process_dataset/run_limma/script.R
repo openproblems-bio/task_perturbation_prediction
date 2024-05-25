@@ -49,15 +49,18 @@ limma_trafo <- function(value) {
   gsub("[^[:alnum:]]", "_", value)
 }
 
-obs_filt <- adata$obs$split %in% par$input_splits
+adata_filt <- adata[adata$obs$split %in% par$input_splits, ]
+
+new_single_cell_obs <- adata_filt$uns[["single_cell_obs"]] %>%
+  filter(split %in% par$input_splits)
 
 start_time <- Sys.time()
 
-d0 <- Matrix::t(adata[obs_filt, ]$X) %>%
+d0 <- Matrix::t(adata_filt$X) %>%
     edgeR::DGEList() %>%
     edgeR::calcNormFactors()
 
-design_matrix <- model.matrix(~ 0 + sm_cell_type + plate_name, adata[obs_filt, ]$obs %>% mutate_all(limma_trafo))
+design_matrix <- model.matrix(~ 0 + sm_cell_type + plate_name, adata_filt$obs %>% mutate_all(limma_trafo))
 
 # Voom transformation and lmFit
 v <- limma::voom(d0, design = design_matrix, plot = FALSE)
@@ -93,11 +96,8 @@ de_df <- future_map_dfr(
 )
 
 end_time <- Sys.time()
-full_duration <- end_time - start_time
-full_duration_seconds <- as.numeric(full_duration, units = "secs")
-full_minutes <- full_duration_seconds %/% 60
-full_seconds <- full_duration_seconds %% 60
-cat("Total limma runtime: ", full_minutes, " minutes, ", full_seconds, " seconds\n")
+cat("Total limma runtime:\n")
+print(difftime(end_time, start_time))
 
 # transform data
 de_df2 <- de_df %>%
@@ -109,7 +109,7 @@ de_df2 <- de_df %>%
     # compute sign log10 p-values
     sign_log10_pval = sign(logFC) * -log10(ifelse(P.Value == 0, .Machine$double.eps, P.Value)),
     sign_log10_adj_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, adj.P.Value)),
-    is_de = P.Value < par$de_sig_cutoff,
+    is_de = P.Value < par$de_sig_cutoff
   ) %>%
   as_tibble()
 
@@ -130,6 +130,8 @@ layers <- map(setNames(layer_names, layer_names), function(layer_name) {
 # copy uns
 uns_names <- c("dataset_id", "dataset_name", "dataset_url", "dataset_reference", "dataset_summary", "dataset_description", "dataset_organism")
 new_uns <- adata$uns[uns_names]
+
+new_uns[["single_cell_obs"]] <- new_single_cell_obs
 
 # create anndata object
 output <- anndata::AnnData(
