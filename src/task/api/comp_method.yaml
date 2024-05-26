@@ -20,6 +20,10 @@ functionality:
       __merge__: file_id_map.yaml
       required: true
       direction: input
+    - name: --layer
+      type: string
+      direction: input
+      default: sign_log10_pval
     - name: --output
       __merge__: file_prediction.yaml
       required: true
