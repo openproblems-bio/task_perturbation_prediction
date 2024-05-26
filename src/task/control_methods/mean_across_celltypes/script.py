@@ -4,11 +4,11 @@ import sys
 
 ## VIASH START
 par = {
-  "de_train": "resources/neurips-2023-data/de_train.parquet",
-  "de_test": "resources/neurips-2023-data/de_test.parquet",
+  "de_train_h5ad": "resources/neurips-2023-data/de_train.h5ad",
+  "de_test_h5ad": "resources/neurips-2023-data/de_test.h5ad",
   "layer": "sign_log10_pval",
   "id_map": "resources/neurips-2023-data/id_map.csv",
-  "output": "resources/neurips-2023-data/output_mean_celltypes.parquet",
+  "output": "resources/neurips-2023-data/output_mean.parquet",
 }
 ## VIASH END
 
@@ -24,5 +24,16 @@ de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
 mean_celltype = de_train.groupby("cell_type")[gene_names].mean()
 mean_celltype = mean_celltype.loc[id_map.cell_type]
 
-output = pd.DataFrame(mean_celltype.values, index=id_map["id"], columns=gene_names).reset_index()
-output.to_parquet(par["output"])
+# write output
+output = ad.AnnData(
+    layers={
+        "prediction": mean_celltype.values
+    },
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+output.write_h5ad(par["output"], compression="gzip")

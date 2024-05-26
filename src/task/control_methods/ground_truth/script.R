@@ -1,4 +1,3 @@
-requireNamespace("arrow", quietly = TRUE)
 requireNamespace("anndata", quietly = TRUE)
 library(dplyr, warn.conflicts = FALSE)
 
@@ -14,15 +13,19 @@ par <- list(
 
 # read data
 de_test_h5ad <- anndata::read_h5ad(par$de_test_h5ad)
-id_map <- read.csv(par$id_map)
 
 # remove unneeded columns
-output <- data.frame(
-  id = as.integer(id_map$id),
-  de_test_h5ad$layers[[par$layer]],
-  stringsAsFactors = FALSE,
-  check.names = FALSE
+output <- anndata::AnnData(
+  layers = list(
+    prediction = de_test_h5ad$layers[[par$layer]]
+  ),
+  obs = de_test_h5ad$obs[, c()],
+  var = de_test_h5ad$var[, c()],
+  uns = list(
+    dataset_id = de_test_h5ad$uns$dataset_id,
+    method_id = meta$functionality_name
+  )
 )
 
-# store output
-arrow::write_parquet(output, par$output)
+# write output
+output$write_h5ad(par$output, compression = "gzip")

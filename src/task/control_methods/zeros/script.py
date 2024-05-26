@@ -1,12 +1,14 @@
-import pandas as pd
 import anndata as ad
+import numpy as np
+import pandas as pd
 
 ## VIASH START
 par = {
-  "de_train": "resources/neurips-2023-data/de_train.parquet",
-  "de_test": "resources/neurips-2023-data/de_test.parquet",
+  "de_train_h5ad": "resources/neurips-2023-data/de_train.h5ad",
+  "de_test_h5ad": "resources/neurips-2023-data/de_test.h5ad",
+  "layer": "sign_log10_pval",
   "id_map": "resources/neurips-2023-data/id_map.csv",
-  "output": "resources/neurips-2023-data/output_baseline_zero.parquet",
+  "output": "resources/neurips-2023-data/output_mean.parquet",
 }
 ## VIASH END
 
@@ -14,6 +16,16 @@ de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
 id_map = pd.read_csv(par["id_map"])
 gene_names = list(de_train_h5ad.var_names)
 
-# create new pandas dataframe with columns "id" from id_map and gene_names for the rest. "id" fill from id_map and the rest set to zero
-output = pd.DataFrame(0, index=id_map["id"], columns=gene_names).reset_index()
-output.to_parquet(par["output"])
+prediction = np.zeros((id_map.shape[0], len(gene_names)))
+
+# write output
+output = ad.AnnData(
+    layers={"prediction": prediction},
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+output.write_h5ad(par["output"], compression="gzip")
