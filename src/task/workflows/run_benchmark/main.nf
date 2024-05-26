@@ -11,11 +11,7 @@ methods = [
   jn_ap_op2,
   scape,
   transformer_ensemble,
-  pyboost.run(
-    args: [
-      train_obs_zip: file("s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/neurips-2023-kaggle/train_obs.csv.zip")
-    ]
-  )
+  pyboost
 ]
 
 // construct list of metrics
