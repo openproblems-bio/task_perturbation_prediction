@@ -17,7 +17,7 @@ prediction = ad.read_h5ad(par["prediction"])
 
 print("Select genes", flush=True)
 genes = list(de_test.var_names)
-de_test_X = de_test.layers["sign_log10_pval"]
+de_test_X = de_test.layers[par["layer"]]
 prediction_X = prediction.layers["prediction"]
 
 print("Clipping values", flush=True)
