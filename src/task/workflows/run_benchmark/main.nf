@@ -172,7 +172,6 @@ workflow benchmark_wf {
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: [
         de_test_h5ad: "de_test_h5ad",
-        method_id: "method_id",
         prediction: "method_output",
       ],
       // use 'toState' to publish that component's outputs to the overall state
