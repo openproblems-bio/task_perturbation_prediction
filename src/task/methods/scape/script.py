@@ -1,7 +1,6 @@
-import sys, os, fastparquet, anndata, shutil, argparse
-print(sys.executable)
-print(os.getcwd())
+import sys, fastparquet, shutil
 import pandas as pd
+import anndata as ad
 import numpy as np
 import tensorflow as tf
 print(f"tf version:{tf.__version__}")
@@ -19,6 +18,7 @@ par = dict(
 	id_map = "resources/neurips-2023-data/id_map.csv",
 	output = "output/neurips-2023-data/output_rf.parquet",
 	output_model = None,
+	layer = "sign_log10_pval",
 	# cell = "NK cells",
 	cell = "lol",
 	epochs = 2,
@@ -40,16 +40,32 @@ print(f"par: {par}")
 # if output_model is not provided, create a temporary directory
 model_dir = par["output_model"] or tempfile.TemporaryDirectory(dir = meta["temp_dir"]).name
 
-
 # remove temp dir on exit
 if not par["output_model"]:
 	import atexit
 	atexit.register(lambda: shutil.rmtree(model_dir))
 
 # load log pvals
-df_de = scape.io.load_slogpvals(par['de_train']).drop(columns=["id", "split"], axis=1, errors="ignore")
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+
+# construct data frames
+def get_df(adata, layer):
+	return pd.concat(
+		[
+			pd.DataFrame(adata.layers[layer], index=adata.obs_names, columns=adata.var_names),
+			adata.obs[['cell_type', 'sm_name']],
+		],
+		axis=1
+	).set_index(['cell_type', 'sm_name'])
+
+df_de = get_df(de_train_h5ad, par["layer"])
+df_lfc = get_df(de_train_h5ad, "logFC")
 
 
+# Make sure rows/columns are in the same order
+df_lfc = df_lfc.loc[df_de.index, df_de.columns]
+
+# check whether the cell type is in the data
 def confirm_celltype(df_de, cell, sm_name=None):
 	cells = None
 	if sm_name is None:
@@ -66,21 +82,6 @@ def confirm_celltype(df_de, cell, sm_name=None):
 		return cell_
 
 par["cell"] = confirm_celltype(df_de, par["cell"])
-
-# load logfc
-adata = anndata.read_h5ad(par["de_train_h5ad"])
-
-df_lfc = pd.concat(
-	[
-		pd.DataFrame(adata.layers["logFC"], index=adata.obs_names, columns=adata.var_names),
-		adata.obs[['cell_type', 'sm_name']],
-	],
-	axis=1
-).set_index(['cell_type', 'sm_name'])
-del adata
-
-# Make sure rows/columns are in the same order
-df_lfc = df_lfc.loc[df_de.index, df_de.columns]
 
 # We select only a subset of the genes for the model (top most variant genes)
 top_genes = scape.util.select_top_variable([df_de], k=par["n_genes"])
