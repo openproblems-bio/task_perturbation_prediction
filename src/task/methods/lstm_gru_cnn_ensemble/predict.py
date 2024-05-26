@@ -1,11 +1,14 @@
 import time
+import anndata as ad
 import pandas as pd
 import numpy as np
 from helper_functions import combine_features, load_trained_models, average_prediction, weighted_average_prediction
+from anndata_to_dataframe import anndata_to_dataframe
 import fastparquet
 
 def read_data(par):
-    de_train = pd.read_parquet(par["de_train"])
+    de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+    de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
     de_train = de_train.drop(columns=['split'])
     id_map = pd.read_csv(par["id_map"])
     return de_train, id_map

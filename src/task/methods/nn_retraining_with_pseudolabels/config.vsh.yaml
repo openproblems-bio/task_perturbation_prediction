@@ -41,6 +41,7 @@ functionality:
       path: script.py
     - path: notebook_264.py
     - path: notebook_266.py
+    - path: ../../utils/anndata_to_dataframe.py
 
 platforms:
   - type: docker

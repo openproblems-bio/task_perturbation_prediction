@@ -3,6 +3,7 @@
 
 import sys
 import pandas as pd
+import anndata as ad
 import os
 os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'  # Make PyTorch deterministic on GPU
 from typing import List
@@ -26,13 +27,15 @@ meta = {
 
 sys.path.append(meta["resources_dir"])
 
+from anndata_to_dataframe import anndata_to_dataframe
 from helper import plant_seed, MultiOutputTargetEncoder, train
 
 print('Reading input files', flush=True)
-de_train = pd.read_parquet(par["de_train"])
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
 id_map = pd.read_csv(par["id_map"])
 
-gene_names = [col for col in de_train.columns if col not in {"cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control", "index"}]
+gene_names = list(de_train_h5ad.var_names)
 
 print('Preprocess data', flush=True)
 SEED = 0xCAFE

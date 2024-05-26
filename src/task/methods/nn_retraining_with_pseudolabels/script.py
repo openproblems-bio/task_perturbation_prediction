@@ -13,7 +13,7 @@
 
 import sys
 import pandas as pd
-
+import anndata as ad
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -21,6 +21,8 @@ warnings.filterwarnings("ignore")
 ## VIASH START
 par = {
     "de_train": "resources/neurips-2023-data/de_train.parquet",
+    "de_train_h5ad": "resources/neurips-2023-data/de_train.h5ad",
+    "layer": "sign_log10_pval",
     "id_map": "resources/neurips-2023-data/id_map.csv",
     "output": "output.parquet",
     "reps": 2,
@@ -28,51 +30,38 @@ par = {
 meta = {"resources_dir": "src/task/methods/nn_retraining_with_pseudolabels"}
 ## VIASH END
 
-def main(par, meta):
-    # load helper functions in notebooks
-    sys.path.append(meta["resources_dir"])
+# load helper functions in notebooks
+sys.path.append(meta["resources_dir"])
 
-    from notebook_264 import run_notebook_264
-    from notebook_266 import run_notebook_266
+from anndata_to_dataframe import anndata_to_dataframe
+from notebook_264 import run_notebook_264
+from notebook_266 import run_notebook_266
 
-    # load train data
-    train_df = pd.read_parquet(par["de_train"])
-    train_df = train_df.sample(frac=1.0, random_state=42)
-    train_df = train_df.reset_index(drop=True)
+# load train data
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+train_df = anndata_to_dataframe(de_train_h5ad, par["layer"])
 
-    # load test data
-    test_df = pd.read_csv(par["id_map"])
+train_df = train_df.sample(frac=1.0, random_state=42)
+train_df = train_df.reset_index(drop=True)
 
-    # determine gene names
-    # gene_names = train_df.loc[:, "A1BG":].columns.tolist()
-    gene_names = [
-        col
-        for col in train_df.columns
-        if col not in {
-            "cell_type",
-            "sm_name",
-            "sm_lincs_id",
-            "SMILES",
-            "split",
-            "control",
-            "index",
-        }
-    ]
+# load test data
+test_df = pd.read_csv(par["id_map"])
 
-    # clean up train data
-    train_df = train_df.loc[:, ["cell_type", "sm_name"] + gene_names]
+# determine gene names
+gene_names = list(de_train_h5ad.var_names)
 
-    # run notebook 264
-    pseudolabel = run_notebook_264(train_df, test_df, gene_names, par["reps"])
+# clean up train data
+train_df = train_df.loc[:, ["cell_type", "sm_name"] + gene_names]
 
-    # add metadata
-    pseudolabel = pd.concat(
-        [test_df[["cell_type", "sm_name"]], pseudolabel.loc[:, gene_names]], axis=1
-    )
+# run notebook 264
+pseudolabel = run_notebook_264(train_df, test_df, gene_names, par["reps"])
 
-    # run notebook 266
-    df = run_notebook_266(train_df, test_df, pseudolabel, gene_names, par["reps"])
+# add metadata
+pseudolabel = pd.concat(
+    [test_df[["cell_type", "sm_name"]], pseudolabel.loc[:, gene_names]], axis=1
+)
 
-    df.to_parquet(par["output"])
+# run notebook 266
+df = run_notebook_266(train_df, test_df, pseudolabel, gene_names, par["reps"])
 
-main(par, meta)
+df.to_parquet(par["output"])
