@@ -142,7 +142,7 @@ workflow benchmark_wf {
           output_model: null
         ]
         if (comp.config.functionality.info.type == "control_method") {
-          new_args.de_test = state.de_test
+          new_args.de_test_h5ad = state.de_test_h5ad
         }
         new_args
       },

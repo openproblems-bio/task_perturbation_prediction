@@ -122,7 +122,7 @@ rownames(new_obs) <- paste0(new_obs$cell_type, ", ", new_obs$sm_name)
 new_var <- data.frame(row.names = levels(de_df2$gene))
 
 # create layers from de_df
-layer_names <- c("is_de", "is_de_adj", "logFC", "t", "P.Value", "adj.P.Value", "sign_log10_adj_pval", "sign_log10_pval")
+layer_names <- c("is_de", "is_de_adj", "logFC", "AveExpr", "t", "P.Value", "adj.P.Value", "B", "sign_log10_adj_pval", "sign_log10_pval")
 layers <- map(setNames(layer_names, layer_names), function(layer_name) {
   de_df2 %>%
     select(gene, row_i, !!layer_name) %>%
