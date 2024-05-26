@@ -20,7 +20,7 @@ functionality:
       type: string
       direction: input
       default: sign_log10_pval
-      description: Which layer to use for prediction.
+      description: Which layer to use for prediction and evaluation.
     - name: --output
       __merge__: file_score.yaml
       direction: output

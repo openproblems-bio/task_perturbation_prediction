@@ -141,6 +141,7 @@ workflow benchmark_wf {
         def new_args = [
           de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
+          layer: state.layer,
           output: 'predictions/$id.$key.output.parquet',
           output_model: null
         ]
@@ -172,6 +173,7 @@ workflow benchmark_wf {
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: [
         de_test_h5ad: "de_test_h5ad",
+        layer: "layer",
         prediction: "method_output",
       ],
       // use 'toState' to publish that component's outputs to the overall state
@@ -241,8 +243,6 @@ workflow stability_wf {
         input_test: "de_test_h5ad"
       ],
       toState: [
-        de_train: "output_train",
-        de_test: "output_test",
         id_map: "output_id_map"
       ]
     )
