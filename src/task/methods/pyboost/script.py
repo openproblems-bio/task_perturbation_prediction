@@ -87,12 +87,16 @@ if de_pred.isna().any().any():
     print("Warning: This submission contains missing values. "
             "Don't submit it!")
 
-# Create the submission dataframe
-submission = pd.DataFrame(de_pred.values, columns=genes, index=id_map.index)
-
-print(f'Variance of submission: {submission.values.var():.2f},   min = {submission.values.min():.2f}, max = {submission.values.max():.2f}')
-
 # Write the files
-# submission.reset_index(drop=True, inplace=True)
-submission.reset_index(names="id", inplace=True)
-submission.to_parquet(par["output"])
+print('Write output to file', flush=True)
+output = ad.AnnData(
+    layers={"prediction": de_pred.values},
+    obs=pd.DataFrame(index=id_map.index),
+    var=pd.DataFrame(index=genes),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+
+output.write_h5ad(par["output"], compression="gzip")

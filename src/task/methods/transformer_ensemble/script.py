@@ -149,8 +149,16 @@ weighted_pred = sum(
     [argset["weight"] * pred for argset, pred in zip(argsets, predictions)]
 ) / sum([argset["weight"] for argset in argsets])
 
-df = pd.DataFrame(weighted_pred, columns=gene_names)
-df.reset_index(drop=True, inplace=True)
-df.reset_index(names="id", inplace=True)
 
-df.to_parquet(par["output"])
+print('Write output to file', flush=True)
+output = ad.AnnData(
+    layers={"prediction": weighted_pred},
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+
+output.write_h5ad(par["output"], compression="gzip")

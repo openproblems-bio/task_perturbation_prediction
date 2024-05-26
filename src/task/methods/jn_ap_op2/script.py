@@ -6,7 +6,6 @@ import pandas as pd
 import anndata as ad
 import os
 os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'  # Make PyTorch deterministic on GPU
-from typing import List
 import numpy as np
 import pandas as pd
 import tqdm
@@ -113,14 +112,14 @@ for SUBMISSION_NAME in par["submission_names"]:
 Y_submit_final = np.mean(Y_submit_ensemble, axis=0)
 
 print('Write output to file', flush=True)
-output = pd.DataFrame(
-  Y_submit_final,
-  index=id_map["id"],
-  columns=gene_names
-).reset_index()
-output.to_parquet(par["output"])
+output = ad.AnnData(
+    layers={"prediction": Y_submit_final},
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
 
-
-
-
-
+output.write_h5ad(par["output"], compression="gzip")

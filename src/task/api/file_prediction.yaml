@@ -1,5 +1,5 @@
 type: file
-example: resources/neurips-2023-data/prediction.parquet
+example: resources/neurips-2023-data/prediction.h5ad
 info:
   label: Prediction
   summary: "Differential Gene Expression prediction"

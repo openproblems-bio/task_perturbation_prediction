@@ -36,11 +36,11 @@ viash run src/task/control_methods/sample/config.vsh.yaml -- \
   --de_train "$OUT/de_train.parquet" \
   --de_test "$OUT/de_test.parquet" \
   --id_map "$OUT/id_map.csv" \
-  --output "$OUT/prediction.parquet"
+  --output "$OUT/prediction.h5ad"
 
 echo ">> Run metric"
 viash run src/task/metrics/mean_rowwise_error/config.vsh.yaml -- \
-  --prediction "$OUT/prediction.parquet" \
+  --prediction "$OUT/prediction.h5ad" \
   --method_id "sample" \
   --de_test_h5ad "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"

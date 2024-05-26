@@ -13,10 +13,9 @@ print(f"scape version:{scape.__version__}")
 
 ## VIASH START
 par = dict(
-	de_train = "resources/neurips-2023-data/de_train.parquet",
 	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
 	id_map = "resources/neurips-2023-data/id_map.csv",
-	output = "output/neurips-2023-data/output_rf.parquet",
+	output = "output.h5ad",
 	output_model = None,
 	layer = "sign_log10_pval",
 	# cell = "NK cells",
@@ -34,6 +33,23 @@ meta = dict(
 	temp_dir = "/tmp"
 )
 ## VIASH END
+
+def write_predictions(df_submission_data, par, meta, de_train_h5ad, id_map):
+	# Write the files
+	print('Write output to file', flush=True)
+	genes = list(de_train_h5ad.var_names)
+	output = ad.AnnData(
+			layers={"prediction": df_submission_data[genes].to_numpy()},
+			obs=pd.DataFrame(index=id_map["id"]),
+			var=pd.DataFrame(index=genes),
+			uns={
+				"dataset_id": de_train_h5ad.uns["dataset_id"],
+				"method_id": meta["functionality_name"]
+			}
+	)
+
+	output.write_h5ad(par["output"], compression="gzip")
+
 
 print(f"par: {par}")
 
@@ -91,8 +107,8 @@ drugs = df_de.loc[df_de.index.get_level_values("cell_type") == par["cell"]].inde
 if par["n_drugs"]:
 	drugs = drugs[:par["n_drugs"]]
 
-df_id_map = pd.read_csv(par["id_map"])
-df_sub_ix = df_id_map.set_index(["cell_type", "sm_name"])
+id_map = pd.read_csv(par["id_map"])
+df_sub_ix = id_map.set_index(["cell_type", "sm_name"])
 
 # generate base predictions
 base_predictions = []
@@ -136,7 +152,7 @@ top_drugs = set(top_all_drugs) | set(top_sub_drugs)
 if len(top_drugs) == 0:
 	# df_focus is not computed, just return the original submission
 	df_submission_data = df_sub_ix.join(df_sub).reset_index(drop=True)
-	fastparquet.write(par['output'], df_submission_data)
+	write_predictions(df_submission_data, par, meta, de_train_h5ad, id_map)
 	sys.exit(0)
 
 df_de_c = df_de[df_de.index.get_level_values("sm_name").isin(top_drugs)]
@@ -174,4 +190,5 @@ df_focus.update(df_sub_enhanced)
 # write output
 df_submission = 0.80 * df_focus + 0.20 * df_sub
 df_submission_data = df_sub_ix.join(df_submission).reset_index(drop=True)
-fastparquet.write(par['output'], df_submission_data)
+
+write_predictions(df_submission_data, par, meta, de_train_h5ad, id_map)

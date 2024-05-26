@@ -48,4 +48,4 @@ prepare_data(par, paths)
 train(par, paths)
 
 # predict
-predict(par, paths)
+predict(par, meta, paths)

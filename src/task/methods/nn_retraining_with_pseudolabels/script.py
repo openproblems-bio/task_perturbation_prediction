@@ -20,10 +20,9 @@ warnings.filterwarnings("ignore")
 
 ## VIASH START
 par = {
-    "de_train": "resources/neurips-2023-data/de_train.parquet",
     "de_train_h5ad": "resources/neurips-2023-data/de_train.h5ad",
-    "layer": "sign_log10_pval",
     "id_map": "resources/neurips-2023-data/id_map.csv",
+    "layer": "sign_log10_pval",
     "output": "output.parquet",
     "reps": 2,
 }
@@ -45,7 +44,7 @@ train_df = train_df.sample(frac=1.0, random_state=42)
 train_df = train_df.reset_index(drop=True)
 
 # load test data
-test_df = pd.read_csv(par["id_map"])
+id_map = pd.read_csv(par["id_map"])
 
 # determine gene names
 gene_names = list(de_train_h5ad.var_names)
@@ -54,14 +53,26 @@ gene_names = list(de_train_h5ad.var_names)
 train_df = train_df.loc[:, ["cell_type", "sm_name"] + gene_names]
 
 # run notebook 264
-pseudolabel = run_notebook_264(train_df, test_df, gene_names, par["reps"])
+pseudolabel = run_notebook_264(train_df, id_map, gene_names, par["reps"])
 
 # add metadata
 pseudolabel = pd.concat(
-    [test_df[["cell_type", "sm_name"]], pseudolabel.loc[:, gene_names]], axis=1
+    [id_map[["cell_type", "sm_name"]], pseudolabel.loc[:, gene_names]], axis=1
 )
 
 # run notebook 266
-df = run_notebook_266(train_df, test_df, pseudolabel, gene_names, par["reps"])
+df = run_notebook_266(train_df, id_map, pseudolabel, gene_names, par["reps"])
 
-df.to_parquet(par["output"])
+
+print('Write output to file', flush=True)
+output = ad.AnnData(
+    layers={"prediction": df[gene_names].to_numpy()},
+    obs=pd.DataFrame(index=id_map["id"]),
+    var=pd.DataFrame(index=gene_names),
+    uns={
+      "dataset_id": de_train_h5ad.uns["dataset_id"],
+      "method_id": meta["functionality_name"]
+    }
+)
+
+output.write_h5ad(par["output"], compression="gzip")
