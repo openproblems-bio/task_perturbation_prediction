@@ -8,24 +8,19 @@ library(future)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk_cleaned.h5ad",
+  input = "resources/neurips-2023-data/pseudobulk.h5ad",
   de_sig_cutoff = 0.05,
   control_compound = "Dimethyl Sulfoxide",
-  # for public data
   output = "resources/neurips-2023-data/de_train.h5ad",
   input_splits = c("train", "control", "public_test"),
   output_splits = c("train", "control", "public_test")
-  # # for private data
-#   output = "resources/neurips-2023-data/de_test.h5ad",
-#   input_splits = c("train", "control", "public_test", "private_test"),
-#   output_splits = c("private_test")
 )
 meta <- list(
-  cpus = 10
+  cpus = 30
 )
 ## VIASH END
 
-plan(multicore, workers = meta$cpus)
+plan(multicore)
 
 # load data
 adata <- anndata::read_h5ad(par$input)
@@ -67,8 +62,9 @@ v <- limma::voom(d0, design = design_matrix, plot = FALSE)
 fit <- limma::lmFit(v, design_matrix)
 
 # run limma DE for each cell type and compound
-de_df <- future_map_dfr(
+de_df <- furrr::future_map_dfr(
   seq_len(nrow(new_obs)),
+  .options = furrr_options(seed = TRUE),
   function(row_i) {
     cat("Computing DE contrasts (", row_i, "/", nrow(new_obs), ")\n", sep = "")
     sm_cell_type <- as.character(new_obs$sm_cell_type[[row_i]])
@@ -87,12 +83,11 @@ de_df <- future_map_dfr(
     )
 
     limma::contrasts.fit(fit, contr) %>%
-      limma::eBayes(robust=TRUE) %>%
+      limma::eBayes(robust = TRUE) %>%
       limma::topTable(n = Inf, sort = "none") %>%
       rownames_to_column("gene") %>%
       mutate(row_i = row_i)
-  },
-  .options = furrr_options(seed = TRUE)
+  }
 )
 
 end_time <- Sys.time()
@@ -106,10 +101,12 @@ de_df2 <- de_df %>%
     gene = factor(gene),
     # readjust p-values for multiple testing
     adj.P.Value = p.adjust(P.Value, method = "BH"),
-    # compute sign log10 p-values
+    # compute sign fc × log10 p-values
     sign_log10_pval = sign(logFC) * -log10(ifelse(P.Value == 0, .Machine$double.eps, P.Value)),
     sign_log10_adj_pval = sign(logFC) * -log10(ifelse(adj.P.Value == 0, .Machine$double.eps, adj.P.Value)),
-    is_de = P.Value < par$de_sig_cutoff
+    # determine if gene is DE
+    is_de = P.Value < par$de_sig_cutoff,
+    is_de_adj = adj.P.Value < par$de_sig_cutoff
   ) %>%
   as_tibble()
 
