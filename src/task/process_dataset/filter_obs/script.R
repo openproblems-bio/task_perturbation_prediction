@@ -5,7 +5,7 @@ library(purrr, warn.conflicts = FALSE)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/sc_counts.h5ad",
+  input = "resources/neurips-2023-raw/sc_counts_reannotated_with_counts.h5ad",
   output = "resources/neurips-2023-data/sc_counts_cleaned.h5ad"
 )
 ## VIASH END
