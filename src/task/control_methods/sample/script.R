@@ -1,5 +1,5 @@
 requireNamespace("arrow", quietly = TRUE)
-
+requireNamespace("anndata", quietly = TRUE)
 
 ## VIASH START
 par <- list(
@@ -11,18 +11,18 @@ par <- list(
 ## VIASH END
 
 # read data
-de_train <- arrow::read_parquet(par$de_train)
+de_train_h5ad <- anndata::read_h5ad(par$de_train_h5ad)
 id_map <- arrow::read_csv_arrow(par$id_map)
 
 # get gene names
-gene_names <- setdiff(names(de_train), c("id", "cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control"))
+gene_names <- de_train_h5ad$var_names
 
 # create output data structure
 output <- data.frame(id = id_map$id)
 
 # generate random data
 for (gene_name in gene_names) {
-  output[[gene_name]] <- sample(de_train[[gene_name]], size = nrow(output), replace = TRUE)
+  output[[gene_name]] <- sample(de_train_h5ad$layers[[par$layer]][,gene_name], size = nrow(output), replace = TRUE)
 }
 
 # store output

@@ -8,10 +8,6 @@ functionality:
       description: |
         A regression method to predict the expression of one modality from another.
   arguments:
-    - name: --de_train
-      __merge__: file_de_train_parquet.yaml
-      required: false
-      direction: input
     - name: --de_train_h5ad
       __merge__: file_de_train_h5ad.yaml
       required: false
@@ -24,6 +20,7 @@ functionality:
       type: string
       direction: input
       default: sign_log10_pval
+      description: Which layer to use for prediction.
     - name: --output
       __merge__: file_prediction.yaml
       required: true

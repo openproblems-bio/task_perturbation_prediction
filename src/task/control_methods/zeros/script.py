@@ -1,4 +1,5 @@
 import pandas as pd
+import anndata as ad
 
 ## VIASH START
 par = {
@@ -9,9 +10,10 @@ par = {
 }
 ## VIASH END
 
-de_train = pd.read_parquet(par["de_train"])
+de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
 id_map = pd.read_csv(par["id_map"])
-gene_names = [col for col in de_train.columns if col not in {"cell_type", "sm_name", "sm_lincs_id", "SMILES", "split", "control", "index"}]
+gene_names = list(de_train_h5ad.var_names)
+
 # create new pandas dataframe with columns "id" from id_map and gene_names for the rest. "id" fill from id_map and the rest set to zero
 output = pd.DataFrame(0, index=id_map["id"], columns=gene_names).reset_index()
 output.to_parquet(par["output"])
