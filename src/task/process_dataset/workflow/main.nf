@@ -71,9 +71,9 @@ workflow run_wf {
     )
 
     | setState([
-      "de_train",
+      // "de_train",
       "de_train_h5ad",
-      "de_test",
+      // "de_test",
       "de_test_h5ad",
       "id_map"
     ])

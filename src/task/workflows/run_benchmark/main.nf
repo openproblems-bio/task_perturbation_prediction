@@ -139,7 +139,6 @@ workflow benchmark_wf {
       // use 'fromState' to fetch the arguments the component requires from the overall state
       fromState: { id, state, comp ->
         def new_args = [
-          de_train: state.de_train,
           de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
           output: 'predictions/$id.$key.output.parquet',
