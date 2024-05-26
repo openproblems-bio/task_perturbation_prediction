@@ -25,6 +25,10 @@ plan(multicore)
 # load data
 adata <- anndata::read_h5ad(par$input)
 
+if (!"sm_cell_type" %in% colnames(adata$obs)) {
+  adata$obs[["sm_cell_type"]] <- paste0(adata$obs[["sm_name"]], "_", adata$obs[["cell_type"]])
+}
+
 # select [cell_type, sm_name] pairs which will be used for DE analysis
 new_obs <- adata$obs %>%
   select(sm_cell_type, cell_type, sm_name, sm_lincs_id, SMILES, split, control) %>%
@@ -110,11 +114,15 @@ de_df2 <- de_df %>%
   ) %>%
   as_tibble()
 
+
+cat("DE df:\n")
+print(head(de_df2))
+
 rownames(new_obs) <- paste0(new_obs$cell_type, ", ", new_obs$sm_name)
 new_var <- data.frame(row.names = levels(de_df2$gene))
 
 # create layers from de_df
-layer_names <- c("is_de", "is_de_adj", "logFC", "P.Value", "adj.P.Value", "sign_log10_adj_pval", "sign_log10_pval")
+layer_names <- c("is_de", "is_de_adj", "logFC", "t", "P.Value", "adj.P.Value", "sign_log10_adj_pval", "sign_log10_pval")
 layers <- map(setNames(layer_names, layer_names), function(layer_name) {
   de_df2 %>%
     select(gene, row_i, !!layer_name) %>%
