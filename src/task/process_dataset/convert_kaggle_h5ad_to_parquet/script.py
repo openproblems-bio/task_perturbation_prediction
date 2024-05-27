@@ -1,14 +1,11 @@
 import anndata as ad
-import pandas as pd
 
 ## VIASH START
 par = {
     "input_train": "resources/neurips-2023-kaggle/2023-09-12_de_by_cell_type_train.h5ad",
     "input_test": "resources/neurips-2023-kaggle/2023-09-12_de_by_cell_type_test.h5ad",
     "input_single_cell_h5ad": "resources/neurips-2023-raw/sc_counts.h5ad",
-    # "output_train": "resources/neurips-2023-kaggle/de_train.parquet",
     "output_train_h5ad": "resources/neurips-2023-kaggle/de_train.h5ad",
-    # "output_test": "resources/neurips-2023-kaggle/de_test.parquet",
     "output_test_h5ad": "resources/neurips-2023-kaggle/de_test.h5ad",
     "output_id_map": "resources/neurips-2023-kaggle/id_map.csv",
 }
