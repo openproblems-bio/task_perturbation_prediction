@@ -11,7 +11,7 @@ par = {
 }
 ## VIASH END
 
-sys.append(meta["resources_dir"])
+sys.path.append(meta["resources_dir"])
 
 from anndata_to_dataframe import anndata_to_dataframe
 
