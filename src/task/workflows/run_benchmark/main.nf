@@ -246,7 +246,7 @@ workflow stability_wf {
     | benchmark_wf
 
     | joinStates { ids, states ->
-      def stability_uns = states.collect{it.stability_uns}
+      def stability_uns = states.collect{it.score_uns}
       def stability_uns_yaml_blob = toYamlBlob(stability_uns)
       def stability_uns_file = tempFile("stability_uns.yaml")
       stability_uns_file.write(stability_uns_yaml_blob)

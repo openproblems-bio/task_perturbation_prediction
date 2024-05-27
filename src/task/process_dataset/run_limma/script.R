@@ -56,8 +56,8 @@ new_single_cell_obs <- adata_filt$uns[["single_cell_obs"]] %>%
 start_time <- Sys.time()
 
 d0 <- Matrix::t(adata_filt$X) %>%
-    edgeR::DGEList() %>%
-    edgeR::calcNormFactors()
+  edgeR::DGEList() %>%
+  edgeR::calcNormFactors()
 
 design_matrix <- model.matrix(~ 0 + sm_cell_type + plate_name, adata_filt$obs %>% mutate_all(limma_trafo))
 
