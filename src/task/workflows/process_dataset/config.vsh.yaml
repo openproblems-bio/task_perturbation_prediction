@@ -1,6 +1,7 @@
 __merge__: ../../api/comp_process_dataset.yaml
 functionality:
-  name: workflow
+  name: process_dataset
+  namespace: "workflows"
   arguments:
     - name: "--dataset_id"
       type: string

@@ -16,7 +16,7 @@ fi
 
 echo ">> Running 'process_dataset' workflow"
 nextflow run \
-  target/nextflow/process_dataset/workflow/main.nf \
+  target/nextflow/workflows/process_dataset/main.nf \
   -profile docker \
   -resume \
   --id neurips-2023-data \
