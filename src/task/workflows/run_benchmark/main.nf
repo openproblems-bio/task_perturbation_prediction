@@ -250,14 +250,6 @@ workflow stability_wf {
       def stability_uns_yaml_blob = toYamlBlob(stability_uns)
       def stability_uns_file = tempFile("stability_uns.yaml")
       stability_uns_file.write(stability_uns_yaml_blob)
-
-      def new_state = [
-        method_configs: method_configs_file,
-        metric_configs: metric_configs_file,
-        task_info: task_info_file,
-        scores: score_uns_file,
-        _meta: states[0]._meta
-      ]
       
       ["output", [stability_scores: stability_uns_file]]
     }
