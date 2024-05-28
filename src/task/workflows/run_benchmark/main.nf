@@ -138,7 +138,7 @@ workflow benchmark_wf {
           de_train_h5ad: state.de_train_h5ad,
           id_map: state.id_map,
           layer: state.layer,
-          output: 'predictions/$id.$key.output.parquet',
+          output: 'predictions/$id.$key.output.h5ad',
           output_model: null
         ]
         if (comp.config.functionality.info.type == "control_method") {
