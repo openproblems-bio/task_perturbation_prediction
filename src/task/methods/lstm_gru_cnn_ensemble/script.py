@@ -2,6 +2,14 @@ import sys
 import tempfile
 import shutil
 
+import torch
+USE_GPU = True
+if USE_GPU and torch.cuda.is_available():
+    print('using device: cuda', flush=True)
+else:
+    print('using device: cpu', flush=True)
+    USE_GPU = False
+
 ## VIASH START
 par = {
     "de_train": "resources/neurips-2023-data/de_train.parquet",
@@ -42,10 +50,13 @@ if not par["output_model"]:
 	atexit.register(lambda: shutil.rmtree(output_model))
 
 # prepare data
+print("\n\n## Preparing data\n")
 prepare_data(par, paths)
 
 # train
+print("\n\n## Training models\n")
 train(par, paths)
 
 # predict
+print("\n\n## Generating predictions\n")
 predict(par, meta, paths)
