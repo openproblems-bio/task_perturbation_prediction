@@ -12,15 +12,20 @@ functionality:
       __merge__: file_de_test_h5ad.yaml
       required: true
       direction: input
+    - name: --de_test_layer
+      type: string
+      direction: input
+      default: sign_log10_pval
+      description: In which layer to find the DE data.
     - name: --prediction
       __merge__: file_prediction.yaml
       required: true
       direction: input
-    - name: --layer
+    - name: --prediction_layer
       type: string
       direction: input
-      default: sign_log10_pval
-      description: Which layer to use for prediction and evaluation.
+      default: prediction
+      description: In which layer to find the predicted DE data.
     - name: --output
       __merge__: file_score.yaml
       direction: output

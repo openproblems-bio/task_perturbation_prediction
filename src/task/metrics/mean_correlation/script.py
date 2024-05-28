@@ -1,12 +1,14 @@
-import pandas as pd
 import anndata as ad
 import numpy as np
 
 ## VIASH START
 par = {
-    "de_test_h5ad": "resources/neurips-2023-kaggle/de_test.h5ad",
-    "prediction": "resources/neurips-2023-kaggle/prediction.h5ad",
-    "output": "resources/neurips-2023-data/score.h5ad",
+    "de_test_h5ad": "resources/neurips-2023-data/de_test.h5ad",
+    "de_test_layer": "sign_log10_pval",
+    "prediction": "resources/neurips-2023-data/prediction.h5ad",
+    "prediction_layer": "prediction",
+    "method_id": "foo",
+    "output": "output.h5ad",
 }
 ## VIASH END
 
@@ -16,28 +18,20 @@ prediction = ad.read_h5ad(par["prediction"])
 
 print("Select genes", flush=True)
 genes = list(de_test.var_names)
-de_test_X = de_test.layers[par["layer"]]
-prediction_X = prediction.layers["prediction"]
+de_test_X = de_test.layers[par["de_test_layer"]]
+prediction_X = prediction.layers[par["prediction_layer"]]
+
+# transform to ranks
+de_test_r = np.argsort(de_test_X, axis=1).argsort(axis=1)
+prediction_r = np.argsort(prediction_X, axis=1).argsort(axis=1)
 
 print("Calculate mean pearson", flush=True)
-mean_pearson = 0
-mean_spearman = 0
-for i in range(de_test_X.shape[0]):
-    y_i = de_test_X[i,]
-    y_hat_i = prediction_X[i,]
-
-    # compute ranks
-    r_i = y_i.argsort().argsort()
-    r_hat_i = y_hat_i.argsort().argsort()
-
-    pearson = np.corrcoef(y_i, y_hat_i)[0, 1]
-    spearman = np.corrcoef(r_i, r_hat_i)[0, 1]
-
-    mean_pearson += pearson
-    mean_spearman += spearman
-
-mean_pearson /= de_test_X.shape[0]
-mean_spearman /= de_test_X.shape[0]
+mean_pearson = np.mean(
+    [np.corrcoef(de_test_X[i,], prediction_X[i,])[0, 1] for i in range(de_test_X.shape[0])]
+)
+mean_spearman = np.mean(
+    [np.corrcoef(de_test_r[i,], prediction_r[i,])[0, 1] for i in range(de_test_X.shape[0])]
+)
 
 print("Create output", flush=True)
 output = ad.AnnData(
