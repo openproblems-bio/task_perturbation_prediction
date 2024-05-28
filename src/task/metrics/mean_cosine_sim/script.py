@@ -5,7 +5,7 @@ import numpy as np
 ## VIASH START
 par = {
     "de_test_h5ad": "resources/neurips-2023-kaggle/de_test.h5ad",
-    "prediction": "resources/neurips-2023-kaggle/output_mean_compounds.parquet",
+    "prediction": "resources/neurips-2023-kaggle/output_mean_compounds.h5ad",
     "method_id": "foo",
     "output": "resources/neurips-2023-data/score.h5ad",
 }

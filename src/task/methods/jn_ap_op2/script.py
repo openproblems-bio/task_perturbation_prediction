@@ -13,9 +13,9 @@ import torch
 
 ## VIASH START
 par = {
-    "de_train": "resources/neurips-2023-kaggle/de_train.parquet",
+    "de_train": "resources/neurips-2023-kaggle/de_train.h5ad",
     "id_map": "resources/neurips-2023-kaggle/id_map.csv",
-    "output": "output.parquet",
+    "output": "output.h5ad",
     "n_replica": 1,
     "submission_names": ["dl40"]
 }

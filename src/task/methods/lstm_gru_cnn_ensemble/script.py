@@ -12,13 +12,13 @@ else:
 
 ## VIASH START
 par = {
-    "de_train": "resources/neurips-2023-data/de_train.parquet",
-    "de_test": "resources/neurips-2023-data/de_test.parquet",
+    "de_train": "resources/neurips-2023-data/de_train.h5ad",
+    "de_test": "resources/neurips-2023-data/de_test.h5ad",
     "id_map": "resources/neurips-2023-data/id_map.csv",
     "models": ["initial", "light"],
     "epochs": 1,
     "kf_n_splits": 2,
-    "output": "output.parquet",
+    "output": "output.h5ad",
     "output_model": None
 }
 meta = {

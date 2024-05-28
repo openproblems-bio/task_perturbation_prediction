@@ -17,7 +17,7 @@ par = dict(
     layer = "sign_log10_pval",
     id_map = "resources/neurips-2023-data/id_map.csv",
     predictor_names = ["py_boost"],
-    output = "output.parquet",
+    output = "output.h5ad",
 )
 meta = dict(
     resources_dir = "src/task/methods/pyboost"

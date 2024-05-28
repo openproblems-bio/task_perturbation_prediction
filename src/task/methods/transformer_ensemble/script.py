@@ -9,9 +9,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ## VIASH START
 par = {
     "de_train_h5ad": "resources/neurips-2023-data/de_train.h5ad",
-    "de_train": "resources/neurips-2023-data/de_train.parquet",
+    "de_train": "resources/neurips-2023-data/de_train.h5ad",
     "id_map": "resources/neurips-2023-data/id_map.csv",
-    "output": "output.parquet",
+    "output": "output.h5ad",
     "num_train_epochs": 10,
     "layer": "sign_log10_pval"
 }
