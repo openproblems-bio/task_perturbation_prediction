@@ -14,10 +14,19 @@ par = {
 
 print("Load data", flush=True)
 de_test = ad.read_h5ad(par["de_test_h5ad"])
+print(f"de_test: {de_test}")
 prediction = ad.read_h5ad(par["prediction"])
+print(f"prediction: {de_test}")
 
-print("Select genes", flush=True)
-genes = list(de_test.var_names)
+print("Resolve genes", flush=True)
+if par["resolve_genes"] == "de_test":
+    genes = list(de_test.var_names)
+elif par["resolve_genes"] == "intersection":
+    genes = list(set(de_test.var_names) & set(prediction.var_names))
+de_test = de_test[:, genes]
+prediction = prediction[:, genes]
+
+# get data
 de_test_X = de_test.layers[par["de_test_layer"]]
 prediction_X = prediction.layers[par["prediction_layer"]]
 

@@ -9,26 +9,36 @@ par = {
     "prediction_layer": "prediction",
     "method_id": "foo",
     "output": "output.h5ad",
+    "resolve_genes": "de_test"
 }
 ## VIASH END
 
 print("Load data", flush=True)
 de_test = ad.read_h5ad(par["de_test_h5ad"])
+print(f"de_test: {de_test}")
 prediction = ad.read_h5ad(par["prediction"])
+print(f"prediction: {de_test}")
 
-print("Select genes", flush=True)
-genes = list(de_test.var_names)
+print("Resolve genes", flush=True)
+if par["resolve_genes"] == "de_test":
+    genes = list(de_test.var_names)
+elif par["resolve_genes"] == "intersection":
+    genes = list(set(de_test.var_names) & set(prediction.var_names))
+de_test = de_test[:, genes]
+prediction = prediction[:, genes]
+
+# get data
 de_test_X = de_test.layers[par["de_test_layer"]]
 prediction_X = prediction.layers[par["prediction_layer"]]
 
-# transform to ranks
-de_test_r = np.argsort(de_test_X, axis=1).argsort(axis=1)
-prediction_r = np.argsort(prediction_X, axis=1).argsort(axis=1)
-
-print("Calculate mean pearson", flush=True)
+print("Calculate metrics", flush=True)
 mean_pearson = np.mean(
     [np.corrcoef(de_test_X[i,], prediction_X[i,])[0, 1] for i in range(de_test_X.shape[0])]
 )
+
+# compute ranks
+de_test_r = np.argsort(de_test_X, axis=1).argsort(axis=1)
+prediction_r = np.argsort(prediction_X, axis=1).argsort(axis=1)
 mean_spearman = np.mean(
     [np.corrcoef(de_test_r[i,], prediction_r[i,])[0, 1] for i in range(de_test_X.shape[0])]
 )
