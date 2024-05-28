@@ -3,6 +3,7 @@ import json
 import time
 import numpy as np
 import torch
+import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
@@ -146,6 +147,9 @@ def train_step(dataloader, model, opt, clip_norm):
         x = x.to(device)
         target = target.to(device)
         loss = model(x, target)
+        # aggregate loss if it's not a scalar
+        if len(loss.size()) > 0:
+            loss = loss.mean()
         train_losses.append(loss.item())
         pred = model(x).detach().cpu().numpy()
         train_mrrmse.append(mrrmse_np(pred, target.cpu().numpy()))
@@ -164,14 +168,17 @@ def validation_step(dataloader, model):
         x = x.to(device)
         target = target.to(device)
         loss = model(x,target)
+        # aggregate loss if it's not a scalar
+        if len(loss.size()) > 0:
+            loss = loss.mean()
         pred = model(x).detach().cpu().numpy()
         val_mrrmse.append(mrrmse_np(pred, target.cpu().numpy()))
         val_losses.append(loss.item())
     return np.mean(val_losses), np.mean(val_mrrmse)
 
 
-def train_function(model, x_train, y_train, x_val, y_val, info_data, config, clip_norm=1.0):
-    if model.name in ['GRU']:
+def train_function(model, model_name, x_train, y_train, x_val, y_val, info_data, config, clip_norm=1.0):
+    if model_name in ['GRU']:
         print('lr', config["LEARNING_RATES"][2])
         opt = torch.optim.Adam(model.parameters(), lr=config["LEARNING_RATES"][2])
     else:
@@ -221,12 +228,19 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, 
                     'val_sm_name': cell_types_sm_names.iloc[val_idx]['sm_name'].tolist()}
         for Model in [LSTM, Conv, GRU]:
             model = Model(scheme, X.shape, y.shape)
-            model, results = train_function(model, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
+            
+            if torch.cuda.device_count() > 1:
+                model = nn.DataParallel(model)
+                model_name = model.module.name
+            else:
+                model_name = model.name
+
+            model, results = train_function(model, model_name, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
             model.to('cpu')
             trained_models.append(model)
-            print(f'PATH OF THE MODEL EQUALS: {paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
-            torch.save(model.state_dict(), f'{paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
-            with open(f'{paths["logs_dir"]}/{model.name}_{scheme}_fold{i}.json', 'w') as file:
+            print(f'PATH OF THE MODEL EQUALS: {paths["model_dir"]}/pytorch_{model_name}_{scheme}_fold{i}.pt')
+            torch.save(model.state_dict(), f'{paths["model_dir"]}/pytorch_{model_name}_{scheme}_fold{i}.pt')
+            with open(f'{paths["logs_dir"]}/{model_name}_{scheme}_fold{i}.json', 'w') as file:
                 json.dump(results, file)
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()

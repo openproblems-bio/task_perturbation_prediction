@@ -3,12 +3,10 @@ import tempfile
 import shutil
 
 import torch
-USE_GPU = True
-if USE_GPU and torch.cuda.is_available():
-    print('using device: cuda', flush=True)
+if torch.cuda.is_available():
+    print(f"detected {torch.cuda.device_count()} cuda devices", flush=True)
 else:
     print('using device: cpu', flush=True)
-    USE_GPU = False
 
 ## VIASH START
 par = {
