@@ -28,12 +28,18 @@ functionality:
       description: "Number of splits for KFold."
       info:
         test_default: 2
-    - name: --models
+    - name: --schemes
       type: string
       default: [initial, light, heavy]
       multiple: true
       info:
         test_default: [initial, light]
+    - name: --models
+      type: string
+      default: [LSTM, GRU, Conv]
+      multiple: true
+      info:
+        test_default: [LSTM, GRU]
 
   resources:
     - type: python_script
