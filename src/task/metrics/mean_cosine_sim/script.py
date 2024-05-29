@@ -7,7 +7,7 @@ par = {
     "de_test_layer": "sign_log10_pval",
     "prediction": "resources/neurips-2023-data/prediction.h5ad",
     "prediction_layer": "prediction",
-    "method_id": "foo",
+    "resolve_genes": "de_test",
     "output": "output.h5ad",
 }
 ## VIASH END
@@ -16,7 +16,7 @@ print("Load data", flush=True)
 de_test = ad.read_h5ad(par["de_test_h5ad"])
 print(f"de_test: {de_test}")
 prediction = ad.read_h5ad(par["prediction"])
-print(f"prediction: {de_test}")
+print(f"prediction: {prediction}")
 
 print("Resolve genes", flush=True)
 if par["resolve_genes"] == "de_test":
