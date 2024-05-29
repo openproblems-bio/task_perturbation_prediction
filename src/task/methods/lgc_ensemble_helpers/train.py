@@ -15,7 +15,6 @@ def train(par, paths):
     de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
     de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
     de_train = de_train.drop(columns=['split'])
-    xlist  = ['cell_type','sm_name']
     ylist = ['cell_type','sm_name','sm_lincs_id','SMILES','control']
     one_hot_train = pd.DataFrame(np.load(f'{paths["train_data_aug_dir"]}/one_hot_train.npy'))
     y = de_train.drop(columns=ylist)

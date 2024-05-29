@@ -38,10 +38,11 @@ def one_hot_encode(data_train, data_test, out_dir):
         os.mkdir(out_dir)
     encoder = OneHotEncoder()
     encoder.fit(data_train)
-    train_features = encoder.transform(data_train)
-    test_features = encoder.transform(data_test)
-    np.save(f"{out_dir}/one_hot_train.npy", train_features.toarray().astype(float))
-    np.save(f"{out_dir}/one_hot_test.npy", test_features.toarray().astype(float))    
+    train_features = encoder.transform(data_train).toarray().astype(float)
+    test_features = encoder.transform(data_test).toarray().astype(float)
+    np.save(f"{out_dir}/one_hot_train.npy", train_features)
+    np.save(f"{out_dir}/one_hot_test.npy", test_features)    
+    return train_features, test_features
 
 def pad_to_balanced_shape(x, target_shape):
     current_size = list(x.shape)
@@ -81,6 +82,7 @@ def save_ChemBERTa_features(smiles_list, out_dir, on_train_data=False):
     else:
         np.save(f"{out_dir}/chemberta_test.npy", emb)
         np.save(f"{out_dir}/chemberta_test_mean.npy", emb_mean)                
+    return emb, emb_mean
                 
 def combine_features(data_aug_dfs, chem_feats, main_df, one_hot_dfs=None, quantiles_df=None):
     """
@@ -248,7 +250,6 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, 
 
 def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config, par, paths):
     kf_cv = KF(n_splits=config["KF_N_SPLITS"], shuffle=True, random_state=42)
-    trained_models = {'initial': [], 'light': [], 'heavy': []}
     print(paths["model_dir"])
     if not os.path.exists(paths["model_dir"]):
         os.makedirs(paths["model_dir"], exist_ok=True)
@@ -265,11 +266,9 @@ def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, conf
     with open(f'{paths["model_dir"]}/shapes.json', 'w') as file:
         json.dump(shapes, file)
     for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
-        if scheme in par["models"]:
+        if scheme in par["schemes"]:
             seed_everything()
             models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm, paths=paths)
-            trained_models[scheme].extend(models)
-    return trained_models
 
 #### Inference utilities
 def inference_pytorch(model, dataloader):
@@ -306,7 +305,10 @@ def weighted_average_prediction(X_test, trained_models, model_wise=[0.25, 0.35, 
     return np.stack(all_preds, axis=1).sum(axis=1)
 
 def load_trained_models(path, kf_n_splits=5):
-    with open(f'{path}/shapes.json', 'r') as f:
+    return load_trained_models_split(path, os.listdir(path), kf_n_splits)
+
+def load_trained_models_split(train_data_aug_dir, model_paths, kf_n_splits=5):
+    with open(f'{train_data_aug_dir}/shapes.json', 'r') as f:
         shapes = json.load(f)
     xshapes = shapes['xshapes']
     yshape = shapes['yshape']
@@ -315,8 +317,9 @@ def load_trained_models(path, kf_n_splits=5):
         for fold in range(kf_n_splits):
             for Model in [LSTM, Conv, GRU]:
                 model = Model(scheme, xshapes[scheme], yshape)
-                for weights_path in os.listdir(path):
-                    if model.name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
-                        model.load_state_dict(torch.load(f'{path}/{weights_path}', map_location='cpu'))
+                for weights_path in model_paths:
+                    model_name = model.name.lower()
+                    if model_name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
+                        model.load_state_dict(torch.load(weights_path, map_location='cpu'))
                         trained_models[scheme].append(model)
     return trained_models

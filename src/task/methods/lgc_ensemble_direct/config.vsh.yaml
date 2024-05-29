@@ -1,7 +1,7 @@
 __merge__: ../../api/comp_method.yaml
 
 functionality:
-  name: lstm_gru_cnn_ensemble
+  name: lgc_ensemble_direct
   info:
     label: LSTM-GRU-CNN Ensemble
     neurips2023_rank: 1
@@ -38,13 +38,13 @@ functionality:
   resources:
     - type: python_script
       path: script.py
-    - path: helper_classes.py
-    - path: helper_functions.py
-    - path: models.py
-    - path: predict.py
-    - path: prepare_data.py
-    - path: train.py
-    - path: divisor_finder.py
+    - path: ../lgc_ensemble_helpers/helper_classes.py
+    - path: ../lgc_ensemble_helpers/helper_functions.py
+    - path: ../lgc_ensemble_helpers/models.py
+    - path: ../lgc_ensemble_helpers/predict.py
+    - path: ../lgc_ensemble_helpers/prepare_data.py
+    - path: ../lgc_ensemble_helpers/train.py
+    - path: ../lgc_ensemble_helpers/divisor_finder.py
     - path: ../../utils/anndata_to_dataframe.py
     
 platforms:

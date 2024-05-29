@@ -99,7 +99,7 @@ functionality:
     - name: methods/nn_retraining_with_pseudolabels
     - name: methods/scape
     - name: methods/jn_ap_op2
-    - name: methods/lstm_gru_cnn_ensemble
+    - name: methods/lgc_ensemble
     - name: methods/transformer_ensemble
     - name: methods/pyboost
     - name: metrics/mean_rowwise_error

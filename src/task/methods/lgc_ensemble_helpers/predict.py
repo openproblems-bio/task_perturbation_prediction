@@ -47,17 +47,17 @@ def predict(par, meta, paths):
     ## Start predictions
     print("\nStarting predictions...")
     t0 = time.time()
-    if "light" in par["models"]:
+    if "light" in par["schemes"]:
         print("\nPredicting light models...")
         pred1 = average_prediction(test_vec_light, trained_models['light'])
         pred2 = weighted_average_prediction(test_vec_light, trained_models['light'],\
                                             model_wise=test_config["MODEL_COEFS"], fold_wise=fold_weights)
-    if "initial" in par["models"]:
+    if "initial" in par["schemes"]:
         print("\nPredicting initial models...")
         pred3 = average_prediction(test_vec, trained_models['initial'])
         pred4 = weighted_average_prediction(test_vec, trained_models['initial'],\
                                             model_wise=test_config["MODEL_COEFS"], fold_wise=fold_weights)
-    if "heavy" in par["models"]:
+    if "heavy" in par["schemes"]:
         print("\nPredicting heavy models...")
         pred5 = average_prediction(test_vec_heavy, trained_models['heavy'])
         pred6 = weighted_average_prediction(test_vec_heavy, trained_models['heavy'],\
@@ -71,13 +71,13 @@ def predict(par, meta, paths):
 
     submission[gene_names] = 0
     weight = 0
-    if "light" in par["models"]:
+    if "light" in par["schemes"]:
         submission[gene_names] += 0.23*pred1 + 0.15*pred2
         weight += 0.23 + 0.15
-    if "initial" in par["models"]:
+    if "initial" in par["schemes"]:
         submission[gene_names] += 0.18*pred3 + 0.15*pred4
         weight += 0.18 + 0.15
-    if "heavy" in par["models"]:
+    if "heavy" in par["schemes"]:
         submission[gene_names] += 0.15*pred5 + 0.14*pred6
         weight += 0.15 + 0.14
     
@@ -86,13 +86,13 @@ def predict(par, meta, paths):
     
     submission[gene_names] = 0
     weight = 0
-    if "light" in par["models"]:
+    if "light" in par["schemes"]:
         submission[gene_names] += 0.13*pred1 + 0.15*pred2
         weight += 0.13 + 0.15
-    if "initial" in par["models"]:
+    if "initial" in par["schemes"]:
         submission[gene_names] += 0.23*pred3 + 0.15*pred4
         weight += 0.23 + 0.15
-    if "heavy" in par["models"]:
+    if "heavy" in par["schemes"]:
         submission[gene_names] += 0.20*pred5 + 0.16*pred6
         weight += 0.20 + 0.16
     
@@ -101,13 +101,13 @@ def predict(par, meta, paths):
 
     submission[gene_names] = 0
     weight = 0
-    if "light" in par["models"]:
+    if "light" in par["schemes"]:
         submission[gene_names] += 0.17*pred1 + 0.16*pred2
         weight += 0.17 + 0.16
-    if "initial" in par["models"]:
+    if "initial" in par["schemes"]:
         submission[gene_names] += 0.17*pred3 + 0.16*pred4
         weight += 0.17 + 0.16
-    if "heavy" in par["models"]:
+    if "heavy" in par["schemes"]:
         submission[gene_names] += 0.18*pred5 + 0.16*pred6
         weight += 0.18 + 0.16
 

@@ -6,7 +6,7 @@ methods = [
   mean_across_compounds,
   sample,
   zeros,
-  lstm_gru_cnn_ensemble,
+  lgc_ensemble,
   nn_retraining_with_pseudolabels,
   jn_ap_op2,
   scape,
