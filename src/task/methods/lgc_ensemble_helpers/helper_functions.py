@@ -307,10 +307,7 @@ def weighted_average_prediction(X_test, trained_models, model_wise=[0.25, 0.35, 
     return np.stack(all_preds, axis=1).sum(axis=1)
 
 def load_trained_models(path, kf_n_splits=5):
-    return load_trained_models_split(path, os.listdir(path), kf_n_splits)
-
-def load_trained_models_split(train_data_aug_dir, model_paths, kf_n_splits=5):
-    with open(f'{train_data_aug_dir}/shapes.json', 'r') as f:
+    with open(f'{path}/shapes.json', 'r') as f:
         shapes = json.load(f)
     xshapes = shapes['xshapes']
     yshape = shapes['yshape']
@@ -319,10 +316,9 @@ def load_trained_models_split(train_data_aug_dir, model_paths, kf_n_splits=5):
         for fold in range(kf_n_splits):
             for Model in [LSTM, Conv, GRU]:
                 model = Model(scheme, xshapes[scheme], yshape)
-                for weights_path in model_paths:
-                    model_name = model.name
-                    if model_name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
-                        model.load_state_dict(torch.load(weights_path, map_location='cpu'))
+                for weights_path in os.listdir(path):
+                    if model.name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
+                        model.load_state_dict(torch.load(f'{path}/{weights_path}', map_location='cpu'))
                         trained_models[scheme].append(model)
     return trained_models
 
