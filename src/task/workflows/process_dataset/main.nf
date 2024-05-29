@@ -3,15 +3,19 @@ workflow run_wf {
   input_ch
 
   main:
-
   output_ch = input_ch
 
-    | compute_pseudobulk.run(
+    | filter_obs.run(
       fromState: [input: "sc_counts"],
+      toState: [filtered_sc_counts: "output"]
+    )
+
+    | compute_pseudobulk.run(
+      fromState: [input: "filtered_sc_counts"],
       toState: [pseudobulk: "output"]
     )
 
-    | clean_pseudobulk.run(
+    | filter_vars.run(
       fromState: [input: "pseudobulk",],
       toState: [pseudobulk_filtered: "output"]
     )
@@ -67,9 +71,9 @@ workflow run_wf {
     )
 
     | setState([
-      "de_train",
+      // "de_train",
       "de_train_h5ad",
-      "de_test",
+      // "de_test",
       "de_test_h5ad",
       "id_map"
     ])

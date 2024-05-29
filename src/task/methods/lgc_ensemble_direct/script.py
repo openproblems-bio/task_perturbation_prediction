@@ -2,19 +2,24 @@ import sys
 import tempfile
 import shutil
 
+import torch
+if torch.cuda.is_available():
+    print(f"detected {torch.cuda.device_count()} cuda devices", flush=True)
+else:
+    print('using device: cpu', flush=True)
+
 ## VIASH START
 par = {
-    "de_train": "resources/neurips-2023-data/de_train.parquet",
-    "de_test": "resources/neurips-2023-data/de_test.parquet",
+    "de_train": "resources/neurips-2023-data/de_train.h5ad",
     "id_map": "resources/neurips-2023-data/id_map.csv",
     "models": ["initial", "light"],
     "epochs": 1,
     "kf_n_splits": 2,
-    "output": "output.parquet",
+    "output": "output.h5ad",
     "output_model": None
 }
 meta = {
-    "resources_dir": "src/task/methods/lstm_gru_cnn_ensemble",
+    "resources_dir": "src/task/methods/lgc_ensemble",
     "temp_dir": "/tmp"
 }
 ## VIASH END
@@ -42,10 +47,13 @@ if not par["output_model"]:
 	atexit.register(lambda: shutil.rmtree(output_model))
 
 # prepare data
+print("\n\n## Preparing data\n")
 prepare_data(par, paths)
 
 # train
+print("\n\n## Training models\n")
 train(par, paths)
 
 # predict
-predict(par, paths)
+print("\n\n## Generating predictions\n")
+predict(par, meta, paths)

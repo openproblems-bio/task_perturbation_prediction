@@ -1,24 +1,24 @@
 functionality:
-  name: filter_vars
+  name: filter_obs
   namespace: process_dataset
   info:
     type: process_dataset
     type_info:
-      label: Filter variables
-      summary: Remove low-quality variables from the dataset
+      label: Filter observations
+      summary: Remove low-quality observations from the dataset
       description: |
-        This task removes low-quality variables from the dataset.
+        This task removes low-quality observations from the dataset.
   arguments:
     - name: --input
       type: file
       required: true
       direction: input
-      example: resources/neurips-2023-raw/pseudobulk.h5ad
+      example: resources/neurips-2023-raw/sc_counts.h5ad
     - name: --output
       type: file
       required: true
       direction: output
-      example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad
+      example: resources/neurips-2023-data/sc_counts_cleaned.h5ad
   resources:
     - type: r_script
       path: script.R
@@ -27,7 +27,7 @@ platforms:
     image: ghcr.io/openproblems-bio/base_r:1.0.4
     setup:
       - type: r
-        cran: [ edgeR, limma, dplyr, tidyr, purrr, tibble ]
+        cran: [ dplyr, tidyr, purrr, tibble ]
   - type: nextflow
     directives:
       label: [ midtime, midmem, lowcpu ]

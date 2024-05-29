@@ -3,6 +3,7 @@ import json
 import time
 import numpy as np
 import torch
+import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
@@ -37,10 +38,11 @@ def one_hot_encode(data_train, data_test, out_dir):
         os.mkdir(out_dir)
     encoder = OneHotEncoder()
     encoder.fit(data_train)
-    train_features = encoder.transform(data_train)
-    test_features = encoder.transform(data_test)
-    np.save(f"{out_dir}/one_hot_train.npy", train_features.toarray().astype(float))
-    np.save(f"{out_dir}/one_hot_test.npy", test_features.toarray().astype(float))    
+    train_features = encoder.transform(data_train).toarray().astype(float)
+    test_features = encoder.transform(data_test).toarray().astype(float)
+    np.save(f"{out_dir}/one_hot_train.npy", train_features)
+    np.save(f"{out_dir}/one_hot_test.npy", test_features)    
+    return train_features, test_features
 
 def pad_to_balanced_shape(x, target_shape):
     current_size = list(x.shape)
@@ -80,6 +82,7 @@ def save_ChemBERTa_features(smiles_list, out_dir, on_train_data=False):
     else:
         np.save(f"{out_dir}/chemberta_test.npy", emb)
         np.save(f"{out_dir}/chemberta_test_mean.npy", emb_mean)                
+    return emb, emb_mean
                 
 def combine_features(data_aug_dfs, chem_feats, main_df, one_hot_dfs=None, quantiles_df=None):
     """
@@ -146,6 +149,9 @@ def train_step(dataloader, model, opt, clip_norm):
         x = x.to(device)
         target = target.to(device)
         loss = model(x, target)
+        # aggregate loss if it's not a scalar
+        if len(loss.size()) > 0:
+            loss = loss.mean()
         train_losses.append(loss.item())
         pred = model(x).detach().cpu().numpy()
         train_mrrmse.append(mrrmse_np(pred, target.cpu().numpy()))
@@ -164,14 +170,17 @@ def validation_step(dataloader, model):
         x = x.to(device)
         target = target.to(device)
         loss = model(x,target)
+        # aggregate loss if it's not a scalar
+        if len(loss.size()) > 0:
+            loss = loss.mean()
         pred = model(x).detach().cpu().numpy()
         val_mrrmse.append(mrrmse_np(pred, target.cpu().numpy()))
         val_losses.append(loss.item())
     return np.mean(val_losses), np.mean(val_mrrmse)
 
 
-def train_function(model, x_train, y_train, x_val, y_val, info_data, config, clip_norm=1.0):
-    if model.name in ['GRU']:
+def train_function(model, model_name, x_train, y_train, x_val, y_val, info_data, config, clip_norm=1.0):
+    if model_name in ['GRU']:
         print('lr', config["LEARNING_RATES"][2])
         opt = torch.optim.Adam(model.parameters(), lr=config["LEARNING_RATES"][2])
     else:
@@ -201,8 +210,8 @@ def train_function(model, x_train, y_train, x_val, y_val, info_data, config, cli
         if val_mrrmse < best_loss:
             best_loss = val_mrrmse
             best_weights = model.state_dict()
-            print('BEST ----> ')
-        print(f"{model.name} Epoch {e}, train_loss {round(loss,3)}, val_loss {round(val_loss, 3)}, val_mrrmse {val_mrrmse}")
+            # print('BEST ----> ')
+        # print(f"{model.name} Epoch {e}, train_loss {round(loss,3)}, val_loss {round(val_loss, 3)}, val_mrrmse {val_mrrmse}")
     t1 = time.time()
     results['runtime'] = float(t1-t0)
     model.load_state_dict(best_weights)
@@ -221,12 +230,19 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, 
                     'val_sm_name': cell_types_sm_names.iloc[val_idx]['sm_name'].tolist()}
         for Model in [LSTM, Conv, GRU]:
             model = Model(scheme, X.shape, y.shape)
-            model, results = train_function(model, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
+            
+            if torch.cuda.device_count() > 1:
+                model = nn.DataParallel(model)
+                model_name = model.module.name
+            else:
+                model_name = model.name
+
+            model, results = train_function(model, model_name, x_train, y_train, x_val, y_val, info_data, config=config, clip_norm=clip_norm)
             model.to('cpu')
             trained_models.append(model)
-            print(f'PATH OF THE MODEL EQUALS: {paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
-            torch.save(model.state_dict(), f'{paths["model_dir"]}/pytorch_{model.name}_{scheme}_fold{i}.pt')
-            with open(f'{paths["logs_dir"]}/{model.name}_{scheme}_fold{i}.json', 'w') as file:
+            print(f'PATH OF THE MODEL EQUALS: {paths["model_dir"]}/pytorch_{model_name}_{scheme}_fold{i}.pt')
+            torch.save(model.state_dict(), f'{paths["model_dir"]}/pytorch_{model_name}_{scheme}_fold{i}.pt')
+            with open(f'{paths["logs_dir"]}/{model_name}_{scheme}_fold{i}.json', 'w') as file:
                 json.dump(results, file)
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
@@ -234,7 +250,6 @@ def cross_validate_models(X, y, kf_cv, cell_types_sm_names, paths, config=None, 
 
 def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, config, par, paths):
     kf_cv = KF(n_splits=config["KF_N_SPLITS"], shuffle=True, random_state=42)
-    trained_models = {'initial': [], 'light': [], 'heavy': []}
     print(paths["model_dir"])
     if not os.path.exists(paths["model_dir"]):
         os.makedirs(paths["model_dir"], exist_ok=True)
@@ -251,14 +266,14 @@ def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, conf
     with open(f'{paths["model_dir"]}/shapes.json', 'w') as file:
         json.dump(shapes, file)
     for scheme, clip_norm, input_features in zip(['initial', 'light', 'heavy'], config["CLIP_VALUES"], [X_vec, X_vec_light, X_vec_heavy]):
-        if scheme in par["models"]:
+        if scheme in par["schemes"]:
             seed_everything()
             models = cross_validate_models(input_features, y, kf_cv, cell_types_sm_names, config=config, scheme=scheme, clip_norm=clip_norm, paths=paths)
-            trained_models[scheme].extend(models)
-    return trained_models
 
 #### Inference utilities
 def inference_pytorch(model, dataloader):
+    if isinstance(model, dict):
+        model = load_model(model)
     model.eval()
     preds = []
     for x in dataloader:
@@ -306,3 +321,36 @@ def load_trained_models(path, kf_n_splits=5):
                         model.load_state_dict(torch.load(f'{path}/{weights_path}', map_location='cpu'))
                         trained_models[scheme].append(model)
     return trained_models
+
+def lazy_load_trained_models(train_data_aug_dir, model_paths, kf_n_splits=5):
+    with open(f'{train_data_aug_dir}/shapes.json', 'r') as f:
+        shapes = json.load(f)
+    xshapes = shapes['xshapes']
+    yshape = shapes['yshape']
+    trained_models = {'initial': [], 'light': [], 'heavy': []}
+    for scheme in ['initial', 'light', 'heavy']:
+        for fold in range(kf_n_splits):
+            for model_name in ["LSTM", "Conv", "GRU"]:
+                for weights_path in model_paths:
+                    if model_name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
+                        # store settings in dict for later use
+                        trained_models[scheme].append({
+                            "model_name": model_name,
+                            "model_path": weights_path,
+                            "scheme": scheme,
+                            "xshape": xshapes[scheme],
+                            "yshape": yshape,
+                            "fold": fold
+                        })
+    return trained_models
+
+model_classes = {
+    "LSTM": LSTM,
+    "GRU": GRU,
+    "Conv": Conv
+}
+def load_model(model_dict):
+    ModelClass = model_classes[model_dict["model_name"]]
+    model = ModelClass(model_dict["scheme"], model_dict["xshape"], model_dict["yshape"])
+    model.load_state_dict(torch.load(model_dict["model_path"], map_location='cpu'))
+    return model

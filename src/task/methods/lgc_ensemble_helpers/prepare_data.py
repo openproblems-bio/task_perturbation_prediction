@@ -1,12 +1,15 @@
 import os
 import pandas as pd
+import anndata as ad
 from helper_functions import seed_everything, one_hot_encode, save_ChemBERTa_features
+from anndata_to_dataframe import anndata_to_dataframe
 
 def prepare_data(par, paths):
     seed_everything()
     ## Read data
     print("\nPreparing data...")
-    de_train = pd.read_parquet(par["de_train"])
+    de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+    de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
     de_train = de_train.drop(columns=['split'])
     id_map = pd.read_csv(par["id_map"])
     ## Create data augmentation

@@ -1,6 +1,8 @@
+import anndata as ad
 import pandas as pd
 import numpy as np
 from helper_functions import combine_features, train_validate
+from anndata_to_dataframe import anndata_to_dataframe
 
 def train(par, paths):
     train_config = {
@@ -10,9 +12,9 @@ def train(par, paths):
         "KF_N_SPLITS": par["kf_n_splits"],
     }
     print("\nRead data and build features...")
-    de_train = pd.read_parquet(par["de_train"])
+    de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+    de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
     de_train = de_train.drop(columns=['split'])
-    xlist  = ['cell_type','sm_name']
     ylist = ['cell_type','sm_name','sm_lincs_id','SMILES','control']
     one_hot_train = pd.DataFrame(np.load(f'{paths["train_data_aug_dir"]}/one_hot_train.npy'))
     y = de_train.drop(columns=ylist)

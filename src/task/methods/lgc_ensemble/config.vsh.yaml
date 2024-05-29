@@ -1,7 +1,7 @@
-__merge__: ../../api/comp_method.yaml
+__merge__: ../../api/comp_method_notest.yaml
 
 functionality:
-  name: lstm_gru_cnn_ensemble
+  name: lgc_ensemble
   info:
     label: LSTM-GRU-CNN Ensemble
     neurips2023_rank: 1
@@ -28,46 +28,28 @@ functionality:
       description: "Number of splits for KFold."
       info:
         test_default: 2
-    - name: --models
+    - name: --schemes
       type: string
       default: [initial, light, heavy]
       multiple: true
       info:
         test_default: [initial, light]
+    - name: --models
+      type: string
+      default: [LSTM, GRU, Conv]
+      multiple: true
+      info:
+        test_default: [LSTM, GRU]
 
   resources:
-    - type: python_script
-      path: script.py
-    - path: helper_classes.py
-    - path: helper_functions.py
-    - path: models.py
-    - path: predict.py
-    - path: prepare_data.py
-    - path: train.py
-    - path: divisor_finder.py
+    - type: nextflow_script
+      path: main.nf
+      entrypoint: run_wf
+
+  dependencies:
+    - name: methods/lgc_ensemble_prepare
+    - name: methods/lgc_ensemble_train
+    - name: methods/lgc_ensemble_predict
     
 platforms:
-  - type: docker
-    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
-    run_args: ["--shm-size=2g"]
-    setup:
-      - type: python
-        packages:
-          - torch==2.1.1
-          - --index-url
-          - https://download.pytorch.org/whl/cu121
-      - type: python
-        packages:
-          - fastparquet
-          - pandas==2.1.3
-          - pyarrow==14.0.1
-          - tqdm==4.66.1
-          - scikit-learn==1.3.2
-          - transformers==4.35.2
-          - matplotlib==3.8.2
-          - torch-summary
-
-  - type: native
   - type: nextflow
-    directives:
-      label: [hightime, veryhighmem, highcpu, highsharedmem, highgpu]
