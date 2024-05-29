@@ -17,7 +17,7 @@ functionality:
       required: true
       direction: input
       description: "The name of the model to train."
-      choices: [lstm, gru, cnn]
+      choices: [LSTM, GRU, Conv]
     - name: --fold
       type: integer
       required: true

@@ -318,7 +318,7 @@ def load_trained_models_split(train_data_aug_dir, model_paths, kf_n_splits=5):
             for Model in [LSTM, Conv, GRU]:
                 model = Model(scheme, xshapes[scheme], yshape)
                 for weights_path in model_paths:
-                    model_name = model.name.lower()
+                    model_name = model.name
                     if model_name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
                         model.load_state_dict(torch.load(weights_path, map_location='cpu'))
                         trained_models[scheme].append(model)

@@ -8,7 +8,7 @@ import pandas as pd
 par = {
     "train_data_aug_dir": "output/train_data_aug_dir",
     "scheme": "initial",
-    "model": "lstm",
+    "model": "LSTM",
     "fold": 0,
     "model_file": "output/model.pt",
     "log_file": "output/log.json",
@@ -57,9 +57,9 @@ info_data = {
 }
 
 models = {
-    "lstm": LSTM,
-    "gru": GRU,
-    "conv": Conv
+    "LSTM": LSTM,
+    "GRU": GRU,
+    "Conv": Conv
 }
 schemes = ['initial', 'light', 'heavy']
 scheme_idx = schemes.index(par["scheme"])

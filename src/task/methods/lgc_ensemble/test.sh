@@ -10,5 +10,5 @@ nextflow run . \
   --epochs 10 \
   --kf_n_splits 3 \
   --schemes "initial;light" \
-  --models "lstm;gru" \
+  --models "LSTM;GRU" \
   --publish_dir "output/lgc_ensemble"

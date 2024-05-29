@@ -36,10 +36,10 @@ functionality:
         test_default: [initial, light]
     - name: --models
       type: string
-      default: [lstm, gru, cnn]
+      default: [LSTM, GRU, Conv]
       multiple: true
       info:
-        test_default: [lstm, gru]
+        test_default: [LSTM, GRU]
 
   resources:
     - type: nextflow_script

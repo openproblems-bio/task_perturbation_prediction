@@ -11,24 +11,13 @@ else:
     print('using device: cpu', flush=True)
 
 ## VIASH START
-# par = {
-#     "id_map": "resources/neurips-2023-data/id_map.csv",
-#     "train_data_aug_dir": "output/train_data_aug_dir",
-#     "model_files": [
-#         "output/models/pytorch_lstm_light_fold0.pt"
-#     ],
-#     "prediction": "output/prediction.h5ad"
-# }
 par = {
-  'train_data_aug_dir': r'work/84/3e88a1fc5cfc621dfa020b09efb483/_viash_par/train_data_aug_dir_1/run.lgc_ensemble_prepare.train_data_aug_dir',
-  'model_files': r'_viash_par/model_files_1/run.lstm_light_fold1.lgc_ensemble_train.model_file.pt;_viash_par/model_files_2/run.lstm_initial_fold0.lgc_ensemble_train.model_file.pt;_viash_par/model_files_3/run.lstm_initial_fold1.lgc_ensemble_train.model_file.pt;_viash_par/model_files_4/run.lstm_initial_fold2.lgc_ensemble_train.model_file.pt;_viash_par/model_files_5/run.lstm_light_fold0.lgc_ensemble_train.model_file.pt;_viash_par/model_files_6/run.lstm_light_fold2.lgc_ensemble_train.model_file.pt;_viash_par/model_files_7/run.gru_initial_fold1.lgc_ensemble_train.model_file.pt;_viash_par/model_files_8/run.gru_initial_fold0.lgc_ensemble_train.model_file.pt;_viash_par/model_files_9/run.gru_initial_fold2.lgc_ensemble_train.model_file.pt;_viash_par/model_files_10/run.gru_light_fold0.lgc_ensemble_train.model_file.pt;_viash_par/model_files_11/run.gru_light_fold1.lgc_ensemble_train.model_file.pt;_viash_par/model_files_12/run.gru_light_fold2.lgc_ensemble_train.model_file.pt'.split(';'),
-  'id_map': r'work/84/3e88a1fc5cfc621dfa020b09efb483/_viash_par/id_map_1/id_map.csv',
-  'prediction': r'work/84/3e88a1fc5cfc621dfa020b09efb483/run.lgc_ensemble_predict.prediction'
-}
-par["model_files"] = [f"work/84/3e88a1fc5cfc621dfa020b09efb483/{f}" for f in par["model_files"]]
-meta = {
-    "resources_dir": "src/task/methods/lgc_ensemble_helpers",
-    "temp_dir": "/tmp"
+    "id_map": "resources/neurips-2023-data/id_map.csv",
+    "train_data_aug_dir": "output/train_data_aug_dir",
+    "model_files": [
+        "output/models/pytorch_lstm_light_fold0.pt"
+    ],
+    "prediction": "output/prediction.h5ad"
 }
 ## VIASH END
 
