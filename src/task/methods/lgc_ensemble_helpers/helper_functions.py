@@ -210,8 +210,8 @@ def train_function(model, model_name, x_train, y_train, x_val, y_val, info_data,
         if val_mrrmse < best_loss:
             best_loss = val_mrrmse
             best_weights = model.state_dict()
-            # print('BEST ----> ')
-        # print(f"{model.name} Epoch {e}, train_loss {round(loss,3)}, val_loss {round(val_loss, 3)}, val_mrrmse {val_mrrmse}")
+            print('BEST ----> ')
+        print(f"{model.name} Epoch {e}, train_loss {round(loss,3)}, val_loss {round(val_loss, 3)}, val_mrrmse {val_mrrmse}")
     t1 = time.time()
     results['runtime'] = float(t1-t0)
     model.load_state_dict(best_weights)
