@@ -25,7 +25,7 @@ print(f"par: {par}", flush=True)
 
 # import helper functions
 sys.path.append(meta['resources_dir'])
-from helper_functions import combine_features, load_trained_models_split, average_prediction, weighted_average_prediction
+from helper_functions import combine_features, lazy_load_trained_models, average_prediction, weighted_average_prediction
 
 print("\nReading data...")
 train_config = json.load(open(f'{par["train_data_aug_dir"]}/config.json'))
@@ -62,7 +62,7 @@ test_vec_heavy = combine_features([quantiles_df,mean_cell_type,mean_sm_name],\
 
 ## Load trained models
 print("\nLoading trained models...")
-trained_models = load_trained_models_split(
+trained_models = lazy_load_trained_models(
     par["train_data_aug_dir"],
     par["model_files"],
     kf_n_splits=test_config["KF_N_SPLITS"]

@@ -272,6 +272,8 @@ def train_validate(X_vec, X_vec_light, X_vec_heavy, y, cell_types_sm_names, conf
 
 #### Inference utilities
 def inference_pytorch(model, dataloader):
+    if isinstance(model, dict):
+        model = load_model(model)
     model.eval()
     preds = []
     for x in dataloader:
@@ -323,3 +325,36 @@ def load_trained_models_split(train_data_aug_dir, model_paths, kf_n_splits=5):
                         model.load_state_dict(torch.load(weights_path, map_location='cpu'))
                         trained_models[scheme].append(model)
     return trained_models
+
+def lazy_load_trained_models(train_data_aug_dir, model_paths, kf_n_splits=5):
+    with open(f'{train_data_aug_dir}/shapes.json', 'r') as f:
+        shapes = json.load(f)
+    xshapes = shapes['xshapes']
+    yshape = shapes['yshape']
+    trained_models = {'initial': [], 'light': [], 'heavy': []}
+    for scheme in ['initial', 'light', 'heavy']:
+        for fold in range(kf_n_splits):
+            for model_name in ["LSTM", "Conv", "GRU"]:
+                for weights_path in model_paths:
+                    if model_name in weights_path and scheme in weights_path and f'fold{fold}' in weights_path:
+                        # store settings in dict for later use
+                        trained_models[scheme].append({
+                            "model_name": model_name,
+                            "model_path": weights_path,
+                            "scheme": scheme,
+                            "xshape": xshapes[scheme],
+                            "yshape": yshape,
+                            "fold": fold
+                        })
+    return trained_models
+
+model_classes = {
+    "LSTM": LSTM,
+    "GRU": GRU,
+    "Conv": Conv
+}
+def load_model(model_dict):
+    ModelClass = model_classes[model_dict["model_name"]]
+    model = ModelClass(model_dict["scheme"], model_dict["xshape"], model_dict["yshape"])
+    model.load_state_dict(torch.load(model_dict["model_path"], map_location='cpu'))
+    return model
