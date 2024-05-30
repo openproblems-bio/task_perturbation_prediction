@@ -54,8 +54,8 @@ functionality:
         max: "+inf"
         maximize: false
   resources:
-    - type: python_script
-      path: script.py
+    - type: r_script
+      path: script.R
 platforms:
   - type: docker
     image: ghcr.io/openproblems-bio/base_r:1.0.4
