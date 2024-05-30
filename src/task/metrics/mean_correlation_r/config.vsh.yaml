@@ -3,7 +3,7 @@ functionality:
   name: mean_correlation
   info:
     metrics:
-      - name: mean_pearson
+      - name: mean_pearson_r
         label: Mean Pearson
         summary: The mean of Pearson correlations per row (perturbation).
         description: |
@@ -13,7 +13,7 @@ functionality:
         min: -1
         max: 1
         maximize: true
-      - name: mean_spearman
+      - name: mean_spearman_r
         label: Mean Spearman
         summary: The mean of Spearman correlations per row (perturbation).
         description: |
@@ -24,11 +24,11 @@ functionality:
         max: 1
         maximize: true
   resources:
-    - type: python_script
-      path: script.py
+    - type: r_script
+      path: script.R
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]

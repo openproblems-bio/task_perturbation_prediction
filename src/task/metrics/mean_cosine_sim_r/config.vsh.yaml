@@ -3,7 +3,7 @@ functionality:
   name: mean_cosine_sim
   info:
     metrics:
-      - name: mean_cosine_sim
+      - name: mean_cosine_sim_r
         label: Mean Cosine Similarity
         summary: The mean of cosine similarities per row (perturbation).
         description: |
@@ -19,7 +19,7 @@ functionality:
         min: -1
         max: 1
         maximize: true
-      - name: mean_cosine_sim_clipped_0001
+      - name: mean_cosine_sim_clipped_0001_r
         label: Mean Cosine Similarity clipped at 0.0001
         summary: The mean of cosine similarities per row (perturbation). Values are clipped to 0.0001 adjusted p-values.
         description: This metric is the same as `mean_cosine_sim`, but with the values clipped to [-log10(0.0001), log10(0.0001)].
@@ -29,11 +29,14 @@ functionality:
         max: 1
         maximize: true
   resources:
-    - type: python_script
-      path: script.py
+    - type: r_script
+      path: script.R
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
+    setup:
+      - type: r
+        packages: proxyC
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]
