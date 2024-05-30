@@ -4,7 +4,7 @@ functionality:
   info:
     metrics:
       - name: mean_rowwise_rmse_r
-        label: Mean Rowwise RMSE
+        label: Mean Rowwise RMSE bis
         summary: The mean of the root mean squared error (RMSE) of each row in the matrix.
         description: |
           We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:
