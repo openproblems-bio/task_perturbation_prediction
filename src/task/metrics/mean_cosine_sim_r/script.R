@@ -48,7 +48,7 @@ output <- AnnData(
   uns = list(
     dataset_id = de_test$uns[["dataset_id"]],
     method_id = prediction$uns[["method_id"]],
-    metric_ids = c("mean_cosine_sim", "mean_cosine_sim_clipped_0001"),
+    metric_ids = c("mean_cosine_sim_r", "mean_cosine_sim_clipped_0001_r"),
     metric_values = c(mean_cosine_similarity, mean_cosine_similarity_clipped_0001)
   )
 )
