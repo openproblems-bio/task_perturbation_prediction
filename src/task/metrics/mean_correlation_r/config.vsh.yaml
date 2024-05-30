@@ -1,10 +1,10 @@
 __merge__: ../../api/comp_metric.yaml
 functionality:
-  name: mean_correlation
+  name: mean_correlation_r
   info:
     metrics:
-      - name: mean_pearson
-        label: Mean Pearson
+      - name: mean_pearson_r
+        label: Mean Pearson bis
         summary: The mean of Pearson correlations per row (perturbation).
         description: |
           The **Mean Pearson Correlation** is computed as follows:
@@ -19,8 +19,8 @@ functionality:
         min: -1
         max: 1
         maximize: true
-      - name: mean_spearman
-        label: Mean Spearman
+      - name: mean_spearman_r
+        label: Mean Spearman bis
         summary: The mean of Spearman correlations per row (perturbation).
         description: |
           The **Mean Spearman Correlation** is computed as follows:
@@ -36,11 +36,11 @@ functionality:
         max: 1
         maximize: true
   resources:
-    - type: python_script
-      path: script.py
+    - type: r_script
+      path: script.R
 platforms:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    image: ghcr.io/openproblems-bio/base_r:1.0.4
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]
