@@ -1,6 +1,6 @@
 __merge__: ../../api/comp_metric.yaml
 functionality:
-  name: mean_rowwise_error
+  name: mean_rowwise_error_r
   info:
     metrics:
       - name: mean_rowwise_rmse_r

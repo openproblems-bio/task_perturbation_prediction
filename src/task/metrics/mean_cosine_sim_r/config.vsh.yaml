@@ -1,6 +1,6 @@
 __merge__: ../../api/comp_metric.yaml
 functionality:
-  name: mean_cosine_sim
+  name: mean_cosine_sim_r
   info:
     metrics:
       - name: mean_cosine_sim_r
