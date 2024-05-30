@@ -13,7 +13,7 @@ settings: '{"stability": true, "stability_obs_fraction": 0.99, "stability_var_fr
 HERE
 
 tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
-  --revision add_cell_obs_to_uns_build \
+  --revision main_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \
   --workspace 53907369739130 \
