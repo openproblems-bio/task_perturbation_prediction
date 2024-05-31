@@ -13,6 +13,10 @@ par = {
 }
 # VIASH END
 
+# workaround for list bug
+if isinstance(par["output"], list):
+    par["output"] = par["output"][0]
+
 # Load data
 input_data = ad.read_h5ad(par["input"])
 
