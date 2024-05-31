@@ -1,5 +1,5 @@
 functionality:
-  name: "run_benchmark"
+  name: "run_stability_analysis"
   namespace: "workflows"
   argument_groups:
     - name: Inputs
