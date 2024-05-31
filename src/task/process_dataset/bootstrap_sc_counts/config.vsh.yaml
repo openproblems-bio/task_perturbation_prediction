@@ -22,15 +22,9 @@ functionality:
           type: file
           required: true
           direction: output
-          multiple: true
-          example: [sc_counts_bootstrap.h5ad]
+          example: sc_counts_bootstrap.h5ad
     - name: Arguments
       arguments:
-        - name: --num_replicates
-          type: integer
-          required: true
-          default: 10
-          description: Number of bootstraps to generate.
         - name: --obs_fraction
           type: double
           required: true
@@ -49,4 +43,4 @@ platforms:
     image: ghcr.io/openproblems-bio/base_python:1.0.4
   - type: nextflow
     directives:
-      label: [ midtime, midmem, midcpu ]
+      label: [ midtime, highmem, midcpu ]

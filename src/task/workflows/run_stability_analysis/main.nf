@@ -14,11 +14,22 @@ workflow run_wf {
 
   main:
   output_ch = input_ch
-    
+
+    // flatten bootstraps
+    | flatMap { id, state -> 
+      return (1..state.bootstrap_num_replicates).collect{ idx ->
+        [
+          id + "-bootstrap" + idx,
+          state + [
+            replicate: idx
+          ]
+        ]
+      }
+    }
+
     | bootstrap_sc_counts.run(
       fromState: [
         input: "sc_counts",
-        num_replicates: "bootstrap_num_replicates",
         obs_fraction: "bootstrap_obs_fraction",
         var_fraction: "bootstrap_var_fraction"
       ],
@@ -26,22 +37,6 @@ workflow run_wf {
         sc_counts: "output"
       ]
     )
-
-
-    // flatten bootstraps
-    | flatMap { id, state -> 
-      return state.sc_counts
-        .withIndex()
-        .collect{ el, idx ->
-          [
-            id + "-bootstrap" + idx,
-            state + [
-              replicate: idx,
-              sc_counts: el
-            ]
-          ]
-        }
-    }
 
     | process_dataset.run(
       fromState: {id, state, comp ->
