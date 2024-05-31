@@ -69,7 +69,8 @@ workflow run_wf {
         de_test_h5ad: "de_test_h5ad",
         id_map: "id_map",
         method_ids: "method_ids",
-        metric_ids: "metric_ids"
+        metric_ids: "metric_ids",
+        layer: "layer"
       ],
       toState: [
         scores: "scores"
