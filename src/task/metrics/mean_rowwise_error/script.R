@@ -3,7 +3,7 @@ library(anndata)
 ## VIASH START (unchanged)
 par <- list(
   de_test_h5ad = "resources/neurips-2023-data/de_test.h5ad",
-  de_test_layer = "sign_log10_pval",
+  de_test_layer = "clipped_sign_log10_pval",
   prediction = "resources/neurips-2023-data/prediction.h5ad",
   prediction_layer = "prediction",
   resolve_genes = "de_test",
