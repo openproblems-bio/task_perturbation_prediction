@@ -3,7 +3,7 @@ library(anndata)
 ## VIASH START
 par <- list(
   de_test_h5ad = "resources/neurips-2023-data/de_test.h5ad",
-  de_test_layer = "sign_log10_pval",
+  de_test_layer = "clipped_sign_log10_pval",
   prediction = "resources/neurips-2023-data/prediction.h5ad",
   prediction_layer = "prediction",
   resolve_genes = "de_test",
@@ -39,13 +39,15 @@ if (any(is.na(prediction_X))) {
 }
 
 cat("Calculate metrics\n")
-out <- cor(t(de_test_X), t(prediction_X), method = "pearson")
-pearson <- diag(out)
-mean_pearson <- mean(ifelse(is.na(pearson), 0, pearson))
+pearson <- proxyC::simil(de_test_X, prediction_X, method = "correlation", diag = TRUE)
+mean_rowwise_pearson <- mean(pearson@x)
 
-out2 <- cor(t(de_test_X), t(prediction_X), method = "spearman")
-spearman <- diag(out2)
-mean_spearman <- mean(ifelse(is.na(spearman), 0, spearman))
+out <- cor(t(de_test_X), t(prediction_X), method = "spearman")
+spearman <- diag(out)
+mean_rowwise_spearman <- mean(ifelse(is.na(spearman), 0, spearman))
+
+cosine <- proxyC::simil(de_test_X, prediction_X, method = "cosine", diag = TRUE)
+mean_rowwise_cosine <- mean(cosine@x)
 
 cat("Create output\n")
 output <- AnnData(
@@ -53,8 +55,8 @@ output <- AnnData(
   uns = list(
     dataset_id = de_test$uns[["dataset_id"]],
     method_id = prediction$uns[["method_id"]],
-    metric_ids = c("mean_pearson_r", "mean_spearman_r"),
-    metric_values = c(mean_pearson, mean_spearman)
+    metric_ids = c("mean_rowwise_pearson", "mean_rowwise_spearman", "mean_rowwise_cosine"),
+    metric_values = c(mean_rowwise_pearson, mean_rowwise_spearman, mean_rowwise_cosine)
   )
 )
 

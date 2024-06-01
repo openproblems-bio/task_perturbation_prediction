@@ -110,11 +110,7 @@ functionality:
     - name: methods/transformer_ensemble
     - name: methods/pyboost
     - name: metrics/mean_rowwise_error
-    - name: metrics/mean_cosine_sim
-    - name: metrics/mean_correlation
-    - name: metrics/mean_rowwise_error_r
-    - name: metrics/mean_cosine_sim_r
-    - name: metrics/mean_correlation_r
+    - name: metrics/mean_rowwise_correlation
     - name: process_dataset/bootstrap
     - name: process_dataset/generate_id_map
   repositories:

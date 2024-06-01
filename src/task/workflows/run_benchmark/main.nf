@@ -17,11 +17,7 @@ methods = [
 // construct list of metrics
 metrics = [
   mean_rowwise_error,
-  mean_rowwise_error_r,
-  mean_cosine_sim,
-  mean_cosine_sim_r,
-  mean_correlation,
-  mean_correlation_r
+  mean_rowwise_correlation
 ]
 
 // which arguments to pass to the methods
