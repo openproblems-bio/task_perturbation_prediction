@@ -19,10 +19,8 @@ workflow run_wf {
     | flatMap { id, state -> 
       return (1..state.bootstrap_num_replicates).collect{ idx ->
         [
-          id + "-bootstrap" + idx,
-          state + [
-            replicate: idx
-          ]
+          "${id}-bootstrap${idx}",
+          state + [replicate: idx]
         ]
       }
     }
@@ -39,7 +37,7 @@ workflow run_wf {
     )
 
     | process_dataset.run(
-      fromState: {id, state, comp ->
+      fromState: {id, state ->
         [
           sc_counts: state.sc_counts,
           dataset_id: id,
