@@ -59,7 +59,7 @@ workflow run_wf {
       methodToState: ["prediction": "output"],
       metricFromState: [
         de_test_h5ad: "de_test_h5ad",
-        layer: "layer",
+        de_test_layer: "layer",
         prediction: "prediction"
       ],
       metricToState: ["metric_output": "output"],
