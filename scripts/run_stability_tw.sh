@@ -10,7 +10,7 @@ publish_dir: "$publish_dir"
 HERE
 
 tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
-  --revision remove_clipped_build \
+  --revision main_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_stability_analysis/main.nf \
   --workspace 53907369739130 \
