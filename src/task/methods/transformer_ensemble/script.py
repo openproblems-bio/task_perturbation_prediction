@@ -94,6 +94,8 @@ for argset in argsets:
         one_hot_encode_features, targets, one_hot_test = (
             prepare_augmented_data_mean_only(de_train=de_train, id_map=id_map)
         )
+    else:
+        raise ValueError("Invalid mean_std argument")
 
     print(f"> Train model", flush=True)
     if argset["sampling_strategy"] == "k-means":
@@ -108,7 +110,7 @@ for argset in argsets:
             device=device,
             mean_std=argset["mean_std"],
         )
-    else:
+    elif argset["sampling_strategy"] == "random":
         label_reducer, scaler, transformer_model = train_non_k_means_strategy(
             n_components=n_components,
             d_model=d_model,
@@ -120,6 +122,8 @@ for argset in argsets:
             device=device,
             mean_std=argset["mean_std"],
         )
+    else:
+        raise ValueError("Invalid sampling_strategy argument")
 
     print(f"> Predict model", flush=True)
     unseen_data = torch.tensor(one_hot_test, dtype=torch.float32).to(device)
