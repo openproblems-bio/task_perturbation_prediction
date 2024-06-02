@@ -20,6 +20,10 @@ functionality:
     - name: Bootstrapping arguments
       description: Define the sampling strategy for the stability analysis.
       arguments:
+        - name: --bootstrap_num_replicates
+          type: integer
+          default: 10
+          description: Number of bootstrap replicates to run.
         - name: --bootstrap_obs
           type: boolean
           default: true
