@@ -57,7 +57,7 @@ output <- AnnData(
     dataset_id = de_test$uns[["dataset_id"]],
     method_id = prediction$uns[["method_id"]],
     metric_ids = c("mean_rowwise_pearson", "mean_rowwise_spearman", "mean_rowwise_cosine"),
-    metric_values = c(mean_rowwise_pearson, mean_rowwise_spearman, mean_rowwise_cosine)
+    metric_values = zapsmall(c(mean_rowwise_pearson, mean_rowwise_spearman, mean_rowwise_cosine), 10)
   )
 )
 

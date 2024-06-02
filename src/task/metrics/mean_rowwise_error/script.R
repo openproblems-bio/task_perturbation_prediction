@@ -56,9 +56,12 @@ output <- AnnData(
       "mean_rowwise_rmse",
       "mean_rowwise_mae"
     ),
-    metric_values = c(
-      mean_rowwise_rmse,
-      mean_rowwise_mae
+    metric_values = zapsmall(
+      c(
+        mean_rowwise_rmse,
+        mean_rowwise_mae
+      ),
+      10
     )
   )
 )
