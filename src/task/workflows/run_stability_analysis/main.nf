@@ -20,16 +20,23 @@ workflow run_wf {
       return (1..state.bootstrap_num_replicates).collect{ idx ->
         [
           "${id}-bootstrap${idx}",
-          state + [replicate: idx]
+          state + [
+            replicate: idx,
+            _meta: [join_id: id]
+          ]
         ]
       }
     }
 
-    | bootstrap_sc_counts.run(
+    | bootstrap.run(
       fromState: [
         input: "sc_counts",
+        bootstrap_obs: "bootstrap_obs",
         obs_fraction: "bootstrap_obs_fraction",
-        var_fraction: "bootstrap_var_fraction"
+        obs_replace: "bootstrap_obs_replace",
+        bootstrap_var: "bootstrap_var",
+        var_fraction: "bootstrap_var_fraction",
+        var_replace: "bootstrap_var_replace"
       ],
       toState: [
         sc_counts: "output"
@@ -70,7 +77,7 @@ workflow run_wf {
       ]
     )
 
-    | setState(["scores"])
+    | setState(["scores", "_meta"])
 
   emit:
   output_ch
