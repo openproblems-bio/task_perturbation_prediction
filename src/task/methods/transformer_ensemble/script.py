@@ -13,7 +13,7 @@ par = {
     "id_map": "resources/neurips-2023-data/id_map.csv",
     "output": "output.h5ad",
     "num_train_epochs": 10,
-    "layer": "sign_log10_pval"
+    "layer": "clipped_sign_log10_pval"
 }
 meta = {
     "resources_dir": "src/task/methods/transformer_ensemble",
@@ -42,34 +42,38 @@ n_components = len(gene_names)
 
 # train and predict models
 argsets = [
+    # Note by author - weight_df1: 0.5 (utilizing std, mean, and clustering sampling, yielding 0.551)
     {
-        "name": "trained_models_kmeans_mean_std",
+        "name": "weight_df1",
         "mean_std": "mean_std",
-        "uncommon": False,
-        "sampling_strategy": "k-means",
-        "weight": 0.4,
-    },
-    {
-        "name": "trained_models_kmeans_mean_std_trueuncommon",
-        "mean_std": "mean_std",
-        "uncommon": True,
-        "sampling_strategy": "k-means",
-        "weight": 0.1,
-    },
-    {
-        "name": "trained_models_kmeans_mean",
-        "mean_std": "mean",
-        "uncommon": False,
-        "sampling_strategy": "k-means",
-        "weight": 0.2,
-    },
-    {
-        "name": "trained_models_nonkmeans_mean",
-        "mean_std": "mean",
         "uncommon": False,
         "sampling_strategy": "random",
-        "weight": 0.3,
+        "weight": 0.5,
     },
+    # Note by author - weight_df2: 0.25 (excluding uncommon elements, resulting in 0.559)
+    {
+        "name": "weight_df2",
+        "mean_std": "mean_std",
+        "uncommon": True,
+        "sampling_strategy": "random",
+        "weight": 0.25,
+    },
+    # Note by author - weight_df3: 0.25 (leveraging clustering sampling, achieving 0.575)
+    {
+        "name": "weight_df3",
+        "mean_std": "mean_std",
+        "uncommon": False, # should this be set to False or True?
+        "sampling_strategy": "k-means",
+        "weight": 0.25,
+    },
+    # Note by author - weight_df4: 0.3 (incorporating mean, random sampling, and excluding std, attaining 0.554)
+    {
+        "name": "weight_df4",
+        "mean_std": "mean",
+        "uncommon": False, # should this be set to False or True?
+        "sampling_strategy": "random",
+        "weight": 0.3,
+    }
 ]
 
 
@@ -145,9 +149,12 @@ for argset in argsets:
     predictions.append(pred)
 
 print(f"Combine predictions", flush=True)
-weighted_pred = sum(
-    [argset["weight"] * pred for argset, pred in zip(argsets, predictions)]
-) / sum([argset["weight"] for argset in argsets])
+# compute weighted sum
+sum_weights = sum([argset["weight"] for argset in argsets])
+weighted_pred = sum([
+    pred * argset["weight"] / sum_weights
+    for argset, pred in zip(argsets, predictions)
+])
 
 
 print('Write output to file', flush=True)
