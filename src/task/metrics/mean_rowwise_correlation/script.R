@@ -1,4 +1,5 @@
 library(anndata)
+library(rlang)
 
 ## VIASH START
 par <- list(
@@ -40,14 +41,14 @@ if (any(is.na(prediction_X))) {
 
 cat("Calculate metrics\n")
 pearson <- proxyC::simil(de_test_X, prediction_X, method = "correlation", diag = TRUE)
-mean_rowwise_pearson <- mean(pearson@x)
+mean_rowwise_pearson <- mean(ifelse(is.finite(pearson@x), pearson@x, 0))
 
 out <- cor(t(de_test_X), t(prediction_X), method = "spearman")
 spearman <- diag(out)
-mean_rowwise_spearman <- mean(ifelse(is.na(spearman), 0, spearman))
+mean_rowwise_spearman <- mean(ifelse(is.finite(spearman), spearman, 0))
 
 cosine <- proxyC::simil(de_test_X, prediction_X, method = "cosine", diag = TRUE)
-mean_rowwise_cosine <- mean(cosine@x)
+mean_rowwise_cosine <- mean(ifelse(is.finite(cosine@x), cosine@x, 0))
 
 cat("Create output\n")
 output <- AnnData(
