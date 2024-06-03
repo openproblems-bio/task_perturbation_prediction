@@ -67,7 +67,7 @@ argsets = [
     # Note by author - weight_df4: 0.3 (incorporating mean, random sampling, and excluding std, attaining 0.554)
     {
         "mean_std": "mean",
-        "uncommon": False, # should this be set to False or True?
+        "uncommon": False,
         "sampling_strategy": "random",
         "weight": 0.3,
     }
@@ -77,8 +77,8 @@ argsets = [
 predictions = []
 
 print(f"Train and predict models", flush=True)
-for argset in argsets:
-    print(f"Train and predict model {argset['name']}", flush=True)
+for i, argset in enumerate(argsets):
+    print(f"Train and predict model {i}/{len(argsets)}", flush=True)
 
     print(f"> Prepare augmented data", flush=True)
     if argset["mean_std"] == "mean_std":
