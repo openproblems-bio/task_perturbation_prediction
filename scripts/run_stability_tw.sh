@@ -6,6 +6,8 @@ publish_dir="s3://openproblems-data/resources/dge_perturbation_prediction/result
 cat > /tmp/params.yaml << HERE
 id: neurips-2023-data
 sc_counts: s3://openproblems-bio/public/neurips-2023-competition/sc_counts_reannotated_with_counts.h5ad
+scores: stability_uns.yaml
+output_state: "state.yaml"
 publish_dir: "$publish_dir"
 HERE
 
