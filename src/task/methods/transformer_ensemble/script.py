@@ -41,10 +41,10 @@ gene_names = list(de_train_h5ad.var_names)
 n_components = len(gene_names)
 
 # train and predict models
+# note, the weights intentionally don't add up to one
 argsets = [
     # Note by author - weight_df1: 0.5 (utilizing std, mean, and clustering sampling, yielding 0.551)
     {
-        "name": "weight_df1",
         "mean_std": "mean_std",
         "uncommon": False,
         "sampling_strategy": "random",
@@ -52,7 +52,6 @@ argsets = [
     },
     # Note by author - weight_df2: 0.25 (excluding uncommon elements, resulting in 0.559)
     {
-        "name": "weight_df2",
         "mean_std": "mean_std",
         "uncommon": True,
         "sampling_strategy": "random",
@@ -60,7 +59,6 @@ argsets = [
     },
     # Note by author - weight_df3: 0.25 (leveraging clustering sampling, achieving 0.575)
     {
-        "name": "weight_df3",
         "mean_std": "mean_std",
         "uncommon": False, # should this be set to False or True?
         "sampling_strategy": "k-means",
@@ -68,7 +66,6 @@ argsets = [
     },
     # Note by author - weight_df4: 0.3 (incorporating mean, random sampling, and excluding std, attaining 0.554)
     {
-        "name": "weight_df4",
         "mean_std": "mean",
         "uncommon": False, # should this be set to False or True?
         "sampling_strategy": "random",
@@ -154,9 +151,9 @@ for argset in argsets:
 
 print(f"Combine predictions", flush=True)
 # compute weighted sum
-sum_weights = sum([argset["weight"] for argset in argsets])
+# note, the weights intentionally don't add up to one
 weighted_pred = sum([
-    pred * argset["weight"] / sum_weights
+    pred * argset["weight"]
     for argset, pred in zip(argsets, predictions)
 ])
 
