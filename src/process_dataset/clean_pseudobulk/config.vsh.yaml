@@ -1,5 +1,6 @@
 functionality:
   name: filter_vars
+  namespace: "process_dataset"
   info:
     type: process_dataset
     type_info:
