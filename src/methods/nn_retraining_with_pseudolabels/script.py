@@ -26,7 +26,7 @@ par = {
     "output": "output.h5ad",
     "reps": 2,
 }
-meta = {"resources_dir": "src/task/methods/nn_retraining_with_pseudolabels"}
+meta = {"resources_dir": "src/methods/nn_retraining_with_pseudolabels"}
 ## VIASH END
 
 # load helper functions in notebooks

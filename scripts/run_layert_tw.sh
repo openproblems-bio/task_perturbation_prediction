@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RUN_ID="layert_$(date +%Y-%m-%d_%H-%M-%S)"
-publish_dir="s3://openproblems-data/resources/dge_perturbation_prediction/results/${RUN_ID}"
+publish_dir="s3://openproblems-data/resources/perturbation_prediction/results/${RUN_ID}"
 
 cat > /tmp/params.yaml << HERE
 id: dge_perturbation_task

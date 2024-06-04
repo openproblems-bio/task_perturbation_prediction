@@ -20,7 +20,7 @@ par = dict(
     output = "output.h5ad",
 )
 meta = dict(
-    resources_dir = "src/task/methods/pyboost"
+    resources_dir = "src/methods/pyboost"
 )
 ## VIASH END
 

@@ -2,7 +2,7 @@
 
 RUN_ID="run_$(date +%Y-%m-%d_%H-%M-%S)"
 resources_dir="s3://openproblems-bio/public/neurips-2023-competition/workflow-resources"
-publish_dir="s3://openproblems-data/resources/dge_perturbation_prediction/results/${RUN_ID}"
+publish_dir="s3://openproblems-data/resources/perturbation_prediction/results/${RUN_ID}"
 
 cat > /tmp/params.yaml << HERE
 param_list:

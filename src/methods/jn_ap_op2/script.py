@@ -20,7 +20,7 @@ par = {
     "submission_names": ["dl40"]
 }
 meta = {
-    "resources_dir": "src/task/methods/jn_ap_op2",
+    "resources_dir": "src/methods/jn_ap_op2",
 }
 ## VIASH END
 

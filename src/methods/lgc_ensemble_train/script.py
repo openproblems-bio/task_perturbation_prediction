@@ -18,7 +18,7 @@ par = {
     "log_file": "output/log.json",
 }
 meta = {
-    "resources_dir": "src/task/methods/lgc_ensemble",
+    "resources_dir": "src/methods/lgc_ensemble",
     "temp_dir": "/tmp"
 }
 ## VIASH END
@@ -32,7 +32,7 @@ from models import Conv, LSTM, GRU
 from helper_functions import train_function
 
 ###################################################################
-# Interpretation from src/task/methods/lgc_ensemble/helper_functions.py
+# Interpretation from src/methods/lgc_ensemble/helper_functions.py
 
 print("Load data...", flush=True)
 # read kf_cv_initial from json

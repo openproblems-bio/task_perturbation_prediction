@@ -19,7 +19,7 @@ par = {
     "output_model": None
 }
 meta = {
-    "resources_dir": "src/task/methods/lgc_ensemble",
+    "resources_dir": "src/methods/lgc_ensemble",
     "temp_dir": "/tmp"
 }
 ## VIASH END

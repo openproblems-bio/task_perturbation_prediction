@@ -19,7 +19,7 @@ par = {
     "layer": "sign_log10_pval"
 }
 meta = {
-    "resources_dir": "src/task/methods/transformer_ensemble",
+    "resources_dir": "src/methods/transformer_ensemble",
 }
 ## VIASH END
 

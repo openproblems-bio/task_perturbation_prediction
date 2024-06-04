@@ -22,7 +22,7 @@ par = {
     "train_data_aug_dir": "output/train_data_aug_dir",
 }
 meta = {
-    "resources_dir": "src/task/methods/lgc_ensemble",
+    "resources_dir": "src/methods/lgc_ensemble",
     "temp_dir": "/tmp"
 }
 ## VIASH END
@@ -37,7 +37,7 @@ from helper_functions import combine_features
 
 
 ###################################################################
-# interpreted from src/task/methods/lgc_ensemble/prepare_data.py
+# interpreted from src/methods/lgc_ensemble/prepare_data.py
 # prepare data
 seed_everything()
 
@@ -91,7 +91,7 @@ test_smiles = list(map(sm_name2smiles.get, id_map['sm_name'].values))
 _, _ = save_ChemBERTa_features(test_smiles, out_dir=par["train_data_aug_dir"], on_train_data=False)
 
 ###################################################################
-# interpreted from src/task/methods/lgc_ensemble/train.py
+# interpreted from src/methods/lgc_ensemble/train.py
 
 ## Prepare cross-validation
 cell_types_sm_names = de_train[['cell_type', 'sm_name']]
