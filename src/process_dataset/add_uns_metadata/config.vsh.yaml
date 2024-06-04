@@ -1,5 +1,6 @@
 functionality:
   name: add_uns_metadata
+  namespace: "process_dataset"
   info:
     type: process_dataset
     type_info:
