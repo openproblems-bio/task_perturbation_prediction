@@ -55,6 +55,7 @@ argsets = [
         "uncommon": False,
         "sampling_strategy": "random",
         "weight": 0.5,
+        "validation_percentage": 0.1,
     },
     # Note by author - weight_df2: 0.25 (excluding uncommon elements, resulting in 0.559)
     {
@@ -62,11 +63,13 @@ argsets = [
         "uncommon": True,
         "sampling_strategy": "random",
         "weight": 0.25,
+        "validation_percentage": 0.1,
+
     },
     # Note by author - weight_df3: 0.25 (leveraging clustering sampling, achieving 0.575)
     {
         "mean_std": "mean_std",
-        "uncommon": False, # should this be set to False or True?
+        "uncommon": False,
         "sampling_strategy": "k-means",
         "weight": 0.25,
     },
@@ -76,6 +79,7 @@ argsets = [
         "uncommon": False,
         "sampling_strategy": "random",
         "weight": 0.3,
+        "validation_percentage": 0.1,
     }
 ]
 
@@ -113,8 +117,8 @@ for i, argset in enumerate(argsets):
             num_epochs=par["num_train_epochs"],
             early_stopping=par["early_stopping"],
             batch_size=par["batch_size"],
-            device=device,
             mean_std=argset["mean_std"],
+            device=device,
         )
     elif argset["sampling_strategy"] == "random":
         label_reducer, scaler, transformer_model = train_non_k_means_strategy(
@@ -125,8 +129,9 @@ for i, argset in enumerate(argsets):
             num_epochs=par["num_train_epochs"],
             early_stopping=par["early_stopping"],
             batch_size=par["batch_size"],
-            device=device,
             mean_std=argset["mean_std"],
+            validation_percentage=argset["validation_percentage"],
+            device=device,
         )
     else:
         raise ValueError("Invalid sampling_strategy argument")
