@@ -1,4 +1,5 @@
 functionality:
+  namespace: process_dataset
   info:
     type: process_dataset
     type_info:
@@ -26,4 +27,3 @@ functionality:
       required: true
       direction: output
       default: id_map.csv
-  test_resources: []

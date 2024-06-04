@@ -1,6 +1,5 @@
 functionality:
   name: run_limma
-  namespace: process_dataset
   info:
     type: process_dataset
     type_info:

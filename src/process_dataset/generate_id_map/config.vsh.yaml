@@ -1,6 +1,5 @@
 functionality:
   name: generate_id_map
-  namespace: process_dataset
   info:
     type: process_dataset
     type_info:
