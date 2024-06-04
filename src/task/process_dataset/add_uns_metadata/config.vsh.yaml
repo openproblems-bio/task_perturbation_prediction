@@ -7,7 +7,7 @@ functionality:
       label: Add metadata
       summary: Add metadata to the pseudobulked data
       description: |
-        Add metadata to the pseudobulked single-cell dataset for the DGE regression task.
+        Add metadata to the pseudobulked single-cell dataset for the perturbation regression task.
   arguments:
     - name: --input
       type: file

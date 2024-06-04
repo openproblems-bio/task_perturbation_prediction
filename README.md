@@ -10,7 +10,7 @@ Predicting how small molecules change gene expression in different cell
 types.
 
 Path to source:
-[`src/task`](https://github.com/openproblems-bio/task-dge-perturbation-prediction/tree/main/src/task)
+[`src/task`](https://github.com/openproblems-bio/task_perturbation_prediction/tree/main/src/task)
 
 ## Installation
 
@@ -27,9 +27,9 @@ To add a method to the repository, follow the instructions in the `scripts/add_a
 To get started, you can run the following commands:
 
 ```bash
-git clone git@github.com:openproblems-bio/task-dge-perturbation-prediction.git
+git clone git@github.com:openproblems-bio/task_perturbation_prediction.git
 
-cd task-dge-perturbation-prediction
+cd task_perturbation_prediction
 
 # download resources
 scripts/download_resources.sh

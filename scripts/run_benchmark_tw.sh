@@ -20,7 +20,7 @@ output_state: "state.yaml"
 publish_dir: "$publish_dir"
 HERE
 
-tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
+tw launch https://github.com/openproblems-bio/task_perturbation_prediction.git \
   --revision main_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \

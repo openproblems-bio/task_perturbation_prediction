@@ -12,7 +12,7 @@ rename_keys: "de_train_h5ad:de_train_h5ad,de_test_h5ad:de_test_h5ad,id_map:id_ma
 settings: '{"layer": "t"}'
 HERE
 
-tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
+tw launch https://github.com/openproblems-bio/task_perturbation_prediction.git \
   --revision main_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \

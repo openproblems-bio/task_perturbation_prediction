@@ -6,7 +6,7 @@ import re
 
 ## VIASH START
 par = {
-  "task": "DGE Perturbation Prediction",
+  "task": "Perturbation Prediction",
   "type": "method",
   "language": "python",
   "name": "new_comp",

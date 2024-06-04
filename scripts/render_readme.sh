@@ -7,5 +7,5 @@ set -e
 ../openproblems-v2/target/docker/common/create_task_readme/create_task_readme \
   --task "dge_perturbation_prediction" \
   --task_dir "src/task" \
-  --github_url "https://github.com/openproblems-bio/task-dge-perturbation-prediction/tree/main/" \
+  --github_url "https://github.com/openproblems-bio/task_perturbation_prediction/tree/main/" \
   --output "README.md"

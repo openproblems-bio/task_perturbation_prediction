@@ -18,8 +18,8 @@ output_state: "state.yaml"
 publish_dir: "$publish_dir"
 HERE
 
-tw launch https://github.com/openproblems-bio/task-dge-perturbation-prediction.git \
-  --revision fix_trafo_ens_build \
+tw launch https://github.com/openproblems-bio/task_perturbation_prediction.git \
+  --revision suggestions_elior_build \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \
   --workspace 53907369739130 \

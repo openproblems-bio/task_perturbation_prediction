@@ -7,7 +7,7 @@ functionality:
       label: Pseudobulk
       summary: Compute pseudobulk data
       description: |
-        Compute pseudobulk data for the DGE regression task.
+        Compute pseudobulk data for the perturbation regression task.
   arguments:
     - name: --input
       type: file
