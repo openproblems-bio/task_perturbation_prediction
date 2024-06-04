@@ -26,8 +26,7 @@ functionality:
       required: true
       direction: output
     - name: "--output_model"
-      type: "file"
-      description: "Optional model output. If no value is passed, the model will be removed at the end of the run."
+      __merge__: file_model.yaml
       direction: output
       required: false
       must_exist: false
