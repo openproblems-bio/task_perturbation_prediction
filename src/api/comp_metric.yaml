@@ -4,9 +4,9 @@ functionality:
     type: metric
     type_info:
       label: Metric
-      summary: A metric to compare two predictions.
+      summary: A perturbation prediction metric
       description: |
-        A metric to compare two predictions.
+        A metric to compare a perturbation prediction to the ground truth.
   arguments:
     - name: --de_test_h5ad
       __merge__: file_de_test_h5ad.yaml

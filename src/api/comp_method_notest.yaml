@@ -4,9 +4,9 @@ functionality:
     type: method
     type_info:
       label: Method
-      summary: A regression method.
+      summary: A perturbation prediction method
       description: |
-        A regression method to predict the expression of one modality from another.
+        A method for predicting the perturbation response of small molecules on certain cell types.
   arguments:
     - name: --de_train_h5ad
       __merge__: file_de_train_h5ad.yaml

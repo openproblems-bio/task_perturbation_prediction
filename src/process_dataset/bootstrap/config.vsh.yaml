@@ -5,9 +5,9 @@ functionality:
     type: process_dataset
     type_info:
       label: Bootstrap
-      summary: A component to generate bootstraps of a dataset.
+      summary: Bootstrap a dataset
       description: |
-        This component generates bootstraps of a dataset. It takes as input a parquet file and an h5ad file and generates bootstraps of the dataset. The bootstraps are saved as parquet and h5ad files.
+        This component bootstraps a dataset.
   argument_groups:
     - name: Inputs
       arguments:
