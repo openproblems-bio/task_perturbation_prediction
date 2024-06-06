@@ -426,9 +426,9 @@ RUN Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packag
   Rscript -e 'remotes::install_cran(c("proxyC"), repos = "https://cran.rstudio.com")'
 
 LABEL org.opencontainers.image.description="Companion container for running component metrics mean_rowwise_error"
-LABEL org.opencontainers.image.created="2024-06-06T09:46:40Z"
+LABEL org.opencontainers.image.created="2024-06-06T14:51:51Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="33a27528c858187bbea4118dc8960ca6889f3bb8"
+LABEL org.opencontainers.image.revision="a623d3ad92e82dc099ecaf024de153237d275931"
 LABEL org.opencontainers.image.version="1.0.0"
 
 VIASHDOCKER

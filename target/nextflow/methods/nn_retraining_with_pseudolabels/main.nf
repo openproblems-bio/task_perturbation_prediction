@@ -3234,7 +3234,7 @@ meta = [
     "platform" : "nextflow",
     "output" : "/home/runner/work/task_perturbation_prediction/task_perturbation_prediction/target/nextflow/methods/nn_retraining_with_pseudolabels",
     "viash_version" : "0.8.6",
-    "git_commit" : "33a27528c858187bbea4118dc8960ca6889f3bb8",
+    "git_commit" : "a623d3ad92e82dc099ecaf024de153237d275931",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   }
 }'''))
