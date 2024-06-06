@@ -379,13 +379,12 @@ Arguments:
 
 </div>
 
-
 ## Component type: Method
 
 Path:
 [`src/methods`](https://github.com/openproblems-bio/openproblems-v2/tree/main/src/methods)
 
-A regression method.
+A perturbation prediction method
 
 Arguments:
 
@@ -406,7 +405,7 @@ Arguments:
 Path:
 [`src/metrics`](https://github.com/openproblems-bio/openproblems-v2/tree/main/src/metrics)
 
-A metric to compare two predictions.
+A perturbation prediction metric
 
 Arguments:
 

@@ -1,4 +1,4 @@
-__merge__: ../../api/comp_method_notest.yaml
+__merge__: ../../api/wf_method.yaml
 
 functionality:
   name: lgc_ensemble
