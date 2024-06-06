@@ -7,7 +7,7 @@ functionality:
       label: Limma
       summary: Run limma
       description: |
-        Run limma for the parturbation regression task.
+        Run limma for the perturbation regression task.
   arguments:
     - name: --input
       type: file

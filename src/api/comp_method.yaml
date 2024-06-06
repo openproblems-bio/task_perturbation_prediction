@@ -1,4 +1,4 @@
-__merge__: comp_method_notest.yaml
+__merge__: wf_method.yaml
 functionality:
   test_resources:
     - type: python_script

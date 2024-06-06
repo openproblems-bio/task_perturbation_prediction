@@ -6,7 +6,7 @@ functionality:
       label: Control Method
       summary: A control method.
       description: |
-        A control method to predict perturbation effects.
+        A control method to serve as a quality control for the perturbation prediction benchmark.
   arguments:
     - name: --de_train_h5ad
       __merge__: file_de_train_h5ad.yaml
