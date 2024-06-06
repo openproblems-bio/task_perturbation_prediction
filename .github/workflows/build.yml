@@ -5,8 +5,11 @@ on:
     branches: [ 'main' ]
   workflow_dispatch:
     inputs:
+      target_branch:
+        description: 'Branch to deploy to. If not specified, `build/${BRANCH_NAME}` will be used.'
+        required: false
       version:
-        description: 'Version name to use for the build. If not specified, `${BRANCH_NAME}_build` will be used.'
+        description: 'Version name to use for the build. If not specified, `build/${BRANCH_NAME}` will be used.'
         required: false
 
 jobs:
@@ -15,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      version: ${{ steps.version.outputs.version }}
+      target_branch: ${{ steps.defaults.outputs.target_branch }}
+      version: ${{ steps.defaults.outputs.version }}
       component_matrix: ${{ steps.set_matrix.outputs.matrix }}
 
     steps:
@@ -24,13 +28,21 @@ jobs:
     - uses: viash-io/viash-actions/setup@v5
 
     - name: Determine version tag from branch name
-      id: version
+      id: defaults
       run: |
-        if [ -z "$INPUT_VERSION" ]; then
-          echo "version=$(echo $GITHUB_REF | sed 's/refs\/heads\/\(.*\)/\1_build/')" >> $GITHUB_OUTPUT
-        else
-          echo "version=$INPUT_VERSION" >> $GITHUB_OUTPUT
+        BRANCH_NAME=$(echo $GITHUB_REF | sed 's/refs\/heads\///')
+
+        VERSION=${{ github.event.inputs.version }}
+        if [ -z "$VERSION" ]; then
+          VERSION="build/$BRANCH_NAME"
         fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+        TARGET_BRANCH=${{ github.event.inputs.target_branch }}
+        if [ -z "$TARGET_BRANCH" ]; then
+          TARGET_BRANCH="build/$BRANCH_NAME"
+        fi
+        echo "target_branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
 
     - name: Remove target folder from .gitignore
       run: |
@@ -39,7 +51,7 @@ jobs:
 
     - uses: viash-io/viash-actions/ns-build@v5
       with:
-        config_mod: .functionality.version := '${{ steps.version.outputs.version }}'
+        config_mod: .functionality.version := '${{ steps.defaults.outputs.version }}'
         parallel: true
 
     - name: Deploy to target branch
@@ -47,7 +59,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: .
-        publish_branch: ${{ steps.version.outputs.version }}
+        publish_branch: ${{ steps.defaults.outputs.target_branch }}
 
     - id: ns_list
       uses: viash-io/viash-actions/ns-list@v5
