@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       target_branch:
-        description: 'Branch to deploy to. If not specified, `build/${BRANCH_NAME}` will be used.'
+        description: 'Branch to deploy to. If not specified, `build-${BRANCH_NAME}` will be used.'
         required: false
       version:
-        description: 'Version name to use for the build. If not specified, `build/${BRANCH_NAME}` will be used.'
+        description: 'Version name to use for the build. If not specified, `build-${BRANCH_NAME}` will be used.'
         required: false
 
 jobs:
@@ -34,13 +34,13 @@ jobs:
 
         VERSION=${{ github.event.inputs.version }}
         if [ -z "$VERSION" ]; then
-          VERSION="build/$BRANCH_NAME"
+          VERSION="build-$BRANCH_NAME"
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
 
         TARGET_BRANCH=${{ github.event.inputs.target_branch }}
         if [ -z "$TARGET_BRANCH" ]; then
-          TARGET_BRANCH="build/$BRANCH_NAME"
+          TARGET_BRANCH="build-$BRANCH_NAME"
         fi
         echo "target_branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
 
