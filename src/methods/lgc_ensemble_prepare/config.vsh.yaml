@@ -57,7 +57,6 @@ resources:
 engines:
   - type: docker
     image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
-    run_args: ["--shm-size=2g"]
     setup:
       - type: python
         packages:
@@ -78,6 +77,7 @@ engines:
   - type: native
 runners:
   - type: executable
+    docker_run_args: ["--shm-size=2g"]
   - type: nextflow
     directives:
       label: [hightime, veryhighmem, highcpu]

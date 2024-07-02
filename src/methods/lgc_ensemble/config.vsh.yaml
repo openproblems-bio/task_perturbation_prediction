@@ -50,7 +50,6 @@ dependencies:
   - name: methods/lgc_ensemble_train
   - name: methods/lgc_ensemble_predict
     
-platforms:
 runners:
   - type: executable
   - type: nextflow
