@@ -2,7 +2,7 @@
 
 ## MAJOR CHANGES
 
-* Update to Viash 0.9 (PR #xxx):
+* Update to Viash 0.9 (PR #71):
 
   - Update component formats
   - Update CI
