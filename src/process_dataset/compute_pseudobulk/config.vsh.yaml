@@ -17,7 +17,7 @@ arguments:
     type: file
     required: true
     direction: output
-    example: resources/neurips-2023-data/pseudobulk.h5ad
+    example: resources/datasets/neurips-2023-data/pseudobulk.h5ad
 resources:
   - type: python_script
     path: script.py

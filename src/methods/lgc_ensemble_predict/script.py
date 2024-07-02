@@ -12,7 +12,7 @@ else:
 
 ## VIASH START
 par = {
-    "id_map": "resources/neurips-2023-data/id_map.csv",
+    "id_map": "resources/datasets/neurips-2023-data/id_map.csv",
     "train_data_aug_dir": "output/train_data_aug_dir",
     "model_files": [
         "output/models/pytorch_lstm_light_fold0.pt"

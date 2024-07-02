@@ -1,5 +1,5 @@
 type: file
-example: resources/neurips-2023-data/de_test.h5ad
+example: resources/datasets/neurips-2023-data/de_test.h5ad
 info:
   label: DE test
   summary: "Differential expression results for testing."

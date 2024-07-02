@@ -234,7 +234,7 @@ Arguments:
 
 Differential expression results for training.
 
-Example file: `resources/neurips-2023-data/de_train.h5ad`
+Example file: `resources/datasets/neurips-2023-data/de_train.h5ad`
 
 Format:
 
@@ -284,7 +284,7 @@ Slot description:
 
 Differential expression results for testing.
 
-Example file: `resources/neurips-2023-data/de_test.h5ad`
+Example file: `resources/datasets/neurips-2023-data/de_test.h5ad`
 
 Format:
 
@@ -335,7 +335,7 @@ Slot description:
 File indicates the order of de_test, the cell types and the small
 molecule names.
 
-Example file: `resources/neurips-2023-data/id_map.csv`
+Example file: `resources/datasets/neurips-2023-data/id_map.csv`
 
 Format:
 
@@ -427,7 +427,7 @@ Arguments:
 
 Differential Gene Expression prediction
 
-Example file: `resources/neurips-2023-data/prediction.h5ad`
+Example file: `resources/datasets/neurips-2023-data/prediction.h5ad`
 
 Format:
 
@@ -456,7 +456,7 @@ Slot description:
 Optional model output. If no value is passed, the model will be removed
 at the end of the run.
 
-Example file: `resources/neurips-2023-data/model/`
+Example file: `resources/datasets/neurips-2023-data/model/`
 
 Format:
 
@@ -474,7 +474,7 @@ Slot description:
 
 File indicating the score of a metric.
 
-Example file: `resources/neurips-2023-data/score.h5ad`
+Example file: `resources/datasets/neurips-2023-data/score.h5ad`
 
 Format:
 

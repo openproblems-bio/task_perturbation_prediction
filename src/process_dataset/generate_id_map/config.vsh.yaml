@@ -12,12 +12,12 @@ arguments:
     type: file
     required: true
     direction: input
-    example: resources/neurips-2023-data/de_test.h5ad
+    example: resources/datasets/neurips-2023-data/de_test.h5ad
   - name: --id_map
     type: file
     required: true
     direction: output
-    example: resources/neurips-2023-data/id_map.csv
+    example: resources/datasets/neurips-2023-data/id_map.csv
 resources:
   - type: python_script
     path: script.py

@@ -10,8 +10,8 @@ else:
 
 ## VIASH START
 par = {
-    "de_train": "resources/neurips-2023-data/de_train.h5ad",
-    "id_map": "resources/neurips-2023-data/id_map.csv",
+    "de_train": "resources/datasets/neurips-2023-data/de_train.h5ad",
+    "id_map": "resources/datasets/neurips-2023-data/id_map.csv",
     "models": ["initial", "light"],
     "epochs": 1,
     "kf_n_splits": 2,

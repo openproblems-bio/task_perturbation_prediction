@@ -3,11 +3,11 @@ import sys
 
 ## VIASH START
 par = {
-    "input_train": "resources/neurips-2023-data/de_train.h5ad",
-    "input_test": "resources/neurips-2023-data/de_test.h5ad",
-    "output_train": "resources/neurips-2023-data/de_train.parquet",
-    "output_test": "resources/neurips-2023-data/de_test.parquet",
-    "output_id_map": "resources/neurips-2023-data/id_map.csv",
+    "input_train": "resources/datasets/neurips-2023-data/de_train.h5ad",
+    "input_test": "resources/datasets/neurips-2023-data/de_test.h5ad",
+    "output_train": "resources/datasets/neurips-2023-data/de_train.parquet",
+    "output_test": "resources/datasets/neurips-2023-data/de_test.parquet",
+    "output_id_map": "resources/datasets/neurips-2023-data/id_map.csv",
 }
 ## VIASH END
 

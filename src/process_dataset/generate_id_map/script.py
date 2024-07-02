@@ -2,8 +2,8 @@ import anndata as ad
 
 ## VIASH START
 par = {
-    "de_test_h5ad": "resources/neurips-2023-data/de_test.h5ad",
-    "id_map": "resources/neurips-2023-data/id_map.csv",
+    "de_test_h5ad": "resources/datasets/neurips-2023-data/de_test.h5ad",
+    "id_map": "resources/datasets/neurips-2023-data/id_map.csv",
 }
 ## VIASH END
 

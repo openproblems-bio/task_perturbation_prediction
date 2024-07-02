@@ -2,7 +2,7 @@
 
 set -e
 
-OUT=resources/neurips-2023-kaggle
+OUT=resources/datasets_raw/neurips-2023-kaggle
 
 [[ ! -d $OUT ]] && mkdir -p $OUT
 
@@ -53,11 +53,11 @@ de_test_h5ad: !file de_test.h5ad
 id_map: !file id_map.csv
 EOF
 
-echo ">> Uploading results to S3"
-aws s3 sync --profile op2 \
-  --include "*" \
-  --exclude "neurips-2023-raw/*" \
-  --exclude "neurips-2023-public/*" \
-  "resources" \
-  "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" \
-  --delete --dryrun
+# echo ">> Uploading results to S3"
+# aws s3 sync --profile op2 \
+#   --include "*" \
+#   --exclude "neurips-2023-raw/*" \
+#   --exclude "neurips-2023-public/*" \
+#   "resources" \
+#   "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" \
+#   --delete --dryrun
