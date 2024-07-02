@@ -9,7 +9,7 @@ functionality:
         A method for predicting the perturbation response of small molecules on certain cell types.
   arguments:
     - name: --de_train_h5ad
-      __merge__: file_de_train_h5ad.yaml
+      __merge__: file_de_train.yaml
       required: false
       direction: input
     - name: --id_map
