@@ -1,3 +1,15 @@
+# task_perturbation_prediction 1.1.0
+
+## MAJOR CHANGES
+
+* Update to Viash 0.9 (PR #xxx):
+
+  - Update component formats
+  - Update CI
+  - Update helper components
+  - Add helper scripts via git submodule
+
+
 # task_perturbation_prediction 1.0.0
 
 Initial release of the Perturbation Prediction task. Initial components:
