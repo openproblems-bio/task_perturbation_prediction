@@ -60,7 +60,9 @@ def create_config(par, component_type, pretty_name, script_path) -> str:
     |  # This platform allows running the component natively
     |  - type: native
     |  # Allows turning the component into a Nextflow module / pipeline.
-    |  - type: nextflow
+    |runners:
+  - type: executable
+  - type: nextflow
     |    directives:
     |      label: [midtime,midmem,midcpu]
     |'''

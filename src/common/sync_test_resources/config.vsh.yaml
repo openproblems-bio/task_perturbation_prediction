@@ -34,8 +34,10 @@ functionality:
   resources:
     - type: bash_script
       path: script.sh
-platforms:
+engines:
   - type: docker
     image: "amazon/aws-cli:2.7.12"
   - type: native
+runners:
+  - type: executable
   - type: nextflow

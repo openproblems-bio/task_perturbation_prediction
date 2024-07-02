@@ -10,12 +10,14 @@ functionality:
     - type: python_script
       path: script.py
     - path: ../../utils/anndata_to_dataframe.py
-platforms:
+engines:
   - type: docker
     image: ghcr.io/openproblems-bio/base_python:1.0.4
     setup:
       - type: python
         packages: [ fastparquet ]
+runners:
+  - type: executable
   - type: nextflow
     directives:
       label: [ midtime, highmem, highcpu ]

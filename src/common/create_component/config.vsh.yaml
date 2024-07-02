@@ -44,13 +44,15 @@ functionality:
     - type: python_script
       path: script.py
     - path: read_and_merge_yaml.py
-platforms:
+engines:
   - type: docker
     image: python:3.10-slim
     setup:
       - type: python
         pypi: ruamel.yaml
   - type: native
+runners:
+  - type: executable
   - type: nextflow
 
 
