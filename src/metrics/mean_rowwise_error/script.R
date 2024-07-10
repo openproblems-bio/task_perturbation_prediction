@@ -46,6 +46,23 @@ cat("Calculate mean rowwise MAE\n")
 rowwise_mae <- rowMeans(abs(de_test_X - prediction_X))
 mean_rowwise_mae <- mean(rowwise_mae)
 
+###### Implement Huber Loss
+
+cat("Calculate mean rowwise Huber Loss\n")
+# Define Huber loss function
+huber_loss <- function(y_true, y_pred, delta = 2.26) { # Chosen delta value as the 95 percentile of the residuals # nolint
+  error <- y_true - y_pred
+  condition <- abs(error) <= delta
+  squared_loss <- 0.5 * error^2
+  linear_loss <- delta * (abs(error) - 0.5 * delta)
+  ifelse(condition, squared_loss, linear_loss)
+}
+# Calculate rowwise Huber loss
+rowwise_huber <- rowMeans(huber_loss(de_test_X, prediction_X))
+mean_rowwise_huber <- mean(rowwise_huber)
+
+
+
 cat("Create output\n")
 output <- AnnData(
   shape = c(0L, 0L),
@@ -54,17 +71,18 @@ output <- AnnData(
     method_id = prediction$uns[["method_id"]],
     metric_ids = c(
       "mean_rowwise_rmse",
-      "mean_rowwise_mae"
+      "mean_rowwise_mae",
+      "mean_rowwise_huber"
     ),
     metric_values = zapsmall(
       c(
         mean_rowwise_rmse,
-        mean_rowwise_mae
+        mean_rowwise_mae, 
+        mean_rowwise_huber 
       ),
       10
     )
   )
 )
-
 cat("Write output\n")
 write_h5ad(output, par$output, compression = "gzip")
