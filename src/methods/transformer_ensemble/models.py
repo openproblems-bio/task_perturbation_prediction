@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 import torch.optim
 
-
 class CustomTransformer(nn.Module):
     def __init__(self, num_features, num_labels, d_model=128, num_heads=8, num_layers=6):  # num_heads=8
         super(CustomTransformer, self).__init__()
@@ -126,3 +125,18 @@ class CustomMLP(nn.Module):
         x = self.model(x)
         x = self.fc(x)
         return x
+
+class SimpleTransformer(nn.Module):
+    def __init__(self, input_dim, output_dim, d_model=128, num_heads=8, num_layers=6):
+        super(SimpleTransformer, self).__init__()
+        self.embedding = nn.Linear(input_dim, d_model)
+        self.transformer = nn.TransformerEncoder(
+            nn.TransformerEncoderLayer(d_model=d_model, nhead=num_heads, batch_first=True),
+            num_layers=num_layers
+        )
+        self.fc_out = nn.Linear(d_model, output_dim)
+
+    def forward(self, x):
+        x = self.embedding(x)
+        x = self.transformer(x)
+        return self.fc_out(x)

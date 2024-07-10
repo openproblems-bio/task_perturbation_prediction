@@ -26,7 +26,7 @@ meta = {
 sys.path.append(meta["resources_dir"])
 
 from utils import prepare_augmented_data, prepare_augmented_data_mean_only
-from train import train_k_means_strategy, train_non_k_means_strategy
+from train import train_k_means_strategy, train_non_k_means_strategy, train_simple_transformer
 
 # create output model directory if need be
 if par["output_model"]:
@@ -47,38 +47,39 @@ gene_names = list(de_train_h5ad.var_names)
 n_components = len(gene_names)
 
 # train and predict models
-# note, the weights intentionally don't add up to one
 argsets = [
-    # Note by author - weight_df1: 0.5 (utilizing std, mean, and clustering sampling, yielding 0.551)
     {
         "mean_std": "mean_std",
         "uncommon": False,
         "sampling_strategy": "random",
         "weight": 0.5,
     },
-    # Note by author - weight_df2: 0.25 (excluding uncommon elements, resulting in 0.559)
     {
         "mean_std": "mean_std",
         "uncommon": True,
         "sampling_strategy": "random",
         "weight": 0.25,
     },
-    # Note by author - weight_df3: 0.25 (leveraging clustering sampling, achieving 0.575)
     {
         "mean_std": "mean_std",
-        "uncommon": False, # should this be set to False or True?
+        "uncommon": False,
         "sampling_strategy": "k-means",
         "weight": 0.25,
     },
-    # Note by author - weight_df4: 0.3 (incorporating mean, random sampling, and excluding std, attaining 0.554)
     {
         "mean_std": "mean",
         "uncommon": False,
         "sampling_strategy": "random",
         "weight": 0.3,
+    },
+    # Adding a new argset for the SimpleTransformer model
+    {
+        "mean_std": "simple_transformer",
+        "uncommon": False,
+        "sampling_strategy": "random",
+        "weight": 0.4,
     }
 ]
-
 
 predictions = []
 
@@ -95,6 +96,12 @@ for i, argset in enumerate(argsets):
             uncommon=argset["uncommon"],
         )
     elif argset["mean_std"] == "mean":
+        one_hot_encode_features, targets, one_hot_test = prepare_augmented_data_mean_only(
+            de_train_h5ad=de_train_h5ad,
+            id_map=id_map,
+            layer=par["layer"],
+        )
+    elif argset["mean_std"] == "simple_transformer":
         one_hot_encode_features, targets, one_hot_test = prepare_augmented_data_mean_only(
             de_train_h5ad=de_train_h5ad,
             id_map=id_map,
@@ -117,17 +124,29 @@ for i, argset in enumerate(argsets):
             mean_std=argset["mean_std"],
         )
     elif argset["sampling_strategy"] == "random":
-        label_reducer, scaler, transformer_model = train_non_k_means_strategy(
-            n_components=n_components,
-            d_model=par["d_model"],
-            one_hot_encode_features=one_hot_encode_features,
-            targets=targets,
-            num_epochs=par["num_train_epochs"],
-            early_stopping=par["early_stopping"],
-            batch_size=par["batch_size"],
-            device=device,
-            mean_std=argset["mean_std"],
-        )
+        if argset["mean_std"] == "simple_transformer":
+            transformer_model = train_simple_transformer(
+                n_components=n_components,
+                d_model=par["d_model"],
+                one_hot_encode_features=one_hot_encode_features,
+                targets=targets,
+                num_epochs=par["num_train_epochs"],
+                early_stopping=par["early_stopping"],
+                batch_size=par["batch_size"],
+                device=device,
+            )
+        else:
+            label_reducer, scaler, transformer_model = train_non_k_means_strategy(
+                n_components=n_components,
+                d_model=par["d_model"],
+                one_hot_encode_features=one_hot_encode_features,
+                targets=targets,
+                num_epochs=par["num_train_epochs"],
+                early_stopping=par["early_stopping"],
+                batch_size=par["batch_size"],
+                device=device,
+                mean_std=argset["mean_std"],
+            )
     else:
         raise ValueError("Invalid sampling_strategy argument")
 

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim
@@ -10,8 +11,8 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from utils import split_data, reduce_labels, calculate_mrrmse_np
-from models import CustomTransformer_mean_std, CustomTransformer_mean  # Can be changed to other models in models.py
-
+from models import CustomTransformer_mean_std, CustomTransformer_mean, SimpleTransformer  # Can be changed to other models in models.py
+import torch
 from lion_pytorch import Lion
 from torch.utils.data import TensorDataset, DataLoader
 
@@ -213,3 +214,47 @@ def train_non_k_means_strategy(n_components, d_model, one_hot_encode_features, t
         mean_std=mean_std
     )
 
+def train_simple_transformer(n_components, d_model, one_hot_encode_features, targets, num_epochs, early_stopping, batch_size, device):
+    input_dim = one_hot_encode_features.shape[1]
+    output_dim = targets.shape[1]
+    model = SimpleTransformer(input_dim=input_dim, output_dim=output_dim, d_model=d_model).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    loss_fn = nn.MSELoss()
+
+    # Convert to numpy arrays if they are DataFrames
+    one_hot_encode_features = one_hot_encode_features.to_numpy() if isinstance(one_hot_encode_features, pd.DataFrame) else one_hot_encode_features
+    targets = targets.to_numpy() if isinstance(targets, pd.DataFrame) else targets
+
+    dataset = TensorDataset(torch.tensor(one_hot_encode_features, dtype=torch.float32).to(device),
+                            torch.tensor(targets, dtype=torch.float32).to(device))
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    best_loss = float('inf')
+    epochs_without_improvement = 0
+
+    for epoch in range(num_epochs):
+        model.train()
+        total_loss = 0
+        for batch in dataloader:
+            inputs, labels = batch
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = loss_fn(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+
+        avg_loss = total_loss / len(dataloader)
+        print(f"Epoch {epoch+1}/{num_epochs}, Loss: {avg_loss}")
+
+        if avg_loss < best_loss:
+            best_loss = avg_loss
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
+
+        if epochs_without_improvement >= early_stopping:
+            print("Early stopping")
+            break
+
+    return model
