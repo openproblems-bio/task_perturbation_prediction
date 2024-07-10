@@ -1,4 +1,4 @@
-#!/bin/bash
+[B#!/bin/bash
 
 echo "This script is not supposed to be run directly."
 echo "Please run the script step-by-step."
@@ -8,7 +8,7 @@ exit 1
 scripts/download_resources.sh
 
 # create a new component
-method_id="SimpleTransformer"
+method_id="my_method"
 method_lang="python" # change this to "r" if need be
 
 viash run src/common/create_component/config.vsh.yaml -- \
