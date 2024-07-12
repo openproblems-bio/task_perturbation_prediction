@@ -39,7 +39,7 @@ resources:
   - path: ../../utils/anndata_to_dataframe.py
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_python:1.0.4
+    image: ghcr.io/openproblems-bio/base_images/python:1.1.0
     setup:
       - type: python
         packages: [ fastparquet, anndata, pandas ]

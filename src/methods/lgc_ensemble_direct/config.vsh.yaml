@@ -54,7 +54,7 @@ resources:
     
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
+    image: ghcr.io/openproblems-bio/base_images/pytorch_nvidia:1.1.0
     setup:
       - type: python
         packages:

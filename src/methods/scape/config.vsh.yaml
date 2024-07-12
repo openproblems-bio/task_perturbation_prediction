@@ -63,7 +63,7 @@ resources:
     path: script.py
 engines:
   - type: docker
-    image: nvcr.io/nvidia/tensorflow:24.03-tf2-py3
+    image: ghcr.io/openproblems-bio/base_images/tensorflow_nvidia:1.1.0
     setup:
       - type: apt
         packages:
