@@ -42,16 +42,6 @@ engines:
   - type: docker
     image: ghcr.io/openproblems-bio/base_images/tensorflow_nvidia:1.1.0
     setup:
-      - type: apt
-        packages:
-          - procps
-      - type: python
-        packages:
-          - anndata~=0.8.0
-          - scanpy
-          - pyyaml
-          - requests
-          - jsonschema
       - type: python
         packages: 
           - scikit-learn==1.3.2
