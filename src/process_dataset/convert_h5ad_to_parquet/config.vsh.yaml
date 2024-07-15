@@ -42,7 +42,7 @@ engines:
     image: ghcr.io/openproblems-bio/base_images/python:1.1.0
     setup:
       - type: python
-        packages: [ fastparquet, anndata, pandas ]
+        packages: [ fastparquet, pandas ]
 runners:
   - type: executable
   - type: nextflow
