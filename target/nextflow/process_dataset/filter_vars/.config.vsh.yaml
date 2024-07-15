@@ -1,0 +1,131 @@
+name: "filter_vars"
+namespace: "process_dataset"
+version: "build_main"
+argument_groups:
+- name: "Arguments"
+  arguments:
+  - type: "file"
+    name: "--input"
+    info: null
+    example:
+    - "resources/neurips-2023-raw/pseudobulk.h5ad"
+    must_exist: true
+    create_parent: true
+    required: true
+    direction: "input"
+    multiple: false
+    multiple_sep: ";"
+  - type: "file"
+    name: "--output"
+    info: null
+    example:
+    - "resources/datasets/neurips-2023-data/pseudobulk_cleaned.h5ad"
+    must_exist: true
+    create_parent: true
+    required: true
+    direction: "output"
+    multiple: false
+    multiple_sep: ";"
+resources:
+- type: "r_script"
+  path: "script.R"
+  is_executable: true
+info:
+  type: "process_dataset"
+  type_info:
+    label: "Filter variables"
+    summary: "Remove low-quality variables from the dataset"
+    description: "This task removes low-quality variables from the dataset.\n"
+status: "enabled"
+license: "MIT"
+links:
+  repository: "https://github.com/openproblems-bio/task_perturbation_prediction"
+  docker_registry: "ghcr.io"
+runners:
+- type: "executable"
+  id: "executable"
+  docker_setup_strategy: "ifneedbepullelsecachedbuild"
+- type: "nextflow"
+  id: "nextflow"
+  directives:
+    label:
+    - "midtime"
+    - "midmem"
+    - "lowcpu"
+    tag: "$id"
+  auto:
+    simplifyInput: true
+    simplifyOutput: false
+    transcript: false
+    publish: false
+  config:
+    labels:
+      lowmem: "memory = 20.Gb"
+      midmem: "memory = 50.Gb"
+      highmem: "memory = 100.Gb"
+      lowcpu: "cpus = 5"
+      midcpu: "cpus = 15"
+      highcpu: "cpus = 30"
+      lowtime: "time = 1.h"
+      midtime: "time = 4.h"
+      hightime: "time = 8.h"
+      veryhightime: "time = 24.h"
+  debug: false
+  container: "docker"
+engines:
+- type: "docker"
+  id: "docker"
+  image: "ghcr.io/openproblems-bio/base_images/r:1.1.0"
+  namespace_separator: "/"
+  setup:
+  - type: "r"
+    cran:
+    - "edgeR"
+    - "limma"
+    - "dplyr"
+    - "tidyr"
+    - "purrr"
+    - "tibble"
+    bioc_force_install: false
+  entrypoint: []
+  cmd: null
+build_info:
+  config: "src/process_dataset/filter_vars/config.vsh.yaml"
+  runner: "nextflow"
+  engine: "docker"
+  output: "target/nextflow/process_dataset/filter_vars"
+  executable: "target/nextflow/process_dataset/filter_vars/main.nf"
+  viash_version: "0.9.0-RC6"
+  git_commit: "02def5146d3342920487a10adc043309d064e95c"
+  git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"
+package_config:
+  name: "task_perturbation_prediction"
+  version: "build_main"
+  description: "Predicting how small molecules change gene expression in different\
+    \ cell types.\n"
+  info:
+    test_resources:
+    - type: "s3"
+      path: "s3://openproblems-data/resources/perturbation_prediction/datasets"
+      dest: "resources/datasets"
+  viash_version: "0.9.0-RC6"
+  source: "src"
+  target: "target"
+  config_mods:
+  - ".runners[.type == \"nextflow\"].config.labels := { lowmem : \"memory = 20.Gb\"\
+    , midmem : \"memory = 50.Gb\", highmem : \"memory = 100.Gb\", lowcpu : \"cpus\
+    \ = 5\", midcpu : \"cpus = 15\", highcpu : \"cpus = 30\", lowtime : \"time = 1.h\"\
+    , midtime : \"time = 4.h\", hightime : \"time = 8.h\", veryhightime : \"time =\
+    \ 24.h\" }"
+  keywords:
+  - "single-cell"
+  - "perturbation prediction"
+  - "perturbation"
+  - "openproblems"
+  - "benchmark"
+  license: "MIT"
+  organization: "openproblems-bio"
+  links:
+    repository: "https://github.com/openproblems-bio/task_perturbation_prediction"
+    docker_registry: "ghcr.io"
+    issue_tracker: "https://github.com/openproblems-bio/task_perturbation_prediction/issues"

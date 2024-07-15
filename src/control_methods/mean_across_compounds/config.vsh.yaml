@@ -1,0 +1,22 @@
+__merge__: ../../api/comp_control_method.yaml
+name: mean_across_compounds
+info:
+  label: Mean per compound and gene
+  summary: Baseline method that returns mean of compound's outcomes
+  description: |
+    Baseline method that predicts for a compound the mean of its outcomes of all samples.
+resources:
+  - type: python_script
+    path: script.py
+  - path: ../../utils/anndata_to_dataframe.py
+engines:
+  - type: docker
+    image: ghcr.io/openproblems-bio/base_images/python:1.1.0
+    setup:
+      - type: python
+        packages: [ fastparquet ]
+runners:
+  - type: executable
+  - type: nextflow
+    directives:
+      label: [ midtime, highmem, highcpu ]
