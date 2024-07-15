@@ -6,8 +6,8 @@ library(edgeR)
 
 ## VIASH START
 par <- list(
-  input = "resources/neurips-2023-data/pseudobulk.h5ad",
-  output = "resources/neurips-2023-data/pseudobulk_cleaned.h5ad"
+  input = "resources/datasets/neurips-2023-data/pseudobulk.h5ad",
+  output = "resources/datasets/neurips-2023-data/pseudobulk_cleaned.h5ad"
 )
 ## VIASH END
 

@@ -3,9 +3,9 @@ library(rlang)
 
 ## VIASH START
 par <- list(
-  de_test_h5ad = "resources/neurips-2023-data/de_test.h5ad",
+  de_test_h5ad = "resources/datasets/neurips-2023-data/de_test.h5ad",
   de_test_layer = "clipped_sign_log10_pval",
-  prediction = "resources/neurips-2023-data/prediction.h5ad",
+  prediction = "resources/datasets/neurips-2023-data/prediction.h5ad",
   prediction_layer = "prediction",
   resolve_genes = "de_test",
   output = "output.h5ad"

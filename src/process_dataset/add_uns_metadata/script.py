@@ -10,7 +10,7 @@ par = {
   'dataset_summary': 'Differential gene expression ...',
   'dataset_description': 'For this competition, we designed ...',
   'dataset_organism': 'homo_sapiens',
-  'output': 'resources/neurips-2023-data/pseudobulk_uns.h5ad'
+  'output': 'resources/datasets/neurips-2023-data/pseudobulk_uns.h5ad'
 }
 ## VIASH END
 

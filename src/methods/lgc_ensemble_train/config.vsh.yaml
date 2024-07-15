@@ -1,54 +1,52 @@
-functionality:
-  name: lgc_ensemble_train
-  namespace: methods
-  arguments:
-    - name: --train_data_aug_dir
-      type: file
-      required: true
-      direction: input
-    - name: --scheme
-      type: string
-      required: true
-      direction: input
-      description: "The scheme to use for training."
-      choices: [initial, light, heavy]
-    - name: --model
-      type: string
-      required: true
-      direction: input
-      description: "The name of the model to train."
-      choices: [LSTM, GRU, Conv]
-    - name: --fold
-      type: integer
-      required: true
-      direction: input
-      description: "The fold to train."
-    - name: --model_file
-      type: file
-      required: true
-      direction: output
-      example: model.pt
-    - name: --log_file
-      type: file
-      required: true
-      direction: output
-      example: log.json
-  resources:
-    - type: python_script
-      path: script.py
-    - path: ../lgc_ensemble_helpers/helper_classes.py
-    - path: ../lgc_ensemble_helpers/helper_functions.py
-    - path: ../lgc_ensemble_helpers/models.py
-    - path: ../lgc_ensemble_helpers/predict.py
-    - path: ../lgc_ensemble_helpers/prepare_data.py
-    - path: ../lgc_ensemble_helpers/train.py
-    - path: ../lgc_ensemble_helpers/divisor_finder.py
-    - path: ../../utils/anndata_to_dataframe.py
+name: lgc_ensemble_train
+namespace: methods
+arguments:
+  - name: --train_data_aug_dir
+    type: file
+    required: true
+    direction: input
+  - name: --scheme
+    type: string
+    required: true
+    direction: input
+    description: "The scheme to use for training."
+    choices: [initial, light, heavy]
+  - name: --model
+    type: string
+    required: true
+    direction: input
+    description: "The name of the model to train."
+    choices: [LSTM, GRU, Conv]
+  - name: --fold
+    type: integer
+    required: true
+    direction: input
+    description: "The fold to train."
+  - name: --model_file
+    type: file
+    required: true
+    direction: output
+    example: model.pt
+  - name: --log_file
+    type: file
+    required: true
+    direction: output
+    example: log.json
+resources:
+  - type: python_script
+    path: script.py
+  - path: ../lgc_ensemble_helpers/helper_classes.py
+  - path: ../lgc_ensemble_helpers/helper_functions.py
+  - path: ../lgc_ensemble_helpers/models.py
+  - path: ../lgc_ensemble_helpers/predict.py
+  - path: ../lgc_ensemble_helpers/prepare_data.py
+  - path: ../lgc_ensemble_helpers/train.py
+  - path: ../lgc_ensemble_helpers/divisor_finder.py
+  - path: ../../utils/anndata_to_dataframe.py
     
-platforms:
+engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_pytorch_nvidia:1.0.4
-    run_args: ["--shm-size=2g"]
+    image: ghcr.io/openproblems-bio/base_images/pytorch_nvidia:1.1.0
     setup:
       - type: python
         packages:
@@ -67,6 +65,9 @@ platforms:
           - torch-summary
 
   - type: native
+runners:
+  - type: executable
+    docker_run_args: ["--shm-size=2g"]
   - type: nextflow
     directives:
       label: [hightime, veryhighmem, highcpu, highsharedmem, gpu]

@@ -6,7 +6,7 @@ from scipy import sparse
 ## VIASH START
 par = {
     "input": "resources/neurips-2023-raw/sc_counts_reannotated_with_counts.h5ad",
-    "output": "resources/neurips-2023-data/pseudobulk.h5ad",
+    "output": "resources/datasets/neurips-2023-data/pseudobulk.h5ad",
 }
 ## VIASH END
 

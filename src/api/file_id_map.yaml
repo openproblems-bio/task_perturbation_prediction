@@ -1,5 +1,5 @@
 type: file
-example: resources/neurips-2023-data/id_map.csv
+example: resources/datasets/neurips-2023-data/id_map.csv
 info:
   label: ID Map
   summary: "File indicates the order of de_test, the cell types and the small molecule names."

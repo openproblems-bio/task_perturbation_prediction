@@ -1,8 +1,8 @@
 type: file
-example: resources/neurips-2023-data/de_train.h5ad
+example: resources/datasets/neurips-2023-data/de_test.h5ad
 info:
-  label: DE train
-  summary: "Differential expression results for training."
+  label: DE test
+  summary: "Differential expression results for testing."
   file_type: h5ad
   slots:
     obs:
@@ -121,5 +121,5 @@ info:
       - name: single_cell_obs
         type: dataframe
         description: |
-          A dataframe with the cell-level metadata for the training set.
+          A dataframe with the cell-level metadata.
         required: true

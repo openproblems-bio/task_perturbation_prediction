@@ -1,5 +1,5 @@
 type: file
-example: resources/neurips-2023-data/score.h5ad
+example: resources/datasets/neurips-2023-data/score.h5ad
 info:
   label: Score
   summary: "File indicating the score of a metric."

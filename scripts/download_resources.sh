@@ -4,11 +4,11 @@ set -e
 
 echo ">> Downloading resources"
 # aws s3 sync --no-sign-request \
-#   "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" \
+#   "s3://openproblems-data/resources/perturbation_prediction/" \
 #   "resources" \
 #   --delete
 
-viash run src/common/sync_test_resources/config.vsh.yaml -- \
-  --input "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" \
+common/sync_resources/sync_resources \
+  --input "s3://openproblems-data/resources/perturbation_prediction/" \
   --output "resources" \
   --delete

@@ -20,8 +20,8 @@ warnings.filterwarnings("ignore")
 
 ## VIASH START
 par = {
-    "de_train_h5ad": "resources/neurips-2023-data/de_train.h5ad",
-    "id_map": "resources/neurips-2023-data/id_map.csv",
+    "de_train_h5ad": "resources/datasets/neurips-2023-data/de_train.h5ad",
+    "id_map": "resources/datasets/neurips-2023-data/id_map.csv",
     "layer": "clipped_sign_log10_pval",
     "output": "output.h5ad",
     "reps": 2,

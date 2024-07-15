@@ -13,8 +13,8 @@ print(f"scape version:{scape.__version__}")
 
 ## VIASH START
 par = dict(
-	de_train_h5ad = "resources/neurips-2023-data/de_train.h5ad",
-	id_map = "resources/neurips-2023-data/id_map.csv",
+	de_train_h5ad = "resources/datasets/neurips-2023-data/de_train.h5ad",
+	id_map = "resources/datasets/neurips-2023-data/id_map.csv",
 	output = "output.h5ad",
 	output_model = None,
 	layer = "clipped_sign_log10_pval",
