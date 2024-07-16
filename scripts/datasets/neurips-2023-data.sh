@@ -45,10 +45,7 @@ viash run src/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --output "$OUT/score.h5ad"
 
 echo ">> Uploading results to S3"
-# aws s3 sync --profile op2 \
-#   --include "*" \
-#   --exclude "neurips-2023-raw/*" \
-#   --exclude "neurips-2023-public/*" \
-#   "resources" \
-#   "s3://openproblems-bio/public/neurips-2023-competition/workflow-resources/" \
+# aws s3 sync --profile op \
+#   "resources/datasets" \
+#   "s3://openproblems-data/resources/perturbation_prediction/datasets/" \
 #   --delete --dryrun
