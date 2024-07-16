@@ -494,9 +494,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "pyarrow" "pandas~=2.0.3" "scikit-learn~=1.0.1" "tqdm~=4.66.1" "numpy~=1.23" "matplotlib~=3.5.0" "PyYAML~=6.0.1" "lion-pytorch"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods transformer_ensemble"
-LABEL org.opencontainers.image.created="2024-07-16T13:49:10Z"
+LABEL org.opencontainers.image.created="2024-07-16T14:13:48Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="d9f62f77df01815494be1e7fcb2117e1faaf3d1a"
+LABEL org.opencontainers.image.revision="e5a05568a223c55860da3234dc94b0ebbaf08f28"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER

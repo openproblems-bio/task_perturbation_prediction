@@ -21,7 +21,7 @@ publish_dir: "$publish_dir"
 HERE
 
 tw launch openproblems-bio/task_perturbation_prediction \
-  --revision main_build \
+  --revision build/main \
   --pull-latest \
   --main-script target/nextflow/workflows/run_benchmark/main.nf \
   --workspace 53907369739130 \

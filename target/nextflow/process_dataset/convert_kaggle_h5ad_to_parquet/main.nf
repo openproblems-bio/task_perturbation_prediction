@@ -3026,7 +3026,7 @@ meta = [
     "engine" : "docker",
     "output" : "target/nextflow/process_dataset/convert_kaggle_h5ad_to_parquet",
     "viash_version" : "0.9.0-RC6",
-    "git_commit" : "d9f62f77df01815494be1e7fcb2117e1faaf3d1a",
+    "git_commit" : "e5a05568a223c55860da3234dc94b0ebbaf08f28",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
