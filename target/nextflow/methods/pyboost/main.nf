@@ -3211,7 +3211,7 @@ meta = [
     "engine" : "docker|native",
     "output" : "target/nextflow/methods/pyboost",
     "viash_version" : "0.9.0-RC6",
-    "git_commit" : "02def5146d3342920487a10adc043309d064e95c",
+    "git_commit" : "d9f62f77df01815494be1e7fcb2117e1faaf3d1a",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
