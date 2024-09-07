@@ -51,7 +51,7 @@ resources:
     path: script.py
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/python:1.1.0
+    image: openproblems/base_python:1.0.0
 runners:
   - type: executable
   - type: nextflow

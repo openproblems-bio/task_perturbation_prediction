@@ -1,10 +1,10 @@
 type: file
 example: resources/datasets/neurips-2023-data/prediction.h5ad
+label: Prediction
+summary: "Differential Gene Expression prediction"
 info:
-  label: Prediction
-  summary: "Differential Gene Expression prediction"
-  file_type: h5ad
-  slots:
+  format:
+    type: h5ad
     layers:
       - name: prediction
         type: double

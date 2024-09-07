@@ -1,8 +1,8 @@
 __merge__: ../../api/comp_method.yaml
 
 name: transformer_ensemble
+label: Transformer Ensemble
 info:
-  label: Transformer Ensemble
   neurips2023_rank: 2
   summary: An ensemble of four transformer models, trained on diverse feature sets, with a cluster-based sampling strategy and robust validation for optimal performance.
   description: |
@@ -45,7 +45,7 @@ resources:
   - path: train.py
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/pytorch_nvidia:1.1.0
+    image: openproblems/base_pytorch_nvidia:1.0.0
     setup:
       - type: python
         packages:

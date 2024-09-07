@@ -45,7 +45,7 @@ resources:
     path: script.R
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/r:1.1.0
+    image: openproblems/base_r:1.0.0
     setup:
       - type: r
         bioc: [ edgeR, limma, dplyr, tidyr, purrr, tibble, furrr, future ]

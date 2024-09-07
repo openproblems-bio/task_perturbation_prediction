@@ -1,8 +1,8 @@
 __merge__: ../../api/comp_method.yaml
 
 name: lgc_ensemble_direct
+label: LSTM-GRU-CNN Ensemble
 info:
-  label: LSTM-GRU-CNN Ensemble
   neurips2023_rank: 1
   summary: An ensemble of LSTM, GRU, and 1D CNN models
   description: |
@@ -54,7 +54,7 @@ resources:
     
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/pytorch_nvidia:1.1.0
+    image: openproblems/base_pytorch_nvidia:1.0.0
     setup:
       - type: python
         packages:

@@ -1,7 +1,7 @@
 __merge__: ../../api/comp_method.yaml
 name: scape
+label: ScAPE
 info:
-  label: ScAPE
   neurips2023_rank: 16
   summary: Neural network model for drug effect prediction
   description: |
@@ -63,7 +63,7 @@ resources:
     path: script.py
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/tensorflow_nvidia:1.1.0
+    image: openproblems/base_tensorflow_nvidia:1.0.0
     setup:
       - type: python
         packages:
