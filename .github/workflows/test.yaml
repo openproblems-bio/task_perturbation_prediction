@@ -1,0 +1,11 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    uses: viash-io/viash-actions/.github/workflows/test.yaml@v6

@@ -7,7 +7,7 @@
 
 - Check the correct box. Does this PR contain:
   - [ ] Breaking changes
-  - [ ] New functionality (new method, new metric, ...)
+  - [ ] New functionality
   - [ ] Major changes
   - [ ] Minor changes
   - [ ] Bug fixes

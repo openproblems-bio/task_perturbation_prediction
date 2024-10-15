@@ -16,6 +16,6 @@ on:
 
 jobs:
   build:
-    uses: openproblems-bio/actions/.github/workflows/build.yml@main
+    uses: viash-io/viash-actions/.github/workflows/build.yaml@v6
     with:
       version: ${{ github.event.inputs.version }}
