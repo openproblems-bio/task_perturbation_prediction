@@ -34,6 +34,17 @@ workflow run_wf {
       toState: [pseudobulk_filtered_with_uns: "output"]
     )
 
+    | split_sc.run(
+      fromState: [
+        filtered_sc_counts: "filtered_sc_counts",
+        pseudobulk_filtered_with_uns: "pseudobulk_filtered_with_uns"
+      ],
+      toState: [
+        sc_train_h5ad: "sc_train_h5ad",
+        sc_test_h5ad: "sc_test_h5ad"
+      ]
+    )
+
     | run_limma.run(
       key: "limma_train",
       fromState: { id, state ->
@@ -66,7 +77,9 @@ workflow run_wf {
     | setState([
       "de_train_h5ad",
       "de_test_h5ad",
-      "id_map"
+      "id_map",
+      "sc_train_h5ad",
+      "sc_test_h5ad"
     ])
 
   emit:
