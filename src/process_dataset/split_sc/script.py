@@ -15,15 +15,21 @@ print(">> Load sc and pseudobulk", flush=True)
 filtered_sc_counts = ad.read_h5ad(par["filtered_sc_counts"])
 pseudobulk_filtered_with_uns = ad.read_h5ad(par["pseudobulk_filtered_with_uns"])
 
+print(f"single cell: {filtered_sc_counts}")
+print(f"pseudobulk: {pseudobulk_filtered_with_uns}")
+
 print(">> Process sc adata", flush=True)
 filtered_sc_counts.X = filtered_sc_counts.raw.X
 del filtered_sc_counts.raw
 filtered_sc_counts = filtered_sc_counts[:, pseudobulk_filtered_with_uns.var_names]
 
 # applying filtering from pseudobulk to sc
-pseudobulk_filtered_with_uns.obs["plate_well_cell_type"] = pseudobulk_filtered_with_uns.obs["plate_name"].astype(str) + \
-    "_" + pseudobulk_filtered_with_uns.obs["well"].astype(str) + "_" + pseudobulk_filtered_with_uns.obs["cell_type"].astype(str)
-filtered_sc_counts = filtered_sc_counts[filtered_sc_counts.obs["plate_well_cell_type"].isin(
+pseudobulk_filtered_with_uns.obs["plate_well_cell_type"] = \
+    pseudobulk_filtered_with_uns.obs["plate_name"].astype(str) + "_" + \
+    pseudobulk_filtered_with_uns.obs["well"].astype(str) + "_" + \
+        pseudobulk_filtered_with_uns.obs["cell_type"].astype(str)
+
+filtered_sc_counts = filtered_sc_counts[filtered_sc_counts.obs["plate_well_celltype_reannotated"].isin(
     set(pseudobulk_filtered_with_uns.obs["plate_well_cell_type"].unique()))]
 
 # updating the split from kaggle to neurips
