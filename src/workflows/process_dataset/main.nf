@@ -79,7 +79,8 @@ workflow run_wf {
       "de_test_h5ad",
       "id_map",
       "sc_train_h5ad",
-      "sc_test_h5ad"
+      "sc_test_h5ad",
+      "pseudobulk_filtered_with_uns"
     ])
 
   emit:
