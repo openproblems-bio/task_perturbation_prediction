@@ -47,7 +47,7 @@ description: |
 
 version: dev
 license: MIT
-keywords: [single-cell, perturbation prediction, perturbation, openproblems, benchmark]
+keywords: [single-cell, perturbation prediction, perturbation, benchmark]
 links:
   issue_tracker: https://github.com/openproblems-bio/task_perturbation_prediction/issues
   repository: https://github.com/openproblems-bio/task_perturbation_prediction
@@ -121,7 +121,7 @@ viash_version: 0.9.0
 info:
   test_resources:
     - type: s3
-      path: s3://openproblems-data/resources/perturbation_prediction/datasets
+      path: s3://openproblems-data/resources/task_perturbation_prediction/datasets
       dest: resources/datasets
 
 # set default labels
