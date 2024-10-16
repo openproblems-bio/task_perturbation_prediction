@@ -56,5 +56,5 @@ viash run src/metrics/mean_rowwise_error/config.vsh.yaml -- \
 echo ">> Uploading results to S3"
 # aws s3 sync --profile op \
 #   "resources/datasets" \
-#   "s3://openproblems-data/resources/perturbation_prediction/datasets/" \
+#   "s3://openproblems-data/resources/task_perturbation_prediction/datasets/" \
 #   --delete --dryrun
