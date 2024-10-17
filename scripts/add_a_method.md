@@ -17,7 +17,7 @@ scripts/download_resources.sh
 Make sure to replace `foo` with the name of your method. Optionally, you can replace `python` with `r` if you are creating an R method.
 
 ```bash
-common/create_component/create_component \
+./common/scripts/create_component \
   --task perturbation_prediction \
   --language "python" \
   --name "foo" \
