@@ -17,7 +17,7 @@ links:
   repository: https://github.com/theislab/cpa?tab=readme-ov-file
 
 info:
-  # we normalize in the script
+  # we normalize in the script. The model can operate on either raw counts or cpm and log-normalized data.
   preferred_normalization: raw_counts
 
 resources:
