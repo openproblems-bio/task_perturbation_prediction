@@ -38,7 +38,7 @@ filtered_sc_counts.obs["sm_cell_type_orig"] = filtered_sc_counts.obs["sm_name"].
 mapping_to_split = filtered_sc_counts.obs.groupby("sm_cell_type_orig")["split"].apply(lambda x: x.unique()[0]).to_dict()
 filtered_sc_counts.obs["sm_cell_type"] = filtered_sc_counts.obs["sm_name"].astype(str) + "_" + filtered_sc_counts.obs["cell_type"].astype(str)
 filtered_sc_counts.obs["split"] = filtered_sc_counts.obs["sm_cell_type"].map(mapping_to_split)
-filtered_sc_counts.obs['control'] = filtered_sc_counts.obs['split'].eq("control")
+filtered_sc_counts.obs['control'] = filtered_sc_counts.obs['sm_name'].eq("Dimethyl Sulfoxide").astype(int)
 filtered_sc_counts.obs["orig_split"] = filtered_sc_counts.obs["split"].copy()
 filtered_sc_counts.obs['split'] = np.where(
     filtered_sc_counts.obs['split'] == 'private_test', 'test', 'train')
