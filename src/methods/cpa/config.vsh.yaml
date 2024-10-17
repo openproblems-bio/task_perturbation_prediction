@@ -12,6 +12,7 @@ description: |
 
   The implementation is based on https://github.com/theislab/cpa?tab=readme-ov-file and https://colab.research.google.com/github/theislab/cpa/blob/master/docs/tutorials/combosciplex_Rdkit_embeddings.ipynb#scrollTo=f46e39ed
 
+  reference: https://www.embopress.org/doi/full/10.15252/msb.202211517
 links:
   repository: https://github.com/theislab/cpa?tab=readme-ov-file
 
@@ -25,11 +26,12 @@ resources:
 
 engines:
   - type: docker
+    # pytorch requirement is >= 1.13.1 and < 2.0.1
     image: openproblems/base_pytorch_nvidia:1.0.0
     setup:
       - type: python
         packages:
-          - cpa
+          - cpa-tools
           - scanpy
           - anndata
           - numpy
