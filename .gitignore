@@ -1,4 +1,5 @@
 resources
+resources_test
 work
 .nextflow*
 target
