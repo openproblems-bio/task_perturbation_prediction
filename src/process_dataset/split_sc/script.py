@@ -50,6 +50,9 @@ filtered_sc_counts.var = pd.DataFrame(index=filtered_sc_counts.var.index)
 filtered_sc_counts.uns.clear()
 filtered_sc_counts.obsm.clear()
 filtered_sc_counts.obsp.clear()
+for col in filtered_sc_counts.obs.columns:
+    if col not in ["cell_count_by_well_celltype", "cell_count_by_plate_well", "obs_id"]:
+        filtered_sc_counts.obs[col] = filtered_sc_counts.obs[col].astype("category")
 
 print(">> Save sc dataset into splits", flush=True)
 filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train_h5ad"], compression="gzip")
