@@ -238,7 +238,7 @@ def create_metadata_files(args) {
         def metric_configs_file = tempFile("metric_configs.yaml")
         metric_configs_file.write(metric_configs_yaml_blob)
 
-        def task_info_file = meta_.resources_dir.resolve("task_info.yaml")
+        def task_info_file = meta_.resources_dir.resolve("_viash.yaml")
 
         def new_state = [
           dataset_uns: dataset_uns_file,

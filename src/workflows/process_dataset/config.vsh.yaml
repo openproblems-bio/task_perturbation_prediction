@@ -41,6 +41,7 @@ dependencies:
   - name: process_dataset/add_uns_metadata
   - name: process_dataset/run_limma
   - name: process_dataset/generate_id_map
+  - name: process_dataset/split_sc
 runners:
   - type: executable
   - type: nextflow
