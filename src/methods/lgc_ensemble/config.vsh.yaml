@@ -1,8 +1,8 @@
 __merge__: ../../api/wf_method.yaml
 
 name: lgc_ensemble
+label: LSTM-GRU-CNN Ensemble
 info:
-  label: LSTM-GRU-CNN Ensemble
   neurips2023_rank: 1
   summary: An ensemble of LSTM, GRU, and 1D CNN models
   description: |

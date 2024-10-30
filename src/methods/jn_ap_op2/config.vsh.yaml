@@ -1,8 +1,8 @@
 __merge__: ../../api/comp_method.yaml
 
 name: jn_ap_op2
+label: JN-AP-OP2
 info:
-  label: JN-AP-OP2
   neurips2023_rank: 20
   summary: "Deep learning architecture composed of 2 modules: a sample-centric MLP and a gene-centric MLP"
   description: |
@@ -31,7 +31,7 @@ resources:
   - path: helper.py
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/pytorch_nvidia:1.1.0
+    image: openproblems/base_pytorch_nvidia:1.0.0
     setup:
       - type: python
         packages: 

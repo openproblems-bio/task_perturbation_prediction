@@ -1,8 +1,8 @@
 Map findArgumentSchema(Map config, String argument_id) {
   def argument_groups =
-    (config.functionality.argument_groups ?: []) +
+    (config.argument_groups ?: []) +
     [
-      arguments: config.functionality.arguments ?: []
+      arguments: config.arguments ?: []
     ]
 
   def schema_value = argument_groups.findResult{ gr ->

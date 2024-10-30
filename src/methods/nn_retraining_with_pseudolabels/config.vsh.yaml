@@ -1,8 +1,8 @@
 __merge__: ../../api/comp_method.yaml
 
 name: nn_retraining_with_pseudolabels
+label: NN retraining with pseudolabels
 info:
-  label: NN retraining with pseudolabels
   neurips2023_rank: 3
   summary: Neural networks with pseudolabeling and ensemble modelling
   description: |
@@ -40,7 +40,7 @@ resources:
 
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/tensorflow_nvidia:1.1.0
+    image: openproblems/base_tensorflow_nvidia:1.0.0
     setup:
       - type: python
         packages: 

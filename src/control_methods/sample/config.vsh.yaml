@@ -1,17 +1,17 @@
 __merge__: ../../api/comp_control_method.yaml
 name: sample
+label: Sample
+summary: Sample predictions from the training data
+description: |
+  This method samples the training data to generate predictions.
 info:
-  label: Sample
-  summary: Sample predictions from the training data
-  description: |
-    This method samples the training data to generate predictions.
   preferred_normalization: counts
 resources:
   - type: r_script
     path: script.R
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/r:1.1.0
+    image: openproblems/base_r:1.0.0
     setup:
       - type: r
         cran: [ arrow, dplyr ]

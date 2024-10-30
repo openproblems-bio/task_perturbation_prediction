@@ -1,8 +1,8 @@
 __merge__: ../../api/comp_method.yaml
 
 name: pyboost
+label: Py-boost
 info:
-  label: Py-boost
   neurips2023_rank: 18
   summary: "Py-boost predicting t-scores"
   description: |
@@ -38,7 +38,7 @@ resources:
   - path: ../../utils/anndata_to_dataframe.py
 engines:
   - type: docker
-    image: ghcr.io/openproblems-bio/base_images/pytorch_nvidia:1.1.0
+    image: openproblems/base_pytorch_nvidia:1.0.0
     setup:
       - type: python
         packages:

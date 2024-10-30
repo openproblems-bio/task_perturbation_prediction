@@ -63,10 +63,10 @@ resources:
     path: main.nf
     entrypoint: run_wf
   - type: file
-    path: "../../api/task_info.yaml"
+    path: /_viash.yaml
 dependencies:
   - name: common/extract_metadata
-    repository: openproblemsv2
+    repository: openproblems
   - name: control_methods/zeros
   - name: control_methods/sample
   - name: control_methods/ground_truth
@@ -82,9 +82,9 @@ dependencies:
   - name: metrics/mean_rowwise_error
   - name: metrics/mean_rowwise_correlation
 repositories:
-  - name: openproblemsv2
+  - name: openproblems
     type: github
-    repo: openproblems-bio/openproblems-v2
+    repo: openproblems-bio/openproblems
     tag: main_build
 runners:
   - type: executable

@@ -6,11 +6,11 @@ argument_groups:
   arguments:
   - type: "file"
     name: "--de_train_h5ad"
+    label: "DE train"
+    summary: "Differential expression results for training."
     info:
-      label: "DE train"
-      summary: "Differential expression results for training."
-      file_type: "h5ad"
-      slots:
+      format:
+        type: "h5ad"
         obs:
         - name: "cell_type"
           type: "string"
@@ -138,11 +138,11 @@ argument_groups:
     multiple_sep: ";"
   - type: "file"
     name: "--de_test_h5ad"
+    label: "DE test"
+    summary: "Differential expression results for testing."
     info:
-      label: "DE test"
-      summary: "Differential expression results for testing."
-      file_type: "h5ad"
-      slots:
+      format:
+        type: "h5ad"
         obs:
         - name: "cell_type"
           type: "string"
@@ -269,24 +269,25 @@ argument_groups:
     multiple_sep: ";"
   - type: "file"
     name: "--id_map"
+    label: "ID Map"
+    summary: "File indicates the order of de_test, the cell types and the small molecule\
+      \ names."
     info:
-      label: "ID Map"
-      summary: "File indicates the order of de_test, the cell types and the small\
-        \ molecule names."
-      file_type: "csv"
-      columns:
-      - name: "id"
-        type: "integer"
-        description: "Index of the test observation"
-        required: true
-      - name: "cell_type"
-        type: "string"
-        description: "Cell type name"
-        required: true
-      - name: "sm_name"
-        type: "string"
-        description: "Small molecule name"
-        required: true
+      format:
+        type: "csv"
+        columns:
+        - name: "id"
+          type: "integer"
+          description: "Index of the test observation"
+          required: true
+        - name: "cell_type"
+          type: "string"
+          description: "Cell type name"
+          required: true
+        - name: "sm_name"
+          type: "string"
+          description: "Small molecule name"
+          required: true
     example:
     - "resources/datasets/neurips-2023-data/id_map.csv"
     must_exist: true
@@ -307,11 +308,11 @@ argument_groups:
     multiple_sep: ";"
   - type: "file"
     name: "--output"
+    label: "Prediction"
+    summary: "Differential Gene Expression prediction"
     info:
-      label: "Prediction"
-      summary: "Differential Gene Expression prediction"
-      file_type: "h5ad"
-      slots:
+      format:
+        type: "h5ad"
         layers:
         - name: "prediction"
           type: "double"
@@ -342,6 +343,10 @@ resources:
   is_executable: true
 - type: "file"
   path: "anndata_to_dataframe.py"
+label: "Mean per gene"
+summary: "Baseline method that returns mean of gene's outcomes"
+description: "Baseline method that predicts for a gene the mean of its outcomes of\
+  \ all samples.\n"
 test_resources:
 - type: "python_script"
   path: "run_and_check_output.py"
@@ -350,10 +355,6 @@ test_resources:
   path: "resources/datasets/neurips-2023-data"
   dest: "resources/datasets/neurips-2023-data"
 info:
-  label: "Mean per gene"
-  summary: "Baseline method that returns mean of gene's outcomes"
-  description: "Baseline method that predicts for a gene the mean of its outcomes\
-    \ of all samples.\n"
   type: "control_method"
   type_info:
     label: "Control Method"
@@ -399,7 +400,7 @@ runners:
 engines:
 - type: "docker"
   id: "docker"
-  image: "ghcr.io/openproblems-bio/base_images/python:1.1.0"
+  image: "openproblems/base_python:1.0.0"
   namespace_separator: "/"
   setup:
   - type: "python"
@@ -415,20 +416,61 @@ build_info:
   engine: "docker"
   output: "target/nextflow/control_methods/mean_outcome"
   executable: "target/nextflow/control_methods/mean_outcome/main.nf"
-  viash_version: "0.9.0-RC6"
-  git_commit: "e5a05568a223c55860da3234dc94b0ebbaf08f28"
+  viash_version: "0.9.0"
+  git_commit: "cb4543d77463c5a73219385d2435d65e5e9561e6"
   git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"
 package_config:
   name: "task_perturbation_prediction"
   version: "build_main"
-  description: "Predicting how small molecules change gene expression in different\
-    \ cell types.\n"
+  label: "Perturbation Prediction"
+  summary: "Predicting how small molecules change gene expression in different cell\
+    \ types."
+  description: "Human biology can be complex, in part due to the function and interplay\
+    \ of the body's\napproximately 37 trillion cells, which are organized into tissues,\
+    \ organs, and systems.\nHowever, recent advances in single-cell technologies have\
+    \ provided unparalleled insight\ninto the function of cells and tissues at the\
+    \ level of DNA, RNA, and proteins. Yet\nleveraging single-cell methods to develop\
+    \ medicines requires mapping causal links\nbetween chemical perturbations and\
+    \ the downstream impact on cell state. These experiments\nare costly and labor\
+    \ intensive, and not all cells and tissues are amenable to\nhigh-throughput transcriptomic\
+    \ screening. If data science could help accurately predict\nchemical perturbations\
+    \ in new cell types, it could accelerate and expand the development\nof new medicines.\n\
+    \nSeveral methods have been developed for drug perturbation prediction, most of\
+    \ which are\nvariations on the autoencoder architecture (Dr.VAE, scGEN, and ChemCPA).\
+    \ However, these\nmethods lack proper benchmarking datasets with diverse cell\
+    \ types to determine how well\nthey generalize. The largest available training\
+    \ dataset is the NIH-funded Connectivity\nMap (CMap), which comprises over 1.3M\
+    \ small molecule perturbation measurements. However,\nthe CMap includes observations\
+    \ of only 978 genes, less than 5% of all genes. Furthermore,\nthe CMap data is\
+    \ comprised almost entirely of measurements in cancer cell lines, which\nmay not\
+    \ accurately represent human biology.\n\nThis task aims to predict how small molecules\
+    \ change gene expression in different cell\ntypes. This task was a [Kaggle competition](https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/overview)\n\
+    as part of the [NeurIPS 2023 competition track](https://neurips.cc/virtual/2023/competition/66586).\n\
+    \nThe task is to predict the gene expression profile of a cell after a small molecule\n\
+    perturbation. For this competition, we designed and generated a novel single-cell\n\
+    perturbational dataset in human peripheral blood mononuclear cells (PBMCs). We\n\
+    selected 144 compounds from the Library of Integrated Network-Based Cellular Signatures\n\
+    (LINCS) Connectivity Map dataset ([PMID: 29195078](https://pubmed.ncbi.nlm.nih.gov/29195078/))\n\
+    and measured single-cell gene\nexpression profiles after 24 hours of treatment.\
+    \ The experiment was repeated in three\nhealthy human donors, and the compounds\
+    \ were selected based on diverse transcriptional\nsignatures observed in CD34+\
+    \ hematopoietic stem cells (data not released). We performed\nthis experiment\
+    \ in human PBMCs because the cells are commercially available with\npre-obtained\
+    \ consent for public release and PBMCs are a primary, disease-relevant tissue\n\
+    that contains multiple mature cell types (including T-cells, B-cells, myeloid\
+    \ cells,\nand NK cells) with established markers for annotation of cell types.\
+    \ To supplement this\ndataset, we also measured cells from each donor at baseline\
+    \ with joint scRNA and\nsingle-cell chromatin accessibility measurements using\
+    \ the 10x Multiome assay. We hope\nthat the addition of rich multi-omic data for\
+    \ each donor and cell type at baseline will\nhelp establish biological priors\
+    \ that explain the susceptibility of particular genes to\nexhibit perturbation\
+    \ responses in difference biological contexts.\n"
   info:
     test_resources:
     - type: "s3"
-      path: "s3://openproblems-data/resources/perturbation_prediction/datasets"
+      path: "s3://openproblems-data/resources/task_perturbation_prediction/datasets"
       dest: "resources/datasets"
-  viash_version: "0.9.0-RC6"
+  viash_version: "0.9.0"
   source: "src"
   target: "target"
   config_mods:
@@ -437,14 +479,86 @@ package_config:
     \ = 5\", midcpu : \"cpus = 15\", highcpu : \"cpus = 30\", lowtime : \"time = 1.h\"\
     , midtime : \"time = 4.h\", hightime : \"time = 8.h\", veryhightime : \"time =\
     \ 24.h\" }"
+  authors:
+  - name: "Artur Szałata"
+    roles:
+    - "author"
+    info:
+      github: "szalata"
+      orcid: "000-0001-8413-234X"
+  - name: "Robrecht Cannoodt"
+    roles:
+    - "author"
+    info:
+      github: "rcannood"
+      orcid: "0000-0003-3641-729X"
+  - name: "Daniel Burkhardt"
+    roles:
+    - "author"
+    info:
+      github: "dburkhardt"
+      orcid: "0000-0001-7744-1363"
+  - name: "Malte D. Luecken"
+    roles:
+    - "author"
+    info:
+      github: "LuckyMD"
+      orcid: "0000-0001-7464-7921"
+  - name: "Tin M. Tunjic"
+    roles:
+    - "contributor"
+    info:
+      github: "ttunja"
+      orcid: "0000-0001-8842-6548"
+  - name: "Mengbo Wang"
+    roles:
+    - "contributor"
+    info:
+      github: "wangmengbo"
+      orcid: "0000-0002-0266-9993"
+  - name: "Andrew Benz"
+    roles:
+    - "author"
+    info:
+      github: "andrew-benz"
+      orcid: "0009-0002-8118-1861"
+  - name: "Tianyu Liu"
+    roles:
+    - "contributor"
+    info:
+      github: "HelloWorldLTY"
+      orcid: "0000-0002-9412-6573"
+  - name: "Jalil Nourisa"
+    roles:
+    - "contributor"
+    info:
+      github: "janursa"
+      orcid: "0000-0002-7539-4396"
+  - name: "Rico Meinl"
+    roles:
+    - "contributor"
+    info:
+      github: "ricomnl"
+      orcid: "0000-0003-4356-6058"
   keywords:
   - "single-cell"
   - "perturbation prediction"
   - "perturbation"
-  - "openproblems"
   - "benchmark"
   license: "MIT"
   organization: "openproblems-bio"
+  references:
+    bibtex:
+    - "@article{slazata2024benchmark,\n  title = {A benchmark for prediction of transcriptomic\
+      \ responses to chemical perturbations across cell types},\n  author = {Artur\
+      \ Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason\
+      \ Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A.\
+      \ Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic\
+      \ and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian\
+      \ J Theis and Malte D Luecken and Daniel B Burkhardt},\n  booktitle = {The Thirty-eight\
+      \ Conference on Neural Information Processing Systems Datasets and Benchmarks\
+      \ Track},\n  year = {2024},\n  url = {https://openreview.net/forum?id=WTI4RJYSVm}\n\
+      }\n"
   links:
     repository: "https://github.com/openproblems-bio/task_perturbation_prediction"
     docker_registry: "ghcr.io"
