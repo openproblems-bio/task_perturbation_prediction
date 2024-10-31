@@ -29,3 +29,6 @@ arguments:
     direction: output
     required: false
     must_exist: false
+test_resources:
+  # - type: python_script
+  #   path: /common/component_tests/check_config.py

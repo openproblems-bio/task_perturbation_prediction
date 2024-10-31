@@ -13,11 +13,19 @@ info:
         $$
 
         where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.
-      repository_url: null
-      documentation_url: null
       min: 0
-      max: "+inf"
+      max: +.inf
       maximize: false
+      references:
+        bibtex: |
+          @article{slazata2024benchmark,
+            title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},
+            author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},
+            booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+            year = {2024},
+            url = {https://openreview.net/forum?id=WTI4RJYSVm}
+          }
+      links: {}
     - name: mean_rowwise_mae
       label: Mean Rowwise MAE
       summary: The mean of the absolute error (MAE) of each row in the matrix.
@@ -29,11 +37,19 @@ info:
           $$
         
           where $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.
-      repository_url: null
-      documentation_url: null
       min: 0
-      max: "+inf"
+      max: +.inf
       maximize: false
+      references:
+        bibtex: |
+          @article{slazata2024benchmark,
+            title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},
+            author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},
+            booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+            year = {2024},
+            url = {https://openreview.net/forum?id=WTI4RJYSVm}
+          }
+      links: {}
 resources:
   - type: r_script
     path: script.R

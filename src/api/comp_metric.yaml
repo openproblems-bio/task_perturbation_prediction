@@ -38,6 +38,8 @@ arguments:
       How to resolve difference in genes between the two datasets.
 test_resources:
   - type: python_script
+    path: /common/component_tests/check_config.py
+  - type: python_script
     path: /common/component_tests/run_and_check_output.py
   - path: /resources/datasets/neurips-2023-data
     dest: resources/datasets/neurips-2023-data
