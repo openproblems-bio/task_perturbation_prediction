@@ -70,7 +70,7 @@ resources:
     path: main.nf
     entrypoint: run_wf
   - type: file
-    path: "../../api/task_info.yaml"
+    path: /_viash.yaml
 dependencies:
   - name: process_dataset/bootstrap
   - name: workflows/process_dataset

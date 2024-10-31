@@ -7,11 +7,11 @@ info:
     description: |
       A control method to serve as a quality control for the perturbation prediction benchmark.
 arguments:
-  - name: --de_train_h5ad
+  - name: --de_train
     __merge__: file_de_train.yaml
     required: false
     direction: input
-  - name: --de_test_h5ad
+  - name: --de_test
     __merge__: file_de_test.yaml
     required: true
     direction: input

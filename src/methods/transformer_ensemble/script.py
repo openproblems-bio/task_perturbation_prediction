@@ -8,7 +8,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ## VIASH START
 par = {
-    "de_train_h5ad": "resources/neurips-2023-kaggle/de_train.h5ad",
+    "de_train": "resources/neurips-2023-kaggle/de_train.h5ad",
     "id_map": "resources/neurips-2023-kaggle/id_map.csv",
     "output": "output/prediction.h5ad",
     "output_model": "output/model/",
@@ -33,17 +33,17 @@ if par["output_model"]:
     os.makedirs(par["output_model"], exist_ok=True)
 
 # read data
-de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = ad.read_h5ad(par["de_train"])
 id_map = pd.read_csv(par["id_map"])
 
 # convert .obs categoricals to string for ease of use
-for col in de_train_h5ad.obs.select_dtypes(include=["category"]).columns:
-    de_train_h5ad.obs[col] = de_train_h5ad.obs[col].astype(str)
+for col in de_train.obs.select_dtypes(include=["category"]).columns:
+    de_train.obs[col] = de_train.obs[col].astype(str)
 # reset index
-de_train_h5ad.obs.reset_index(drop=True, inplace=True)
+de_train.obs.reset_index(drop=True, inplace=True)
 
 # determine other variables
-gene_names = list(de_train_h5ad.var_names)
+gene_names = list(de_train.var_names)
 n_components = len(gene_names)
 
 # train and predict models
@@ -89,14 +89,14 @@ for i, argset in enumerate(argsets):
     print(f"> Prepare augmented data", flush=True)
     if argset["mean_std"] == "mean_std":
         one_hot_encode_features, targets, one_hot_test = prepare_augmented_data(
-            de_train_h5ad=de_train_h5ad,
+            de_train=de_train,
             id_map=id_map,
             layer=par["layer"],
             uncommon=argset["uncommon"],
         )
     elif argset["mean_std"] == "mean":
         one_hot_encode_features, targets, one_hot_test = prepare_augmented_data_mean_only(
-            de_train_h5ad=de_train_h5ad,
+            de_train=de_train,
             id_map=id_map,
             layer=par["layer"],
         )
@@ -180,8 +180,8 @@ output = ad.AnnData(
     obs=pd.DataFrame(index=id_map["id"]),
     var=pd.DataFrame(index=gene_names),
     uns={
-      "dataset_id": de_train_h5ad.uns["dataset_id"],
-      "method_id": meta["functionality_name"]
+      "dataset_id": de_train.uns["dataset_id"],
+      "method_id": meta["name"]
     }
 )
 

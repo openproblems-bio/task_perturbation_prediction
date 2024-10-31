@@ -1,0 +1,45 @@
+name: split_sc
+namespace: "process_dataset"
+info:
+  type: process_dataset
+  type_info:
+    label: Split Single-Cell Data
+    summary: Split single-cell data into train and test sets
+    description: |
+      This component splits the single-cell data into train and test sets based on the split information in the pseudobulk data.
+arguments:
+  - name: --filtered_sc_counts
+    type: file
+    required: true
+    direction: input
+    example: resources/neurips-2023-data/sc_counts_cleaned.h5ad
+  - name: --pseudobulk_filtered_with_uns
+    type: file
+    required: true
+    direction: input
+    example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad
+  - name: --sc_train
+    type: file
+    required: true
+    direction: output
+    example: sc_train.h5ad
+  - name: --sc_test
+    type: file
+    required: true
+    direction: output
+    example: sc_test.h5ad
+resources:
+  - type: python_script
+    path: script.py
+engines:
+  - type: docker
+    image: openproblems/base_python:1.0.0
+    setup:
+      - type: python
+        packages: [ anndata, numpy, pandas ]
+runners:
+  - type: executable
+  - type: nextflow
+    directives:
+      label: [ midtime, midmem, midcpu ]
+

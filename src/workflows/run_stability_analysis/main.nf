@@ -57,16 +57,16 @@ workflow run_wf {
         ]
       },
       toState: [
-        de_test_h5ad: "de_test_h5ad",
-        de_train_h5ad: "de_train_h5ad",
+        de_test: "de_test",
+        de_train: "de_train",
         id_map: "id_map"
       ]
     )
 
     | run_benchmark.run(
       fromState: [
-        de_train_h5ad: "de_train_h5ad",
-        de_test_h5ad: "de_test_h5ad",
+        de_train: "de_train",
+        de_test: "de_test",
         id_map: "id_map",
         method_ids: "method_ids",
         metric_ids: "metric_ids",
