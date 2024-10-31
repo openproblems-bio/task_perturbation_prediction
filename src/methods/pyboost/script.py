@@ -95,7 +95,7 @@ output = ad.AnnData(
     var=pd.DataFrame(index=genes),
     uns={
       "dataset_id": de_train_h5ad.uns["dataset_id"],
-      "method_id": meta["functionality_name"]
+      "method_id": meta["name"]
     }
 )
 

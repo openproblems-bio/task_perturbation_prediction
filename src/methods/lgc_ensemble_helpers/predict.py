@@ -124,7 +124,7 @@ def predict(par, meta, paths):
         var=pd.DataFrame(index=gene_names),
         uns={
             "dataset_id": de_train_h5ad.uns["dataset_id"],
-            "method_id": meta["functionality_name"]
+            "method_id": meta["name"]
         }
     )
     print(output)

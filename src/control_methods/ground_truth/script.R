@@ -23,7 +23,7 @@ output <- anndata::AnnData(
   var = de_test_h5ad$var[, c()],
   uns = list(
     dataset_id = de_test_h5ad$uns$dataset_id,
-    method_id = meta$functionality_name
+    method_id = meta$name
   )
 )
 

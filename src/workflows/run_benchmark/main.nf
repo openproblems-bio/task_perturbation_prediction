@@ -51,7 +51,7 @@ workflow run_wf {
           output: 'predictions/$id.$key.output.h5ad',
           output_model: null
         ]
-        if (comp.config.functionality.info.type == "control_method") {
+        if (comp.config.info.type == "control_method") {
           new_args.de_test_h5ad = state.de_test_h5ad
         }
         new_args
@@ -126,10 +126,10 @@ def run_benchmark_fun(args) {
   // add the key prefix to the method and metric names
   if (keyPrefix && keyPrefix != "") {
     methods_ = methods.collect{ method ->
-      method.run(key: keyPrefix + method.config.functionality.name)
+      method.run(key: keyPrefix + method.config.name)
     }
     metrics_ = metrics.collect{ metric ->
-      metric.run(key: keyPrefix + metric.config.functionality.name)
+      metric.run(key: keyPrefix + metric.config.name)
     }
   }
 
@@ -142,10 +142,10 @@ def run_benchmark_fun(args) {
       | runEach(
         components: methods_,
         filter: { id, state, comp ->
-          !state.method_ids || state.method_ids.contains(comp.config.functionality.name)
+          !state.method_ids || state.method_ids.contains(comp.config.name)
         },
         id: { id, state, comp ->
-          id + "." + comp.config.functionality.name
+          id + "." + comp.config.name
         },
         fromState: methodFromState,
         toState: methodToState,
@@ -156,10 +156,10 @@ def run_benchmark_fun(args) {
       | runEach(
         components: metrics_,
         filter: { id, state, comp ->
-          !state.metric_ids || state.metric_ids.contains(comp.config.functionality.name)
+          !state.metric_ids || state.metric_ids.contains(comp.config.name)
         },
         id: { id, state, comp ->
-          id + "." + comp.config.functionality.name
+          id + "." + comp.config.name
         },
         fromState: metricFromState,
         toState: metricToState,

@@ -9,7 +9,7 @@ par <- list(
   output = "resources/datasets/neurips-2023-data/output_identity.h5ad"
 )
 meta <- list(
-  functionality_name = "sample"
+  name = "sample"
 )
 ## VIASH END
 
@@ -35,7 +35,7 @@ output <- anndata::AnnData(
   shape = c(nrow(id_map), length(gene_names)),
   uns = list(
     dataset_id = de_train_h5ad$uns$dataset_id,
-    method_id = meta$functionality_name
+    method_id = meta$name
   )
 )
 
