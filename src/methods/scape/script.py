@@ -1,4 +1,5 @@
-import sys, fastparquet, shutil
+import sys
+import shutil
 import pandas as pd
 import anndata as ad
 import numpy as np
