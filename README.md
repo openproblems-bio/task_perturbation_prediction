@@ -139,8 +139,8 @@ perturbation responses in difference biological contexts.
 flowchart LR
   file_sc_counts("Single Cell Counts")
   comp_process_dataset[/"Process dataset"/]
-  file_de_train_h5ad("DE train")
-  file_de_test_h5ad("DE test")
+  file_de_train("DE train")
+  file_de_test("DE test")
   file_id_map("ID Map")
   comp_control_method[/"Control Method"/]
   comp_method[/"Method"/]
@@ -149,13 +149,13 @@ flowchart LR
   file_model("Model")
   file_score("Score")
   file_sc_counts---comp_process_dataset
-  comp_process_dataset-->file_de_train_h5ad
-  comp_process_dataset-->file_de_test_h5ad
+  comp_process_dataset-->file_de_train
+  comp_process_dataset-->file_de_test
   comp_process_dataset-->file_id_map
-  file_de_train_h5ad---comp_control_method
-  file_de_train_h5ad---comp_method
-  file_de_test_h5ad---comp_control_method
-  file_de_test_h5ad---comp_metric
+  file_de_train---comp_control_method
+  file_de_train---comp_method
+  file_de_test---comp_control_method
+  file_de_test---comp_metric
   file_id_map---comp_control_method
   file_id_map---comp_method
   comp_control_method-->file_prediction
@@ -224,8 +224,8 @@ Arguments:
 | Name              | Type   | Description                                                                                                         |
 |:------------------|:-------|:--------------------------------------------------------------------------------------------------------------------|
 | `--sc_counts`     | `file` | Anndata with the counts of the whole dataset.                                                                       |
-| `--de_train_h5ad` | `file` | (*Output*) Differential expression results for training. Default: `de_train.h5ad`.                                  |
-| `--de_test_h5ad`  | `file` | (*Output*) Differential expression results for testing. Default: `de_test.h5ad`.                                    |
+| `--de_train` | `file` | (*Output*) Differential expression results for training. Default: `de_train.h5ad`.                                  |
+| `--de_test`  | `file` | (*Output*) Differential expression results for testing. Default: `de_test.h5ad`.                                    |
 | `--id_map`        | `file` | (*Output*) File indicates the order of de_test, the cell types and the small molecule names. Default: `id_map.csv`. |
 
 </div>
@@ -371,8 +371,8 @@ Arguments:
 
 | Name              | Type     | Description                                                                         |
 |:------------------|:---------|:------------------------------------------------------------------------------------|
-| `--de_train_h5ad` | `file`   | (*Optional*) Differential expression results for training.                          |
-| `--de_test_h5ad`  | `file`   | Differential expression results for testing.                                        |
+| `--de_train` | `file`   | (*Optional*) Differential expression results for training.                          |
+| `--de_test`  | `file`   | Differential expression results for testing.                                        |
 | `--id_map`        | `file`   | File indicates the order of de_test, the cell types and the small molecule names.   |
 | `--layer`         | `string` | (*Optional*) Which layer to use for prediction. Default: `clipped_sign_log10_pval`. |
 | `--output`        | `file`   | (*Output*) Differential Gene Expression prediction.                                 |
@@ -392,7 +392,7 @@ Arguments:
 
 | Name              | Type     | Description                                                                                                         |
 |:------------------|:---------|:--------------------------------------------------------------------------------------------------------------------|
-| `--de_train_h5ad` | `file`   | (*Optional*) Differential expression results for training.                                                          |
+| `--de_train` | `file`   | (*Optional*) Differential expression results for training.                                                          |
 | `--id_map`        | `file`   | File indicates the order of de_test, the cell types and the small molecule names.                                   |
 | `--layer`         | `string` | (*Optional*) Which layer to use for prediction. Default: `clipped_sign_log10_pval`.                                 |
 | `--output`        | `file`   | (*Output*) Differential Gene Expression prediction.                                                                 |
@@ -413,7 +413,7 @@ Arguments:
 
 | Name                 | Type     | Description                                                                                   |
 |:---------------------|:---------|:----------------------------------------------------------------------------------------------|
-| `--de_test_h5ad`     | `file`   | Differential expression results for testing.                                                  |
+| `--de_test`     | `file`   | Differential expression results for testing.                                                  |
 | `--de_test_layer`    | `string` | (*Optional*) In which layer to find the DE data. Default: `clipped_sign_log10_pval`.          |
 | `--prediction`       | `file`   | Differential Gene Expression prediction.                                                      |
 | `--prediction_layer` | `string` | (*Optional*) In which layer to find the predicted DE data. Default: `prediction`.             |

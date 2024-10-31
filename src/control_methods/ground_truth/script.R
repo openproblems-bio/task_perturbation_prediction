@@ -3,8 +3,8 @@ library(dplyr, warn.conflicts = FALSE)
 
 ## VIASH START
 par <- list(
-  de_train_h5ad = "resources/datasets/neurips-2023-data/de_train.h5ad",
-  de_test_h5ad = "resources/datasets/neurips-2023-data/de_test.h5ad",
+  de_train = "resources/datasets/neurips-2023-data/de_train.h5ad",
+  de_test = "resources/datasets/neurips-2023-data/de_test.h5ad",
   layer = "clipped_sign_log10_pval",
   id_map = "resources/datasets/neurips-2023-data/id_map.csv",
   output = "resources/datasets/neurips-2023-data/output_identity.h5ad"
@@ -12,17 +12,17 @@ par <- list(
 ## VIASH END
 
 # read data
-de_test_h5ad <- anndata::read_h5ad(par$de_test_h5ad)
+de_test <- anndata::read_h5ad(par$de_test)
 
 # remove unneeded columns
 output <- anndata::AnnData(
   layers = list(
-    prediction = de_test_h5ad$layers[[par$layer]]
+    prediction = de_test$layers[[par$layer]]
   ),
-  obs = de_test_h5ad$obs[, c()],
-  var = de_test_h5ad$var[, c()],
+  obs = de_test$obs[, c()],
+  var = de_test$var[, c()],
   uns = list(
-    dataset_id = de_test_h5ad$uns$dataset_id,
+    dataset_id = de_test$uns$dataset_id,
     method_id = meta$name
   )
 )

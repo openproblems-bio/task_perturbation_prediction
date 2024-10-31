@@ -5,9 +5,9 @@ import numpy as np
 from helper_functions import combine_features, load_trained_models, average_prediction, weighted_average_prediction
 
 def read_data(par):
-    de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+    de_train = ad.read_h5ad(par["de_train"])
     id_map = pd.read_csv(par["id_map"])
-    return de_train_h5ad, id_map
+    return de_train, id_map
 
 def predict(par, meta, paths):
     test_config = {
@@ -19,8 +19,8 @@ def predict(par, meta, paths):
     ## Read train, test and sample submission data # train data is needed for columns
     print("\nReading data...")
     # de_train, id_map, sample_submission = read_data(par)
-    de_train_h5ad, id_map = read_data(par)
-    gene_names = list(de_train_h5ad.var_names)
+    de_train, id_map = read_data(par)
+    gene_names = list(de_train.var_names)
     
     ## Build input features
     mean_cell_type = pd.read_csv(f'{paths["train_data_aug_dir"]}/mean_cell_type.csv')
@@ -123,7 +123,7 @@ def predict(par, meta, paths):
         obs=pd.DataFrame(index=id_map["id"]),
         var=pd.DataFrame(index=gene_names),
         uns={
-            "dataset_id": de_train_h5ad.uns["dataset_id"],
+            "dataset_id": de_train.uns["dataset_id"],
             "method_id": meta["name"]
         }
     )

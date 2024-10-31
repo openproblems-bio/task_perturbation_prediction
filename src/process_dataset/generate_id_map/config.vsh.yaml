@@ -8,7 +8,7 @@ info:
     description: |
       This task generates the ID map file for competitors.
 arguments:
-  - name: --de_test_h5ad
+  - name: --de_test
     type: file
     required: true
     direction: input

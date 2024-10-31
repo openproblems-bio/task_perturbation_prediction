@@ -45,20 +45,20 @@ workflow run_wf {
       metrics: metrics,
       methodFromState: { id, state, comp ->
         def new_args = [
-          de_train_h5ad: state.de_train_h5ad,
+          de_train: state.de_train,
           id_map: state.id_map,
           layer: state.layer,
           output: 'predictions/$id.$key.output.h5ad',
           output_model: null
         ]
         if (comp.config.info.type == "control_method") {
-          new_args.de_test_h5ad = state.de_test_h5ad
+          new_args.de_test = state.de_test
         }
         new_args
       },
       methodToState: ["prediction": "output"],
       metricFromState: [
-        de_test_h5ad: "de_test_h5ad",
+        de_test: "de_test",
         de_test_layer: "layer",
         prediction: "prediction"
       ],
@@ -80,7 +80,7 @@ workflow run_wf {
   // create dataset, method and metric metadata files
   metadata_ch = input_ch
     | create_metadata_files(
-      datasetFromState: [input: "de_train_h5ad"],
+      datasetFromState: [input: "de_train"],
       methods: methods,
       metrics: metrics,
       meta: meta

@@ -7,7 +7,7 @@ info:
     description: |
       A metric to compare a perturbation prediction to the ground truth.
 arguments:
-  - name: --de_test_h5ad
+  - name: --de_test
     __merge__: file_de_test.yaml
     required: true
     direction: input
