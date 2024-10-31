@@ -1,0 +1,47 @@
+__merge__: ../../api/comp_method.yaml
+
+name: cpa
+label: CPA
+summary: "Compositional Perturbation Autoencoder for single-cell drug response prediction"
+description: |
+  CPA (Compositional Perturbation Autoencoder) is a deep learning model designed for predicting 
+  single-cell drug responses. It uses an autoencoder architecture with adversarial training to 
+  learn drug-induced changes in gene expression across different cell types and conditions. 
+  The model is trained on single-cell RNA-seq data and can predict cellular responses to 
+  unseen drug combinations and doses.
+
+  The implementation is based on https://github.com/theislab/cpa?tab=readme-ov-file and https://colab.research.google.com/github/theislab/cpa/blob/master/docs/tutorials/combosciplex_Rdkit_embeddings.ipynb#scrollTo=f46e39ed
+
+  reference: https://www.embopress.org/doi/full/10.15252/msb.202211517
+links:
+  repository: https://github.com/theislab/cpa?tab=readme-ov-file
+
+info:
+  # we normalize in the script. The model can operate on either raw counts or cpm and log-normalized data.
+  preferred_normalization: counts
+
+resources:
+  - type: python_script
+    path: script.py
+
+engines:
+  - type: docker
+    # pytorch requirement is >= 1.13.1 and < 2.0.1
+    image: openproblems/base_pytorch_nvidia:1.0.0
+    setup:
+      - type: python
+        packages:
+          - cpa-tools
+          - scanpy
+          - anndata
+          - numpy
+          - pandas
+      - type: apt
+        packages:
+          - python3-tk
+
+runners:
+  - type: executable
+  - type: nextflow
+    directives:
+      label: [ hightime, highmem, highcpu, gpu ]

@@ -54,6 +54,11 @@ for col in filtered_sc_counts.obs.columns:
     if col not in ["cell_count_by_well_celltype", "cell_count_by_plate_well", "obs_id"]:
         filtered_sc_counts.obs[col] = filtered_sc_counts.obs[col].astype("category")
 
+# copy uns from pseudobulk
+to_copy_uns = [key for key in pseudobulk_filtered_with_uns.uns.keys() if key.startswith("dataset_")]
+for uns_key in to_copy_uns:
+    filtered_sc_counts.uns[uns_key] = pseudobulk_filtered_with_uns.uns[uns_key]
+
 print(">> Save sc dataset into splits", flush=True)
 filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train"], compression="gzip")
 filtered_sc_counts[filtered_sc_counts.obs["split"] == "test"].write_h5ad(par["sc_test"], compression="gzip")
