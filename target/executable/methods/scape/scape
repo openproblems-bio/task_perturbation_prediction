@@ -173,8 +173,26 @@ VIASH_META_TEMP_DIR="$VIASH_TEMP"
 function ViashHelp {
   echo "scape build_main"
   echo ""
+  echo "ScAPE is utilises a neural network (NN) model to estimate drug effects on gene"
+  echo "expression in"
+  echo "peripheral blood mononuclear cells (PBMCs). The model took drug and cell"
+  echo "features as input,"
+  echo "with these features primarily derived from the median of signed log-pvalues and"
+  echo "log fold-changes"
+  echo "grouped by drug and cell type. The NN was trained using a leave-one-drug-out"
+  echo "cross-validation"
+  echo "strategy, focusing on NK cells as a representative cell type due to their"
+  echo "similarity to B cells"
+  echo "and Myeloid cells in principal component analysis. Model performance was"
+  echo "evaluated by comparing"
+  echo "its predictions against two baselines: predicting zero effect and predicting the"
+  echo "median"
+  echo "log-pvalue for each drug. The final submission combined predictions from models"
+  echo "trained on"
+  echo "different gene and drug subsets, aiming to enhance overall prediction accuracy."
+  echo ""
   echo "Arguments:"
-  echo "    --de_train_h5ad"
+  echo "    --de_train"
   echo "        type: file, file must exist"
   echo "        example: resources/datasets/neurips-2023-data/de_train.h5ad"
   echo ""
@@ -507,12 +525,12 @@ function ViashDockerfile {
 FROM openproblems/base_tensorflow_nvidia:1.0.0
 ENTRYPOINT []
 RUN pip install --upgrade pip && \
-  pip install --upgrade --no-cache-dir "tensorflow-io-gcs-filesystem>=0.31.0" "scikit-learn~=1.2.2" "fastparquet~=2023.10.1" "git+https://github.com/scapeML/scape.git"
+  pip install --upgrade --no-cache-dir "tensorflow~=2.14.0" "tensorflow-io-gcs-filesystem>=0.31.0" "pandas~=1.5.3" "scikit-learn~=1.2.2" "fastparquet~=2023.10.1" "git+https://github.com/scapeML/scape.git"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods scape"
-LABEL org.opencontainers.image.created="2024-10-30T21:08:19Z"
-LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="cb4543d77463c5a73219385d2435d65e5e9561e6"
+LABEL org.opencontainers.image.created="2024-10-31T04:35:16Z"
+LABEL org.opencontainers.image.source="https://github.com/scapeML/scape"
+LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER
@@ -652,15 +670,15 @@ while [[ $# -gt 0 ]]; do
             echo "scape build_main"
             exit
             ;;
-        --de_train_h5ad)
-            [ -n "$VIASH_PAR_DE_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--de_train_h5ad\': \'$VIASH_PAR_DE_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TRAIN_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_train_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --de_train)
+            [ -n "$VIASH_PAR_DE_TRAIN" ] && ViashError Bad arguments for option \'--de_train\': \'$VIASH_PAR_DE_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TRAIN="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_train. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --de_train_h5ad=*)
-            [ -n "$VIASH_PAR_DE_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--de_train_h5ad=*\': \'$VIASH_PAR_DE_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TRAIN_H5AD=$(ViashRemoveFlags "$1")
+        --de_train=*)
+            [ -n "$VIASH_PAR_DE_TRAIN" ] && ViashError Bad arguments for option \'--de_train=*\': \'$VIASH_PAR_DE_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TRAIN=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         --id_map)
@@ -1011,8 +1029,8 @@ if [ -z ${VIASH_PAR_MIN_N_TOP_DRUGS+x} ]; then
 fi
 
 # check whether required files exist
-if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ] && [ ! -e "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
-  ViashError "Input file '$VIASH_PAR_DE_TRAIN_H5AD' does not exist."
+if [ ! -z "$VIASH_PAR_DE_TRAIN" ] && [ ! -e "$VIASH_PAR_DE_TRAIN" ]; then
+  ViashError "Input file '$VIASH_PAR_DE_TRAIN' does not exist."
   exit 1
 fi
 if [ ! -z "$VIASH_PAR_ID_MAP" ] && [ ! -e "$VIASH_PAR_ID_MAP" ]; then
@@ -1141,9 +1159,9 @@ fi
 if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
   # detect volumes from file arguments
   VIASH_CHOWN_VARS=()
-if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
-  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TRAIN_H5AD")" )
-  VIASH_PAR_DE_TRAIN_H5AD=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TRAIN_H5AD")
+if [ ! -z "$VIASH_PAR_DE_TRAIN" ]; then
+  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TRAIN")" )
+  VIASH_PAR_DE_TRAIN=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TRAIN")
 fi
 if [ ! -z "$VIASH_PAR_ID_MAP" ]; then
   VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_ID_MAP")" )
@@ -1226,7 +1244,8 @@ function interrupt {
 trap clean_up EXIT
 trap interrupt INT SIGINT
 cat > "\$tempscript" << 'VIASHMAIN'
-import sys, fastparquet, shutil
+import sys
+import shutil
 import pandas as pd
 import anndata as ad
 import numpy as np
@@ -1242,7 +1261,7 @@ print(f"scape version:{scape.__version__}")
 ## VIASH START
 # The following code has been auto-generated by Viash.
 par = {
-  'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'de_train': $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'layer': $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo "r'${VIASH_PAR_LAYER//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\'/\'\"\'\"r\'}'"; else echo None; fi ),
@@ -1281,17 +1300,17 @@ dep = {
 
 ## VIASH END
 
-def write_predictions(df_submission_data, par, meta, de_train_h5ad, id_map):
+def write_predictions(df_submission_data, par, meta, de_train, id_map):
 	# Write the files
 	print('Write output to file', flush=True)
-	genes = list(de_train_h5ad.var_names)
+	genes = list(de_train.var_names)
 	output = ad.AnnData(
 			layers={"prediction": df_submission_data[genes].to_numpy()},
 			obs=pd.DataFrame(index=id_map["id"]),
 			var=pd.DataFrame(index=genes),
 			uns={
-				"dataset_id": de_train_h5ad.uns["dataset_id"],
-				"method_id": meta["functionality_name"]
+				"dataset_id": de_train.uns["dataset_id"],
+				"method_id": meta["name"]
 			}
 	)
 
@@ -1309,7 +1328,7 @@ if not par["output_model"]:
 	atexit.register(lambda: shutil.rmtree(model_dir))
 
 # load log pvals
-de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = ad.read_h5ad(par["de_train"])
 
 # construct data frames
 def get_df(adata, layer):
@@ -1321,8 +1340,8 @@ def get_df(adata, layer):
 		axis=1
 	).set_index(['cell_type', 'sm_name'])
 
-df_de = get_df(de_train_h5ad, par["layer"])
-df_lfc = get_df(de_train_h5ad, "logFC")
+df_de = get_df(de_train, par["layer"])
+df_lfc = get_df(de_train, "logFC")
 
 
 # Make sure rows/columns are in the same order
@@ -1399,7 +1418,7 @@ top_drugs = set(top_all_drugs) | set(top_sub_drugs)
 if len(top_drugs) == 0:
 	# df_focus is not computed, just return the original submission
 	df_submission_data = df_sub_ix.join(df_sub).reset_index(drop=True)
-	write_predictions(df_submission_data, par, meta, de_train_h5ad, id_map)
+	write_predictions(df_submission_data, par, meta, de_train, id_map)
 	sys.exit(0)
 
 df_de_c = df_de[df_de.index.get_level_values("sm_name").isin(top_drugs)]
@@ -1438,7 +1457,7 @@ df_focus.update(df_sub_enhanced)
 df_submission = 0.80 * df_focus + 0.20 * df_sub
 df_submission_data = df_sub_ix.join(df_submission).reset_index(drop=True)
 
-write_predictions(df_submission_data, par, meta, de_train_h5ad, id_map)
+write_predictions(df_submission_data, par, meta, de_train, id_map)
 VIASHMAIN
 python -B "\$tempscript" &
 wait "\$!"
@@ -1449,8 +1468,8 @@ VIASHEOF
 if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
   # strip viash automount from file paths
   
-  if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
-    VIASH_PAR_DE_TRAIN_H5AD=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TRAIN_H5AD")
+  if [ ! -z "$VIASH_PAR_DE_TRAIN" ]; then
+    VIASH_PAR_DE_TRAIN=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TRAIN")
   fi
   if [ ! -z "$VIASH_PAR_ID_MAP" ]; then
     VIASH_PAR_ID_MAP=$(ViashDockerStripAutomount "$VIASH_PAR_ID_MAP")

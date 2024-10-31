@@ -27,7 +27,7 @@ argument_groups:
     multiple: false
     multiple_sep: ";"
   - type: "file"
-    name: "--sc_train_h5ad"
+    name: "--sc_train"
     info: null
     example:
     - "sc_train.h5ad"
@@ -38,7 +38,7 @@ argument_groups:
     multiple: false
     multiple_sep: ";"
   - type: "file"
-    name: "--sc_test_h5ad"
+    name: "--sc_test"
     info: null
     example:
     - "sc_test.h5ad"
@@ -117,7 +117,7 @@ build_info:
   output: "target/nextflow/process_dataset/split_sc"
   executable: "target/nextflow/process_dataset/split_sc/main.nf"
   viash_version: "0.9.0"
-  git_commit: "cb4543d77463c5a73219385d2435d65e5e9561e6"
+  git_commit: "2fa44462b1e7d530bad703c4a20ed22b49d3705e"
   git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"
 package_config:
   name: "task_perturbation_prediction"

@@ -177,11 +177,11 @@ function ViashHelp {
   echo "compounds."
   echo ""
   echo "Arguments:"
-  echo "    --de_train_h5ad"
+  echo "    --de_train"
   echo "        type: file, file must exist"
   echo "        example: resources/datasets/neurips-2023-data/de_train.h5ad"
   echo ""
-  echo "    --de_test_h5ad"
+  echo "    --de_test"
   echo "        type: file, required parameter, file must exist"
   echo "        example: resources/datasets/neurips-2023-data/de_test.h5ad"
   echo ""
@@ -478,9 +478,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet"
 
 LABEL org.opencontainers.image.description="Companion container for running component control_methods mean_across_celltypes"
-LABEL org.opencontainers.image.created="2024-10-30T21:08:20Z"
+LABEL org.opencontainers.image.created="2024-10-31T04:35:17Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="cb4543d77463c5a73219385d2435d65e5e9561e6"
+LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER
@@ -620,26 +620,26 @@ while [[ $# -gt 0 ]]; do
             echo "mean_across_celltypes build_main"
             exit
             ;;
-        --de_train_h5ad)
-            [ -n "$VIASH_PAR_DE_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--de_train_h5ad\': \'$VIASH_PAR_DE_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TRAIN_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_train_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --de_train)
+            [ -n "$VIASH_PAR_DE_TRAIN" ] && ViashError Bad arguments for option \'--de_train\': \'$VIASH_PAR_DE_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TRAIN="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_train. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --de_train_h5ad=*)
-            [ -n "$VIASH_PAR_DE_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--de_train_h5ad=*\': \'$VIASH_PAR_DE_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TRAIN_H5AD=$(ViashRemoveFlags "$1")
+        --de_train=*)
+            [ -n "$VIASH_PAR_DE_TRAIN" ] && ViashError Bad arguments for option \'--de_train=*\': \'$VIASH_PAR_DE_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TRAIN=$(ViashRemoveFlags "$1")
             shift 1
             ;;
-        --de_test_h5ad)
-            [ -n "$VIASH_PAR_DE_TEST_H5AD" ] && ViashError Bad arguments for option \'--de_test_h5ad\': \'$VIASH_PAR_DE_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TEST_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_test_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --de_test)
+            [ -n "$VIASH_PAR_DE_TEST" ] && ViashError Bad arguments for option \'--de_test\': \'$VIASH_PAR_DE_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TEST="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_test. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --de_test_h5ad=*)
-            [ -n "$VIASH_PAR_DE_TEST_H5AD" ] && ViashError Bad arguments for option \'--de_test_h5ad=*\': \'$VIASH_PAR_DE_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TEST_H5AD=$(ViashRemoveFlags "$1")
+        --de_test=*)
+            [ -n "$VIASH_PAR_DE_TEST" ] && ViashError Bad arguments for option \'--de_test=*\': \'$VIASH_PAR_DE_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TEST=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         --id_map)
@@ -845,8 +845,8 @@ fi
 
 
 # check whether required parameters exist
-if [ -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then
-  ViashError '--de_test_h5ad' is a required argument. Use "--help" to get more information on the parameters.
+if [ -z ${VIASH_PAR_DE_TEST+x} ]; then
+  ViashError '--de_test' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
 if [ -z ${VIASH_PAR_ID_MAP+x} ]; then
@@ -888,12 +888,12 @@ if [ -z ${VIASH_PAR_LAYER+x} ]; then
 fi
 
 # check whether required files exist
-if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ] && [ ! -e "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
-  ViashError "Input file '$VIASH_PAR_DE_TRAIN_H5AD' does not exist."
+if [ ! -z "$VIASH_PAR_DE_TRAIN" ] && [ ! -e "$VIASH_PAR_DE_TRAIN" ]; then
+  ViashError "Input file '$VIASH_PAR_DE_TRAIN' does not exist."
   exit 1
 fi
-if [ ! -z "$VIASH_PAR_DE_TEST_H5AD" ] && [ ! -e "$VIASH_PAR_DE_TEST_H5AD" ]; then
-  ViashError "Input file '$VIASH_PAR_DE_TEST_H5AD' does not exist."
+if [ ! -z "$VIASH_PAR_DE_TEST" ] && [ ! -e "$VIASH_PAR_DE_TEST" ]; then
+  ViashError "Input file '$VIASH_PAR_DE_TEST' does not exist."
   exit 1
 fi
 if [ ! -z "$VIASH_PAR_ID_MAP" ] && [ ! -e "$VIASH_PAR_ID_MAP" ]; then
@@ -983,13 +983,13 @@ fi
 if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
   # detect volumes from file arguments
   VIASH_CHOWN_VARS=()
-if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
-  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TRAIN_H5AD")" )
-  VIASH_PAR_DE_TRAIN_H5AD=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TRAIN_H5AD")
+if [ ! -z "$VIASH_PAR_DE_TRAIN" ]; then
+  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TRAIN")" )
+  VIASH_PAR_DE_TRAIN=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TRAIN")
 fi
-if [ ! -z "$VIASH_PAR_DE_TEST_H5AD" ]; then
-  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TEST_H5AD")" )
-  VIASH_PAR_DE_TEST_H5AD=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TEST_H5AD")
+if [ ! -z "$VIASH_PAR_DE_TEST" ]; then
+  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TEST")" )
+  VIASH_PAR_DE_TEST=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TEST")
 fi
 if [ ! -z "$VIASH_PAR_ID_MAP" ]; then
   VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_ID_MAP")" )
@@ -1074,8 +1074,8 @@ import sys
 ## VIASH START
 # The following code has been auto-generated by Viash.
 par = {
-  'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
-  'de_test_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TEST_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'de_train': $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'de_test': $( if [ ! -z ${VIASH_PAR_DE_TEST+x} ]; then echo "r'${VIASH_PAR_DE_TEST//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'layer': $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo "r'${VIASH_PAR_LAYER//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\'/\'\"\'\"r\'}'"; else echo None; fi )
@@ -1109,13 +1109,13 @@ dep = {
 sys.path.append(meta["resources_dir"])
 from anndata_to_dataframe import anndata_to_dataframe
 
-de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = ad.read_h5ad(par["de_train"])
 id_map = pd.read_csv(par["id_map"])
-gene_names = list(de_train_h5ad.var_names)
-de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
+gene_names = list(de_train.var_names)
+de_train_df = anndata_to_dataframe(de_train, par["layer"])
 
 # compute mean celltype
-mean_celltype = de_train.groupby("cell_type")[gene_names].mean()
+mean_celltype = de_train_df.groupby("cell_type")[gene_names].mean()
 mean_celltype = mean_celltype.loc[id_map.cell_type]
 
 # write output
@@ -1126,8 +1126,8 @@ output = ad.AnnData(
     obs=pd.DataFrame(index=id_map["id"]),
     var=pd.DataFrame(index=gene_names),
     uns={
-      "dataset_id": de_train_h5ad.uns["dataset_id"],
-      "method_id": meta["functionality_name"]
+      "dataset_id": de_train.uns["dataset_id"],
+      "method_id": meta["name"]
     }
 )
 output.write_h5ad(par["output"], compression="gzip")
@@ -1141,11 +1141,11 @@ VIASHEOF
 if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
   # strip viash automount from file paths
   
-  if [ ! -z "$VIASH_PAR_DE_TRAIN_H5AD" ]; then
-    VIASH_PAR_DE_TRAIN_H5AD=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TRAIN_H5AD")
+  if [ ! -z "$VIASH_PAR_DE_TRAIN" ]; then
+    VIASH_PAR_DE_TRAIN=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TRAIN")
   fi
-  if [ ! -z "$VIASH_PAR_DE_TEST_H5AD" ]; then
-    VIASH_PAR_DE_TEST_H5AD=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TEST_H5AD")
+  if [ ! -z "$VIASH_PAR_DE_TEST" ]; then
+    VIASH_PAR_DE_TEST=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TEST")
   fi
   if [ ! -z "$VIASH_PAR_ID_MAP" ]; then
     VIASH_PAR_ID_MAP=$(ViashDockerStripAutomount "$VIASH_PAR_ID_MAP")

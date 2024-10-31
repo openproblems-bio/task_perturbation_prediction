@@ -2813,7 +2813,7 @@ meta = [
       "arguments" : [
         {
           "type" : "file",
-          "name" : "--de_train_h5ad",
+          "name" : "--de_train",
           "label" : "DE train",
           "summary" : "Differential expression results for training.",
           "info" : {
@@ -3172,12 +3172,10 @@ meta = [
     }
   ],
   "label" : "LSTM-GRU-CNN Ensemble",
+  "summary" : "An ensemble of LSTM, GRU, and 1D CNN models",
+  "description" : "An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,\none-hot encoding of cell type/small molecule pairs, and various statistical measures of target gene expression.\nThe models were trained with a combination of MSE, MAE, LogCosh, and BCE loss functions to improve their\nrobustness and predictive performance. The approach also included data augmentation techniques to ensure\ngeneralization and account for noise in the data.\n",
   "info" : {
     "neurips2023_rank" : 1,
-    "summary" : "An ensemble of LSTM, GRU, and 1D CNN models",
-    "description" : "An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,\none-hot encoding of cell type/small molecule pairs, and various statistical measures of target gene expression.\nThe models were trained with a combination of MSE, MAE, LogCosh, and BCE loss functions to improve their\nrobustness and predictive performance. The approach also included data augmentation techniques to ensure\ngeneralization and account for noise in the data.\n",
-    "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/459258",
-    "repository_url" : "https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main",
     "type" : "method",
     "type_info" : {
       "label" : "Method",
@@ -3208,8 +3206,9 @@ meta = [
   ],
   "license" : "MIT",
   "links" : {
-    "repository" : "https://github.com/openproblems-bio/task_perturbation_prediction",
-    "docker_registry" : "ghcr.io"
+    "repository" : "https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main",
+    "docker_registry" : "ghcr.io",
+    "documentation" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/459258"
   },
   "runners" : [
     {
@@ -3259,7 +3258,7 @@ meta = [
     "engine" : "native",
     "output" : "target/nextflow/methods/lgc_ensemble",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3426,7 +3425,7 @@ workflow run_wf {
 
     | lgc_ensemble_prepare.run(
       fromState: [
-        "de_train_h5ad",
+        "de_train",
         "id_map",
         "layer",
         "epochs",

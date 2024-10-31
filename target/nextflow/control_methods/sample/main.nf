@@ -2813,7 +2813,7 @@ meta = [
       "arguments" : [
         {
           "type" : "file",
-          "name" : "--de_train_h5ad",
+          "name" : "--de_train",
           "label" : "DE train",
           "summary" : "Differential expression results for training.",
           "info" : {
@@ -2985,7 +2985,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--de_test_h5ad",
+          "name" : "--de_test",
           "label" : "DE test",
           "summary" : "Differential expression results for testing.",
           "info" : {
@@ -3362,7 +3362,7 @@ meta = [
     "engine" : "docker",
     "output" : "target/nextflow/control_methods/sample",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3527,8 +3527,8 @@ requireNamespace("anndata", quietly = TRUE)
 .viash_orig_warn <- options(warn = 2)
 
 par <- list(
-  "de_train_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TRAIN_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "de_test_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_train" = $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TRAIN" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_test" = $( if [ ! -z ${VIASH_PAR_DE_TEST+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "id_map" = $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_ID_MAP" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "layer" = $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_LAYER" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "output" = $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_OUTPUT" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi )
@@ -3565,13 +3565,13 @@ rm(.viash_orig_warn)
 ## VIASH END
 
 # read data
-de_train_h5ad <- anndata::read_h5ad(par\\$de_train_h5ad)
+de_train <- anndata::read_h5ad(par\\$de_train)
 id_map <- read.csv(par\\$id_map)
 
 # get gene names
-gene_names <- de_train_h5ad\\$var_names
+gene_names <- de_train\\$var_names
 
-input_layer <- de_train_h5ad\\$layers[[par\\$layer]]
+input_layer <- de_train\\$layers[[par\\$layer]]
 
 prediction <- sapply(gene_names, function(gene_name) {
   sample(input_layer[,gene_name], size = nrow(id_map), replace = TRUE)
@@ -3582,11 +3582,11 @@ rownames(prediction) <- id_map\\$id
 # remove unneeded columns
 output <- anndata::AnnData(
   layers = list(prediction = prediction),
-  var = de_train_h5ad\\$var[, c()],
+  var = de_train\\$var[, c()],
   shape = c(nrow(id_map), length(gene_names)),
   uns = list(
-    dataset_id = de_train_h5ad\\$uns\\$dataset_id,
-    method_id = meta\\$functionality_name
+    dataset_id = de_train\\$uns\\$dataset_id,
+    method_id = meta\\$name
   )
 )
 

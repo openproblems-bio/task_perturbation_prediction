@@ -2813,7 +2813,7 @@ meta = [
       "arguments" : [
         {
           "type" : "file",
-          "name" : "--de_test_h5ad",
+          "name" : "--de_test",
           "label" : "DE test",
           "summary" : "Differential expression results for testing.",
           "info" : {
@@ -3126,6 +3126,11 @@ meta = [
   "test_resources" : [
     {
       "type" : "python_script",
+      "path" : "/common/component_tests/check_config.py",
+      "is_executable" : true
+    },
+    {
+      "type" : "python_script",
       "path" : "/common/component_tests/run_and_check_output.py",
       "is_executable" : true
     },
@@ -3143,8 +3148,11 @@ meta = [
         "summary" : "The mean of the root mean squared error (RMSE) of each row in the matrix.",
         "description" : "We use the **Mean Rowwise Root Mean Squared Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRRMSE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} (y_{ij} - \\\\widehat{y}_{ij})^2\\\\right)^{1/2}\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
         "min" : 0,
-        "max" : "+inf",
-        "maximize" : false
+        "max" : "+.inf",
+        "maximize" : false,
+        "references" : {
+          "bibtex" : "@article{slazata2024benchmark,\n  title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},\n  author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},\n  booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},\n  year = {2024},\n  url = {https://openreview.net/forum?id=WTI4RJYSVm}\n}\n"
+        }
       },
       {
         "name" : "mean_rowwise_mae",
@@ -3152,8 +3160,11 @@ meta = [
         "summary" : "The mean of the absolute error (MAE) of each row in the matrix.",
         "description" : "We use the **Mean Rowwise Absolute Error** to score submissions, computed as follows:\n\n$$\n\\\\textrm{MRMAE} = \\\\frac{1}{R}\\\\sum_{i=1}^R\\\\left(\\\\frac{1}{n} \\\\sum_{j=1}^{n} |y_{ij} - \\\\widehat{y}_{ij}|\\\\right)\n$$\n\nwhere $(R)$ is the number of scored rows, and $(y_{ij})$ and $(\\\\widehat{y}_{ij})$ are the actual and predicted values, respectively, for row $(i)$ and column $(j)$, and $(n)$ bis the number of columns.\n",
         "min" : 0,
-        "max" : "+inf",
-        "maximize" : false
+        "max" : "+.inf",
+        "maximize" : false,
+        "references" : {
+          "bibtex" : "@article{slazata2024benchmark,\n  title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},\n  author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},\n  booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},\n  year = {2024},\n  url = {https://openreview.net/forum?id=WTI4RJYSVm}\n}\n"
+        }
       }
     ],
     "type" : "metric",
@@ -3233,7 +3244,7 @@ meta = [
     "engine" : "docker",
     "output" : "target/nextflow/metrics/mean_rowwise_error",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3398,7 +3409,7 @@ library(anndata)
 .viash_orig_warn <- options(warn = 2)
 
 par <- list(
-  "de_test_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_test" = $( if [ ! -z ${VIASH_PAR_DE_TEST+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "de_test_layer" = $( if [ ! -z ${VIASH_PAR_DE_TEST_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_LAYER" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "prediction" = $( if [ ! -z ${VIASH_PAR_PREDICTION+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_PREDICTION" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "prediction_layer" = $( if [ ! -z ${VIASH_PAR_PREDICTION_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_PREDICTION_LAYER" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
@@ -3437,7 +3448,7 @@ rm(.viash_orig_warn)
 ## VIASH END
 
 cat("Load data\\\\n")
-de_test <- read_h5ad(par\\$de_test_h5ad)
+de_test <- read_h5ad(par\\$de_test)
 cat("de_test: "); print(de_test)
 prediction <- read_h5ad(par\\$prediction)
 cat("prediction: "); print(prediction)

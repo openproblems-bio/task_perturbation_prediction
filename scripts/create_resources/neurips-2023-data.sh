@@ -42,15 +42,15 @@ nextflow run \
 
 echo ">> Run method"
 viash run src/control_methods/mean_across_compounds/config.vsh.yaml -- \
-  --de_train_h5ad "$OUT/de_train.h5ad" \
-  --de_test_h5ad "$OUT/de_test.h5ad" \
+  --de_train "$OUT/de_train.h5ad" \
+  --de_test "$OUT/de_test.h5ad" \
   --id_map "$OUT/id_map.csv" \
   --output "$OUT/prediction.h5ad"
 
 echo ">> Run metric"
 viash run src/metrics/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.h5ad" \
-  --de_test_h5ad "$OUT/de_test.h5ad" \
+  --de_test "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"
 
 echo ">> Uploading results to S3"

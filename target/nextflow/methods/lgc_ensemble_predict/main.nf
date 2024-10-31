@@ -2993,7 +2993,7 @@ meta = [
     "engine" : "docker|native",
     "output" : "target/nextflow/methods/lgc_ensemble_predict",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3320,7 +3320,7 @@ df_sub = 0.34*df1 + 0.33*df2 + 0.33*df3 # Final ensembling
 df_sub.reset_index(drop=True, inplace=True)
 
 # write output
-method_id = meta["functionality_name"].replace("_predict", "")
+method_id = meta["name"].replace("_predict", "")
 output = ad.AnnData(
     layers={"prediction": df_sub.to_numpy()},
     obs=pd.DataFrame(index=id_map["id"]),

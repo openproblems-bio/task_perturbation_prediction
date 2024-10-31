@@ -29,10 +29,10 @@ sys.path.append(meta["resources_dir"])
 from helper import plant_seed, MultiOutputTargetEncoder, train
 
 print('Reading input files', flush=True)
-de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
+de_train = ad.read_h5ad(par["de_train"])
 id_map = pd.read_csv(par["id_map"])
 
-gene_names = list(de_train_h5ad.var_names)
+gene_names = list(de_train.var_names)
 
 print('Preprocess data', flush=True)
 SEED = 0xCAFE
@@ -56,10 +56,10 @@ plant_seed(SEED, USE_GPU)
 
 print('Data location', flush=True)
 # Data location
-cell_types = de_train_h5ad.obs['cell_type'].astype(str)
-sm_names = de_train_h5ad.obs['sm_name'].astype(str)
+cell_types = de_train.obs['cell_type'].astype(str)
+sm_names = de_train.obs['sm_name'].astype(str)
 
-data = de_train_h5ad.layers[par["layer"]]
+data = de_train.layers[par["layer"]]
 
 print('Train model', flush=True)
 # ... train model ...
@@ -115,8 +115,8 @@ output = ad.AnnData(
     obs=pd.DataFrame(index=id_map["id"]),
     var=pd.DataFrame(index=gene_names),
     uns={
-      "dataset_id": de_train_h5ad.uns["dataset_id"],
-      "method_id": meta["functionality_name"]
+      "dataset_id": de_train.uns["dataset_id"],
+      "method_id": meta["name"]
     }
 )
 

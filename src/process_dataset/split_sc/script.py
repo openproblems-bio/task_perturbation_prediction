@@ -6,8 +6,8 @@ import pandas as pd
 par = {
   'filtered_sc_counts': 'resources/neurips-2023-data/sc_counts_cleaned.h5ad',
   'pseudobulk_filtered_with_uns': 'resources/neurips-2023-data/pseudobulk_cleaned.h5ad',
-  'sc_train_h5ad': 'sc_train.h5ad',
-  'sc_test_h5ad': 'sc_test.h5ad'
+  'sc_train': 'sc_train.h5ad',
+  'sc_test': 'sc_test.h5ad'
 }
 ## VIASH END
 
@@ -55,5 +55,5 @@ for col in filtered_sc_counts.obs.columns:
         filtered_sc_counts.obs[col] = filtered_sc_counts.obs[col].astype("category")
 
 print(">> Save sc dataset into splits", flush=True)
-filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train_h5ad"], compression="gzip")
-filtered_sc_counts[filtered_sc_counts.obs["split"] == "test"].write_h5ad(par["sc_test_h5ad"], compression="gzip")
+filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train"], compression="gzip")
+filtered_sc_counts[filtered_sc_counts.obs["split"] == "test"].write_h5ad(par["sc_test"], compression="gzip")

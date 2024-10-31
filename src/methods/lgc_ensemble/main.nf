@@ -9,7 +9,7 @@ workflow run_wf {
 
     | lgc_ensemble_prepare.run(
       fromState: [
-        "de_train_h5ad",
+        "de_train",
         "id_map",
         "layer",
         "epochs",

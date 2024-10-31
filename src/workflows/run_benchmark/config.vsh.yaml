@@ -3,11 +3,11 @@ namespace: "workflows"
 argument_groups:
   - name: Inputs
     arguments:
-      - name: "--de_train_h5ad"
+      - name: "--de_train"
         __merge__: ../../api/file_de_train.yaml
         required: true
         direction: input
-      - name: "--de_test_h5ad"
+      - name: "--de_test"
         __merge__: ../../api/file_de_test.yaml
         required: true
         direction: input

@@ -5,7 +5,7 @@ argument_groups:
 - name: "Arguments"
   arguments:
   - type: "file"
-    name: "--de_train_h5ad"
+    name: "--de_train"
     label: "DE train"
     summary: "Differential expression results for training."
     info:
@@ -272,6 +272,17 @@ resources:
 - type: "file"
   path: "train.py"
 label: "Transformer Ensemble"
+summary: "An ensemble of four transformer models, trained on diverse feature sets,\
+  \ with a cluster-based sampling strategy and robust validation for optimal performance."
+description: "This method employs an ensemble of four transformer models,\neach with\
+  \ different weights and trained on slightly varying feature sets.\nThe feature engineering\
+  \ process involved one-hot encoding of categorical labels,\ntarget encoding using\
+  \ mean and standard deviation, and enriching the feature set\nwith the standard\
+  \ deviation of target variables. Additionally, the dataset was\ncarefully examined\
+  \ to ensure data cleanliness. A sophisticated sampling strategy\nbased on K-Means\
+  \ clustering was employed to partition the data into training and\nvalidation sets,\
+  \ ensuring a representative distribution. The model architecture\nleveraged sparse\
+  \ and dense feature encoding, along with a transformer for effective\nlearning.\n"
 test_resources:
 - type: "python_script"
   path: "run_and_check_output.py"
@@ -281,20 +292,6 @@ test_resources:
   dest: "resources/datasets/neurips-2023-data"
 info:
   neurips2023_rank: 2
-  summary: "An ensemble of four transformer models, trained on diverse feature sets,\
-    \ with a cluster-based sampling strategy and robust validation for optimal performance."
-  description: "This method employs an ensemble of four transformer models,\neach\
-    \ with different weights and trained on slightly varying feature sets.\nThe feature\
-    \ engineering process involved one-hot encoding of categorical labels,\ntarget\
-    \ encoding using mean and standard deviation, and enriching the feature set\n\
-    with the standard deviation of target variables. Additionally, the dataset was\n\
-    carefully examined to ensure data cleanliness. A sophisticated sampling strategy\n\
-    based on K-Means clustering was employed to partition the data into training and\n\
-    validation sets, ensuring a representative distribution. The model architecture\n\
-    leveraged sparse and dense feature encoding, along with a transformer for effective\n\
-    learning.\n"
-  documentation_url: "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458738"
-  repository_url: "https://github.com/Eliorkalfon/single_cell_pb"
   type: "method"
   type_info:
     label: "Method"
@@ -304,8 +301,9 @@ info:
 status: "enabled"
 license: "MIT"
 links:
-  repository: "https://github.com/openproblems-bio/task_perturbation_prediction"
+  repository: "https://github.com/Eliorkalfon/single_cell_pb"
   docker_registry: "ghcr.io"
+  documentation: "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458738"
 runners:
 - type: "executable"
   id: "executable"
@@ -366,7 +364,7 @@ build_info:
   output: "target/nextflow/methods/transformer_ensemble"
   executable: "target/nextflow/methods/transformer_ensemble/main.nf"
   viash_version: "0.9.0"
-  git_commit: "cb4543d77463c5a73219385d2435d65e5e9561e6"
+  git_commit: "2fa44462b1e7d530bad703c4a20ed22b49d3705e"
   git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"
 package_config:
   name: "task_perturbation_prediction"

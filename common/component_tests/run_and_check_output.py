@@ -42,7 +42,7 @@ def check_format(arg):
     arg_info = arg.get("info") or {}
     if arg["type"] == "file":
         arg_format = arg_info.get("format", {})
-        file_type = arg_format.get("type") or arg_info.get("file_type") or "h5ad"
+        file_type = arg_format.get("type") or arg_info.get("file_type")
 
         if file_type == "h5ad":
             print(f"Reading and checking {arg['clean_name']}", flush=True)

@@ -2813,7 +2813,7 @@ meta = [
       "arguments" : [
         {
           "type" : "file",
-          "name" : "--de_train_h5ad",
+          "name" : "--de_train",
           "label" : "DE train",
           "summary" : "Differential expression results for training.",
           "info" : {
@@ -2985,7 +2985,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--de_test_h5ad",
+          "name" : "--de_test",
           "label" : "DE test",
           "summary" : "Differential expression results for testing.",
           "info" : {
@@ -3475,7 +3475,7 @@ meta = [
     "engine" : "native",
     "output" : "target/nextflow/workflows/run_benchmark",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3690,20 +3690,20 @@ workflow run_wf {
       metrics: metrics,
       methodFromState: { id, state, comp ->
         def new_args = [
-          de_train_h5ad: state.de_train_h5ad,
+          de_train: state.de_train,
           id_map: state.id_map,
           layer: state.layer,
           output: 'predictions/$id.$key.output.h5ad',
           output_model: null
         ]
-        if (comp.config.functionality.info.type == "control_method") {
-          new_args.de_test_h5ad = state.de_test_h5ad
+        if (comp.config.info.type == "control_method") {
+          new_args.de_test = state.de_test
         }
         new_args
       },
       methodToState: ["prediction": "output"],
       metricFromState: [
-        de_test_h5ad: "de_test_h5ad",
+        de_test: "de_test",
         de_test_layer: "layer",
         prediction: "prediction"
       ],
@@ -3725,7 +3725,7 @@ workflow run_wf {
   // create dataset, method and metric metadata files
   metadata_ch = input_ch
     | create_metadata_files(
-      datasetFromState: [input: "de_train_h5ad"],
+      datasetFromState: [input: "de_train"],
       methods: methods,
       metrics: metrics,
       meta: meta
@@ -3771,10 +3771,10 @@ def run_benchmark_fun(args) {
   // add the key prefix to the method and metric names
   if (keyPrefix && keyPrefix != "") {
     methods_ = methods.collect{ method ->
-      method.run(key: keyPrefix + method.config.functionality.name)
+      method.run(key: keyPrefix + method.config.name)
     }
     metrics_ = metrics.collect{ metric ->
-      metric.run(key: keyPrefix + metric.config.functionality.name)
+      metric.run(key: keyPrefix + metric.config.name)
     }
   }
 
@@ -3787,10 +3787,10 @@ def run_benchmark_fun(args) {
       | runEach(
         components: methods_,
         filter: { id, state, comp ->
-          !state.method_ids || state.method_ids.contains(comp.config.functionality.name)
+          !state.method_ids || state.method_ids.contains(comp.config.name)
         },
         id: { id, state, comp ->
-          id + "." + comp.config.functionality.name
+          id + "." + comp.config.name
         },
         fromState: methodFromState,
         toState: methodToState,
@@ -3801,10 +3801,10 @@ def run_benchmark_fun(args) {
       | runEach(
         components: metrics_,
         filter: { id, state, comp ->
-          !state.metric_ids || state.metric_ids.contains(comp.config.functionality.name)
+          !state.metric_ids || state.metric_ids.contains(comp.config.name)
         },
         id: { id, state, comp ->
-          id + "." + comp.config.functionality.name
+          id + "." + comp.config.name
         },
         fromState: metricFromState,
         toState: metricToState,

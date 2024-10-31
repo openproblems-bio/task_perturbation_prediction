@@ -2953,7 +2953,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--de_train_h5ad",
+          "name" : "--de_train",
           "label" : "DE train",
           "summary" : "Differential expression results for training.",
           "info" : {
@@ -3128,7 +3128,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--de_test_h5ad",
+          "name" : "--de_test",
           "label" : "DE test",
           "summary" : "Differential expression results for testing.",
           "info" : {
@@ -3346,7 +3346,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--sc_train_h5ad",
+          "name" : "--sc_train",
           "default" : [
             "sc_train.h5ad"
           ],
@@ -3359,7 +3359,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--sc_test_h5ad",
+          "name" : "--sc_test",
           "default" : [
             "sc_test.h5ad"
           ],
@@ -3568,7 +3568,7 @@ meta = [
     "engine" : "native",
     "output" : "target/nextflow/workflows/process_dataset",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3770,8 +3770,8 @@ workflow run_wf {
         pseudobulk_filtered_with_uns: "pseudobulk_filtered_with_uns"
       ],
       toState: [
-        sc_train_h5ad: "sc_train_h5ad",
-        sc_test_h5ad: "sc_test_h5ad"
+        sc_train: "sc_train",
+        sc_test: "sc_test"
       ]
     )
 
@@ -3784,7 +3784,7 @@ workflow run_wf {
           output_splits: ["train", "control", "public_test"]
         ]
       },
-      toState: [de_train_h5ad: "output"]
+      toState: [de_train: "output"]
     )
 
     | run_limma.run(
@@ -3796,20 +3796,20 @@ workflow run_wf {
           output_splits: ["private_test"]
         ]
       },
-      toState: [de_test_h5ad: "output"]
+      toState: [de_test: "output"]
     )
 
     | generate_id_map.run(
-      fromState: [de_test_h5ad: "de_test_h5ad"],
+      fromState: [de_test: "de_test"],
       toState: [id_map: "id_map"]
     )
 
     | setState([
-      "de_train_h5ad",
-      "de_test_h5ad",
+      "de_train",
+      "de_test",
       "id_map",
-      "sc_train_h5ad",
-      "sc_test_h5ad",
+      "sc_train",
+      "sc_test",
       "pseudobulk_filtered_with_uns"
     ])
 

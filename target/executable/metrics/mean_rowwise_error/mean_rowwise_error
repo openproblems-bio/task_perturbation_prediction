@@ -174,7 +174,7 @@ function ViashHelp {
   echo "mean_rowwise_error build_main"
   echo ""
   echo "Arguments:"
-  echo "    --de_test_h5ad"
+  echo "    --de_test"
   echo "        type: file, required parameter, file must exist"
   echo "        example: resources/datasets/neurips-2023-data/de_test.h5ad"
   echo ""
@@ -482,9 +482,9 @@ RUN Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packag
   Rscript -e 'remotes::install_cran(c("proxyC"), repos = "https://cran.rstudio.com")'
 
 LABEL org.opencontainers.image.description="Companion container for running component metrics mean_rowwise_error"
-LABEL org.opencontainers.image.created="2024-10-30T21:08:19Z"
+LABEL org.opencontainers.image.created="2024-10-31T04:35:16Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="cb4543d77463c5a73219385d2435d65e5e9561e6"
+LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER
@@ -624,15 +624,15 @@ while [[ $# -gt 0 ]]; do
             echo "mean_rowwise_error build_main"
             exit
             ;;
-        --de_test_h5ad)
-            [ -n "$VIASH_PAR_DE_TEST_H5AD" ] && ViashError Bad arguments for option \'--de_test_h5ad\': \'$VIASH_PAR_DE_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TEST_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_test_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --de_test)
+            [ -n "$VIASH_PAR_DE_TEST" ] && ViashError Bad arguments for option \'--de_test\': \'$VIASH_PAR_DE_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TEST="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --de_test. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --de_test_h5ad=*)
-            [ -n "$VIASH_PAR_DE_TEST_H5AD" ] && ViashError Bad arguments for option \'--de_test_h5ad=*\': \'$VIASH_PAR_DE_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_DE_TEST_H5AD=$(ViashRemoveFlags "$1")
+        --de_test=*)
+            [ -n "$VIASH_PAR_DE_TEST" ] && ViashError Bad arguments for option \'--de_test=*\': \'$VIASH_PAR_DE_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_DE_TEST=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         --de_test_layer)
@@ -860,8 +860,8 @@ fi
 
 
 # check whether required parameters exist
-if [ -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then
-  ViashError '--de_test_h5ad' is a required argument. Use "--help" to get more information on the parameters.
+if [ -z ${VIASH_PAR_DE_TEST+x} ]; then
+  ViashError '--de_test' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
 if [ -z ${VIASH_PAR_PREDICTION+x} ]; then
@@ -909,8 +909,8 @@ if [ -z ${VIASH_PAR_RESOLVE_GENES+x} ]; then
 fi
 
 # check whether required files exist
-if [ ! -z "$VIASH_PAR_DE_TEST_H5AD" ] && [ ! -e "$VIASH_PAR_DE_TEST_H5AD" ]; then
-  ViashError "Input file '$VIASH_PAR_DE_TEST_H5AD' does not exist."
+if [ ! -z "$VIASH_PAR_DE_TEST" ] && [ ! -e "$VIASH_PAR_DE_TEST" ]; then
+  ViashError "Input file '$VIASH_PAR_DE_TEST' does not exist."
   exit 1
 fi
 if [ ! -z "$VIASH_PAR_PREDICTION" ] && [ ! -e "$VIASH_PAR_PREDICTION" ]; then
@@ -1013,9 +1013,9 @@ fi
 if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
   # detect volumes from file arguments
   VIASH_CHOWN_VARS=()
-if [ ! -z "$VIASH_PAR_DE_TEST_H5AD" ]; then
-  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TEST_H5AD")" )
-  VIASH_PAR_DE_TEST_H5AD=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TEST_H5AD")
+if [ ! -z "$VIASH_PAR_DE_TEST" ]; then
+  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_DE_TEST")" )
+  VIASH_PAR_DE_TEST=$(ViashDockerAutodetectMount "$VIASH_PAR_DE_TEST")
 fi
 if [ ! -z "$VIASH_PAR_PREDICTION" ]; then
   VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_PREDICTION")" )
@@ -1101,7 +1101,7 @@ library(anndata)
 .viash_orig_warn <- options(warn = 2)
 
 par <- list(
-  "de_test_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_H5AD" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_test" = $( if [ ! -z ${VIASH_PAR_DE_TEST+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
   "de_test_layer" = $( if [ ! -z ${VIASH_PAR_DE_TEST_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_LAYER" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
   "prediction" = $( if [ ! -z ${VIASH_PAR_PREDICTION+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_PREDICTION" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
   "prediction_layer" = $( if [ ! -z ${VIASH_PAR_PREDICTION_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_PREDICTION_LAYER" | sed "s#['\\]#\\\\&#g"; echo "'"; else echo NULL; fi ),
@@ -1140,7 +1140,7 @@ rm(.viash_orig_warn)
 ## VIASH END
 
 cat("Load data\\n")
-de_test <- read_h5ad(par\$de_test_h5ad)
+de_test <- read_h5ad(par\$de_test)
 cat("de_test: "); print(de_test)
 prediction <- read_h5ad(par\$prediction)
 cat("prediction: "); print(prediction)
@@ -1206,8 +1206,8 @@ VIASHEOF
 if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
   # strip viash automount from file paths
   
-  if [ ! -z "$VIASH_PAR_DE_TEST_H5AD" ]; then
-    VIASH_PAR_DE_TEST_H5AD=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TEST_H5AD")
+  if [ ! -z "$VIASH_PAR_DE_TEST" ]; then
+    VIASH_PAR_DE_TEST=$(ViashDockerStripAutomount "$VIASH_PAR_DE_TEST")
   fi
   if [ ! -z "$VIASH_PAR_PREDICTION" ]; then
     VIASH_PAR_PREDICTION=$(ViashDockerStripAutomount "$VIASH_PAR_PREDICTION")

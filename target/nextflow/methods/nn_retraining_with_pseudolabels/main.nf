@@ -2813,7 +2813,7 @@ meta = [
       "arguments" : [
         {
           "type" : "file",
-          "name" : "--de_train_h5ad",
+          "name" : "--de_train",
           "label" : "DE train",
           "summary" : "Differential expression results for training.",
           "info" : {
@@ -3130,6 +3130,8 @@ meta = [
     }
   ],
   "label" : "NN retraining with pseudolabels",
+  "summary" : "Neural networks with pseudolabeling and ensemble modelling",
+  "description" : "The prediction system is two staged, so I publish two versions of the notebook.\nThe first stage predicts pseudolabels. To be honest, if I stopped on this version, I would not be the third.\nThe predicted pseudolabels on all test data (255 rows) are added to training in the second stage.\n\n**Stage 1 preparing pseudolabels**: The main part of this system is a neural network. Every neural network and its environment was optimized by optuna. Hyperparameters that have been optimized:\na dropout value, a number of neurons in particular layers, an output dimension of an embedding layer, a number of epochs, a learning rate, a batch size, a number of dimension of truncated singular value decomposition.\nThe optimization was done on custom 4-folds cross validation. In order to avoid overfitting to cross validation by optuna I applied 2 repeats for every fold and took an average. Generally, the more, the better. The optuna's criterion was MRRMSE.\nFinally, 7 models were ensembled. Optuna was applied again to determine best weights of linear combination. The prediction of test set is the pseudolabels now and will be used in second stage.\n\n**Stage 2 retraining with pseudolabels**: The pseudolabels (255 rows) were added to the training dataset. I applied 20 models with optimized parameters in different experiments for a model diversity.\nOptuna selected optimal weights for the linear combination of the prediction again.\nModels had high variance, so every model was trained 10 times on all dataset and the median of prediction is taken as a final prediction. The prediction was additionally clipped to colwise min and max. \n",
   "test_resources" : [
     {
       "type" : "python_script",
@@ -3144,10 +3146,6 @@ meta = [
   ],
   "info" : {
     "neurips2023_rank" : 3,
-    "summary" : "Neural networks with pseudolabeling and ensemble modelling",
-    "description" : "The prediction system is two staged, so I publish two versions of the notebook.\nThe first stage predicts pseudolabels. To be honest, if I stopped on this version, I would not be the third.\nThe predicted pseudolabels on all test data (255 rows) are added to training in the second stage.\n\n**Stage 1 preparing pseudolabels**: The main part of this system is a neural network. Every neural network and its environment was optimized by optuna. Hyperparameters that have been optimized:\na dropout value, a number of neurons in particular layers, an output dimension of an embedding layer, a number of epochs, a learning rate, a batch size, a number of dimension of truncated singular value decomposition.\nThe optimization was done on custom 4-folds cross validation. In order to avoid overfitting to cross validation by optuna I applied 2 repeats for every fold and took an average. Generally, the more, the better. The optuna's criterion was MRRMSE.\nFinally, 7 models were ensembled. Optuna was applied again to determine best weights of linear combination. The prediction of test set is the pseudolabels now and will be used in second stage.\n\n**Stage 2 retraining with pseudolabels**: The pseudolabels (255 rows) were added to the training dataset. I applied 20 models with optimized parameters in different experiments for a model diversity.\nOptuna selected optimal weights for the linear combination of the prediction again.\nModels had high variance, so every model was trained 10 times on all dataset and the median of prediction is taken as a final prediction. The prediction was additionally clipped to colwise min and max. \n",
-    "documentation_url" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458750",
-    "repository_url" : "https://github.com/okon2000/single_cell_perturbations",
     "type" : "method",
     "type_info" : {
       "label" : "Method",
@@ -3158,8 +3156,9 @@ meta = [
   "status" : "enabled",
   "license" : "MIT",
   "links" : {
-    "repository" : "https://github.com/openproblems-bio/task_perturbation_prediction",
-    "docker_registry" : "ghcr.io"
+    "repository" : "https://github.com/okon2000/single_cell_perturbations",
+    "docker_registry" : "ghcr.io",
+    "documentation" : "https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/458750"
   },
   "runners" : [
     {
@@ -3233,7 +3232,7 @@ meta = [
     "engine" : "docker|native",
     "output" : "target/nextflow/methods/nn_retraining_with_pseudolabels",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3413,7 +3412,7 @@ warnings.filterwarnings("ignore")
 ## VIASH START
 # The following code has been auto-generated by Viash.
 par = {
-  'de_train_h5ad': $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'de_train': $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo "r'${VIASH_PAR_DE_TRAIN//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'id_map': $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo "r'${VIASH_PAR_ID_MAP//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'layer': $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo "r'${VIASH_PAR_LAYER//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'output': $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo "r'${VIASH_PAR_OUTPUT//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
@@ -3454,23 +3453,23 @@ from notebook_264 import run_notebook_264
 from notebook_266 import run_notebook_266
 
 # load train data
-de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
-train_df = anndata_to_dataframe(de_train_h5ad, par["layer"])
+de_train = ad.read_h5ad(par["de_train"])
+de_train_df = anndata_to_dataframe(de_train, par["layer"])
 
-train_df = train_df.sample(frac=1.0, random_state=42)
-train_df = train_df.reset_index(drop=True)
+de_train_df = de_train_df.sample(frac=1.0, random_state=42)
+de_train_df = de_train_df.reset_index(drop=True)
 
 # load test data
 id_map = pd.read_csv(par["id_map"])
 
 # determine gene names
-gene_names = list(de_train_h5ad.var_names)
+gene_names = list(de_train.var_names)
 
 # clean up train data
-train_df = train_df.loc[:, ["cell_type", "sm_name"] + gene_names]
+de_train_df = de_train_df.loc[:, ["cell_type", "sm_name"] + gene_names]
 
 # run notebook 264
-pseudolabel = run_notebook_264(train_df, id_map, gene_names, par["reps"])
+pseudolabel = run_notebook_264(de_train_df, id_map, gene_names, par["reps"])
 
 # add metadata
 pseudolabel = pd.concat(
@@ -3478,7 +3477,7 @@ pseudolabel = pd.concat(
 )
 
 # run notebook 266
-df = run_notebook_266(train_df, id_map, pseudolabel, gene_names, par["reps"])
+df = run_notebook_266(de_train_df, id_map, pseudolabel, gene_names, par["reps"])
 
 
 print('Write output to file', flush=True)
@@ -3487,8 +3486,8 @@ output = ad.AnnData(
     obs=pd.DataFrame(index=id_map["id"]),
     var=pd.DataFrame(index=gene_names),
     uns={
-      "dataset_id": de_train_h5ad.uns["dataset_id"],
-      "method_id": meta["functionality_name"]
+      "dataset_id": de_train.uns["dataset_id"],
+      "method_id": meta["name"]
     }
 )
 

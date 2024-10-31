@@ -3204,7 +3204,7 @@ meta = [
     "engine" : "native",
     "output" : "target/nextflow/workflows/run_stability_analysis",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3419,16 +3419,16 @@ workflow run_wf {
         ]
       },
       toState: [
-        de_test_h5ad: "de_test_h5ad",
-        de_train_h5ad: "de_train_h5ad",
+        de_test: "de_test",
+        de_train: "de_train",
         id_map: "id_map"
       ]
     )
 
     | run_benchmark.run(
       fromState: [
-        de_train_h5ad: "de_train_h5ad",
-        de_test_h5ad: "de_test_h5ad",
+        de_train: "de_train",
+        de_test: "de_test",
         id_map: "id_map",
         method_ids: "method_ids",
         metric_ids: "metric_ids",

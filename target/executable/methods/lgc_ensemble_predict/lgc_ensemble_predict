@@ -470,9 +470,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "pandas==2.1.3" "pyarrow==14.0.1" "tqdm==4.66.1" "scikit-learn==1.3.2" "transformers==4.35.2" "matplotlib==3.8.2" "torch-summary"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods lgc_ensemble_predict"
-LABEL org.opencontainers.image.created="2024-10-30T21:08:20Z"
+LABEL org.opencontainers.image.created="2024-10-31T04:35:17Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="cb4543d77463c5a73219385d2435d65e5e9561e6"
+LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER
@@ -1249,7 +1249,7 @@ df_sub = 0.34*df1 + 0.33*df2 + 0.33*df3 # Final ensembling
 df_sub.reset_index(drop=True, inplace=True)
 
 # write output
-method_id = meta["functionality_name"].replace("_predict", "")
+method_id = meta["name"].replace("_predict", "")
 output = ad.AnnData(
     layers={"prediction": df_sub.to_numpy()},
     obs=pd.DataFrame(index=id_map["id"]),

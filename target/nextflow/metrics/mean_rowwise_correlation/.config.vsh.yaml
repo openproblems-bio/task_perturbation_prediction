@@ -5,7 +5,7 @@ argument_groups:
 - name: "Arguments"
   arguments:
   - type: "file"
-    name: "--de_test_h5ad"
+    name: "--de_test"
     label: "DE test"
     summary: "Differential expression results for testing."
     info:
@@ -240,6 +240,9 @@ resources:
   is_executable: true
 test_resources:
 - type: "python_script"
+  path: "check_config.py"
+  is_executable: true
+- type: "python_script"
   path: "run_and_check_output.py"
   is_executable: true
 - type: "file"
@@ -259,6 +262,17 @@ info:
     min: -1
     max: 1
     maximize: true
+    references:
+      bibtex: "@article{slazata2024benchmark,\n  title = {A benchmark for prediction\
+        \ of transcriptomic responses to chemical perturbations across cell types},\n\
+        \  author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio\
+        \ Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu\
+        \ Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared\
+        \ Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao\
+        \ and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B\
+        \ Burkhardt},\n  booktitle = {The Thirty-eight Conference on Neural Information\
+        \ Processing Systems Datasets and Benchmarks Track},\n  year = {2024},\n \
+        \ url = {https://openreview.net/forum?id=WTI4RJYSVm}\n}\n"
   - name: "mean_rowwise_spearman"
     label: "Mean Rowwise Spearman"
     summary: "The mean of Spearman correlations per row (perturbation)."
@@ -271,6 +285,17 @@ info:
     min: -1
     max: 1
     maximize: true
+    references:
+      bibtex: "@article{slazata2024benchmark,\n  title = {A benchmark for prediction\
+        \ of transcriptomic responses to chemical perturbations across cell types},\n\
+        \  author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio\
+        \ Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu\
+        \ Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared\
+        \ Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao\
+        \ and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B\
+        \ Burkhardt},\n  booktitle = {The Thirty-eight Conference on Neural Information\
+        \ Processing Systems Datasets and Benchmarks Track},\n  year = {2024},\n \
+        \ url = {https://openreview.net/forum?id=WTI4RJYSVm}\n}\n"
   - name: "mean_rowwise_cosine"
     label: "Mean Rowwise Cosine"
     summary: "The mean of cosine similarities per row (perturbation)."
@@ -282,6 +307,17 @@ info:
     min: -1
     max: 1
     maximize: true
+    references:
+      bibtex: "@article{slazata2024benchmark,\n  title = {A benchmark for prediction\
+        \ of transcriptomic responses to chemical perturbations across cell types},\n\
+        \  author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio\
+        \ Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu\
+        \ Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared\
+        \ Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao\
+        \ and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B\
+        \ Burkhardt},\n  booktitle = {The Thirty-eight Conference on Neural Information\
+        \ Processing Systems Datasets and Benchmarks Track},\n  year = {2024},\n \
+        \ url = {https://openreview.net/forum?id=WTI4RJYSVm}\n}\n"
   type: "metric"
   type_info:
     label: "Metric"
@@ -342,7 +378,7 @@ build_info:
   output: "target/nextflow/metrics/mean_rowwise_correlation"
   executable: "target/nextflow/metrics/mean_rowwise_correlation/main.nf"
   viash_version: "0.9.0"
-  git_commit: "cb4543d77463c5a73219385d2435d65e5e9561e6"
+  git_commit: "2fa44462b1e7d530bad703c4a20ed22b49d3705e"
   git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"
 package_config:
   name: "task_perturbation_prediction"

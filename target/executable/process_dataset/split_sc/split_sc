@@ -182,11 +182,11 @@ function ViashHelp {
   echo "        type: file, required parameter, file must exist"
   echo "        example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad"
   echo ""
-  echo "    --sc_train_h5ad"
+  echo "    --sc_train"
   echo "        type: file, required parameter, output, file must exist"
   echo "        example: sc_train.h5ad"
   echo ""
-  echo "    --sc_test_h5ad"
+  echo "    --sc_test"
   echo "        type: file, required parameter, output, file must exist"
   echo "        example: sc_test.h5ad"
 }
@@ -470,9 +470,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "anndata" "numpy" "pandas"
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset split_sc"
-LABEL org.opencontainers.image.created="2024-10-30T21:08:20Z"
+LABEL org.opencontainers.image.created="2024-10-31T04:35:18Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="cb4543d77463c5a73219385d2435d65e5e9561e6"
+LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER
@@ -634,26 +634,26 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS=$(ViashRemoveFlags "$1")
             shift 1
             ;;
-        --sc_train_h5ad)
-            [ -n "$VIASH_PAR_SC_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--sc_train_h5ad\': \'$VIASH_PAR_SC_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_SC_TRAIN_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --sc_train_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --sc_train)
+            [ -n "$VIASH_PAR_SC_TRAIN" ] && ViashError Bad arguments for option \'--sc_train\': \'$VIASH_PAR_SC_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_SC_TRAIN="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --sc_train. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --sc_train_h5ad=*)
-            [ -n "$VIASH_PAR_SC_TRAIN_H5AD" ] && ViashError Bad arguments for option \'--sc_train_h5ad=*\': \'$VIASH_PAR_SC_TRAIN_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_SC_TRAIN_H5AD=$(ViashRemoveFlags "$1")
+        --sc_train=*)
+            [ -n "$VIASH_PAR_SC_TRAIN" ] && ViashError Bad arguments for option \'--sc_train=*\': \'$VIASH_PAR_SC_TRAIN\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_SC_TRAIN=$(ViashRemoveFlags "$1")
             shift 1
             ;;
-        --sc_test_h5ad)
-            [ -n "$VIASH_PAR_SC_TEST_H5AD" ] && ViashError Bad arguments for option \'--sc_test_h5ad\': \'$VIASH_PAR_SC_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_SC_TEST_H5AD="$2"
-            [ $# -lt 2 ] && ViashError Not enough arguments passed to --sc_test_h5ad. Use "--help" to get more information on the parameters. && exit 1
+        --sc_test)
+            [ -n "$VIASH_PAR_SC_TEST" ] && ViashError Bad arguments for option \'--sc_test\': \'$VIASH_PAR_SC_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_SC_TEST="$2"
+            [ $# -lt 2 ] && ViashError Not enough arguments passed to --sc_test. Use "--help" to get more information on the parameters. && exit 1
             shift 2
             ;;
-        --sc_test_h5ad=*)
-            [ -n "$VIASH_PAR_SC_TEST_H5AD" ] && ViashError Bad arguments for option \'--sc_test_h5ad=*\': \'$VIASH_PAR_SC_TEST_H5AD\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
-            VIASH_PAR_SC_TEST_H5AD=$(ViashRemoveFlags "$1")
+        --sc_test=*)
+            [ -n "$VIASH_PAR_SC_TEST" ] && ViashError Bad arguments for option \'--sc_test=*\': \'$VIASH_PAR_SC_TEST\' \& \'$2\' - you should provide exactly one argument for this option. && exit 1
+            VIASH_PAR_SC_TEST=$(ViashRemoveFlags "$1")
             shift 1
             ;;
         ---engine)
@@ -834,12 +834,12 @@ if [ -z ${VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS+x} ]; then
   ViashError '--pseudobulk_filtered_with_uns' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
-if [ -z ${VIASH_PAR_SC_TRAIN_H5AD+x} ]; then
-  ViashError '--sc_train_h5ad' is a required argument. Use "--help" to get more information on the parameters.
+if [ -z ${VIASH_PAR_SC_TRAIN+x} ]; then
+  ViashError '--sc_train' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
-if [ -z ${VIASH_PAR_SC_TEST_H5AD+x} ]; then
-  ViashError '--sc_test_h5ad' is a required argument. Use "--help" to get more information on the parameters.
+if [ -z ${VIASH_PAR_SC_TEST+x} ]; then
+  ViashError '--sc_test' is a required argument. Use "--help" to get more information on the parameters.
   exit 1
 fi
 if [ -z ${VIASH_META_NAME+x} ]; then
@@ -952,11 +952,11 @@ if [[ -n "$VIASH_META_MEMORY_PIB" ]]; then
 fi
 
 # create parent directories of output files, if so desired
-if [ ! -z "$VIASH_PAR_SC_TRAIN_H5AD" ] && [ ! -d "$(dirname "$VIASH_PAR_SC_TRAIN_H5AD")" ]; then
-  mkdir -p "$(dirname "$VIASH_PAR_SC_TRAIN_H5AD")"
+if [ ! -z "$VIASH_PAR_SC_TRAIN" ] && [ ! -d "$(dirname "$VIASH_PAR_SC_TRAIN")" ]; then
+  mkdir -p "$(dirname "$VIASH_PAR_SC_TRAIN")"
 fi
-if [ ! -z "$VIASH_PAR_SC_TEST_H5AD" ] && [ ! -d "$(dirname "$VIASH_PAR_SC_TEST_H5AD")" ]; then
-  mkdir -p "$(dirname "$VIASH_PAR_SC_TEST_H5AD")"
+if [ ! -z "$VIASH_PAR_SC_TEST" ] && [ ! -d "$(dirname "$VIASH_PAR_SC_TEST")" ]; then
+  mkdir -p "$(dirname "$VIASH_PAR_SC_TEST")"
 fi
 
 if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
@@ -970,15 +970,15 @@ if [ ! -z "$VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS" ]; then
   VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS")" )
   VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS=$(ViashDockerAutodetectMount "$VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS")
 fi
-if [ ! -z "$VIASH_PAR_SC_TRAIN_H5AD" ]; then
-  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_SC_TRAIN_H5AD")" )
-  VIASH_PAR_SC_TRAIN_H5AD=$(ViashDockerAutodetectMount "$VIASH_PAR_SC_TRAIN_H5AD")
-  VIASH_CHOWN_VARS+=( "$VIASH_PAR_SC_TRAIN_H5AD" )
+if [ ! -z "$VIASH_PAR_SC_TRAIN" ]; then
+  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_SC_TRAIN")" )
+  VIASH_PAR_SC_TRAIN=$(ViashDockerAutodetectMount "$VIASH_PAR_SC_TRAIN")
+  VIASH_CHOWN_VARS+=( "$VIASH_PAR_SC_TRAIN" )
 fi
-if [ ! -z "$VIASH_PAR_SC_TEST_H5AD" ]; then
-  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_SC_TEST_H5AD")" )
-  VIASH_PAR_SC_TEST_H5AD=$(ViashDockerAutodetectMount "$VIASH_PAR_SC_TEST_H5AD")
-  VIASH_CHOWN_VARS+=( "$VIASH_PAR_SC_TEST_H5AD" )
+if [ ! -z "$VIASH_PAR_SC_TEST" ]; then
+  VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_PAR_SC_TEST")" )
+  VIASH_PAR_SC_TEST=$(ViashDockerAutodetectMount "$VIASH_PAR_SC_TEST")
+  VIASH_CHOWN_VARS+=( "$VIASH_PAR_SC_TEST" )
 fi
 if [ ! -z "$VIASH_META_RESOURCES_DIR" ]; then
   VIASH_DIRECTORY_MOUNTS+=( "$(ViashDockerAutodetectMountArg "$VIASH_META_RESOURCES_DIR")" )
@@ -1056,8 +1056,8 @@ import pandas as pd
 par = {
   'filtered_sc_counts': $( if [ ! -z ${VIASH_PAR_FILTERED_SC_COUNTS+x} ]; then echo "r'${VIASH_PAR_FILTERED_SC_COUNTS//\'/\'\"\'\"r\'}'"; else echo None; fi ),
   'pseudobulk_filtered_with_uns': $( if [ ! -z ${VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS+x} ]; then echo "r'${VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS//\'/\'\"\'\"r\'}'"; else echo None; fi ),
-  'sc_train_h5ad': $( if [ ! -z ${VIASH_PAR_SC_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_SC_TRAIN_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi ),
-  'sc_test_h5ad': $( if [ ! -z ${VIASH_PAR_SC_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_SC_TEST_H5AD//\'/\'\"\'\"r\'}'"; else echo None; fi )
+  'sc_train': $( if [ ! -z ${VIASH_PAR_SC_TRAIN+x} ]; then echo "r'${VIASH_PAR_SC_TRAIN//\'/\'\"\'\"r\'}'"; else echo None; fi ),
+  'sc_test': $( if [ ! -z ${VIASH_PAR_SC_TEST+x} ]; then echo "r'${VIASH_PAR_SC_TEST//\'/\'\"\'\"r\'}'"; else echo None; fi )
 }
 meta = {
   'name': $( if [ ! -z ${VIASH_META_NAME+x} ]; then echo "r'${VIASH_META_NAME//\'/\'\"\'\"r\'}'"; else echo None; fi ),
@@ -1129,8 +1129,8 @@ for col in filtered_sc_counts.obs.columns:
         filtered_sc_counts.obs[col] = filtered_sc_counts.obs[col].astype("category")
 
 print(">> Save sc dataset into splits", flush=True)
-filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train_h5ad"], compression="gzip")
-filtered_sc_counts[filtered_sc_counts.obs["split"] == "test"].write_h5ad(par["sc_test_h5ad"], compression="gzip")
+filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train"], compression="gzip")
+filtered_sc_counts[filtered_sc_counts.obs["split"] == "test"].write_h5ad(par["sc_test"], compression="gzip")
 VIASHMAIN
 python -B "\$tempscript" &
 wait "\$!"
@@ -1147,11 +1147,11 @@ if [[ "$VIASH_ENGINE_TYPE" == "docker" ]]; then
   if [ ! -z "$VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS" ]; then
     VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS=$(ViashDockerStripAutomount "$VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS")
   fi
-  if [ ! -z "$VIASH_PAR_SC_TRAIN_H5AD" ]; then
-    VIASH_PAR_SC_TRAIN_H5AD=$(ViashDockerStripAutomount "$VIASH_PAR_SC_TRAIN_H5AD")
+  if [ ! -z "$VIASH_PAR_SC_TRAIN" ]; then
+    VIASH_PAR_SC_TRAIN=$(ViashDockerStripAutomount "$VIASH_PAR_SC_TRAIN")
   fi
-  if [ ! -z "$VIASH_PAR_SC_TEST_H5AD" ]; then
-    VIASH_PAR_SC_TEST_H5AD=$(ViashDockerStripAutomount "$VIASH_PAR_SC_TEST_H5AD")
+  if [ ! -z "$VIASH_PAR_SC_TEST" ]; then
+    VIASH_PAR_SC_TEST=$(ViashDockerStripAutomount "$VIASH_PAR_SC_TEST")
   fi
   if [ ! -z "$VIASH_META_RESOURCES_DIR" ]; then
     VIASH_META_RESOURCES_DIR=$(ViashDockerStripAutomount "$VIASH_META_RESOURCES_DIR")
@@ -1169,12 +1169,12 @@ fi
 
 
 # check whether required files exist
-if [ ! -z "$VIASH_PAR_SC_TRAIN_H5AD" ] && [ ! -e "$VIASH_PAR_SC_TRAIN_H5AD" ]; then
-  ViashError "Output file '$VIASH_PAR_SC_TRAIN_H5AD' does not exist."
+if [ ! -z "$VIASH_PAR_SC_TRAIN" ] && [ ! -e "$VIASH_PAR_SC_TRAIN" ]; then
+  ViashError "Output file '$VIASH_PAR_SC_TRAIN' does not exist."
   exit 1
 fi
-if [ ! -z "$VIASH_PAR_SC_TEST_H5AD" ] && [ ! -e "$VIASH_PAR_SC_TEST_H5AD" ]; then
-  ViashError "Output file '$VIASH_PAR_SC_TEST_H5AD' does not exist."
+if [ ! -z "$VIASH_PAR_SC_TEST" ] && [ ! -e "$VIASH_PAR_SC_TEST" ]; then
+  ViashError "Output file '$VIASH_PAR_SC_TEST' does not exist."
   exit 1
 fi
 

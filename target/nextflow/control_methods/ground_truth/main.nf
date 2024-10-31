@@ -2813,7 +2813,7 @@ meta = [
       "arguments" : [
         {
           "type" : "file",
-          "name" : "--de_train_h5ad",
+          "name" : "--de_train",
           "label" : "DE train",
           "summary" : "Differential expression results for training.",
           "info" : {
@@ -2985,7 +2985,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--de_test_h5ad",
+          "name" : "--de_test",
           "label" : "DE test",
           "summary" : "Differential expression results for testing.",
           "info" : {
@@ -3362,7 +3362,7 @@ meta = [
     "engine" : "docker",
     "output" : "target/nextflow/control_methods/ground_truth",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3528,8 +3528,8 @@ library(dplyr, warn.conflicts = FALSE)
 .viash_orig_warn <- options(warn = 2)
 
 par <- list(
-  "de_train_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TRAIN_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TRAIN_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
-  "de_test_h5ad" = $( if [ ! -z ${VIASH_PAR_DE_TEST_H5AD+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST_H5AD" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_train" = $( if [ ! -z ${VIASH_PAR_DE_TRAIN+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TRAIN" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
+  "de_test" = $( if [ ! -z ${VIASH_PAR_DE_TEST+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_DE_TEST" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "id_map" = $( if [ ! -z ${VIASH_PAR_ID_MAP+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_ID_MAP" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "layer" = $( if [ ! -z ${VIASH_PAR_LAYER+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_LAYER" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi ),
   "output" = $( if [ ! -z ${VIASH_PAR_OUTPUT+x} ]; then echo -n "'"; echo -n "$VIASH_PAR_OUTPUT" | sed "s#['\\\\]#\\\\\\\\&#g"; echo "'"; else echo NULL; fi )
@@ -3566,18 +3566,18 @@ rm(.viash_orig_warn)
 ## VIASH END
 
 # read data
-de_test_h5ad <- anndata::read_h5ad(par\\$de_test_h5ad)
+de_test <- anndata::read_h5ad(par\\$de_test)
 
 # remove unneeded columns
 output <- anndata::AnnData(
   layers = list(
-    prediction = de_test_h5ad\\$layers[[par\\$layer]]
+    prediction = de_test\\$layers[[par\\$layer]]
   ),
-  obs = de_test_h5ad\\$obs[, c()],
-  var = de_test_h5ad\\$var[, c()],
+  obs = de_test\\$obs[, c()],
+  var = de_test\\$var[, c()],
   uns = list(
-    dataset_id = de_test_h5ad\\$uns\\$dataset_id,
-    method_id = meta\\$functionality_name
+    dataset_id = de_test\\$uns\\$dataset_id,
+    method_id = meta\\$name
   )
 )
 

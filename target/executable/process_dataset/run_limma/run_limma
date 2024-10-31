@@ -491,9 +491,9 @@ RUN Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.pa
   Rscript -e 'if (!requireNamespace("future", quietly = TRUE)) BiocManager::install("future")'
 
 LABEL org.opencontainers.image.description="Companion container for running component process_dataset run_limma"
-LABEL org.opencontainers.image.created="2024-10-30T21:08:21Z"
+LABEL org.opencontainers.image.created="2024-10-31T04:35:19Z"
 LABEL org.opencontainers.image.source="https://github.com/openproblems-bio/task_perturbation_prediction"
-LABEL org.opencontainers.image.revision="cb4543d77463c5a73219385d2435d65e5e9561e6"
+LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER

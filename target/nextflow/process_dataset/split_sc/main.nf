@@ -2839,7 +2839,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--sc_train_h5ad",
+          "name" : "--sc_train",
           "example" : [
             "sc_train.h5ad"
           ],
@@ -2852,7 +2852,7 @@ meta = [
         },
         {
           "type" : "file",
-          "name" : "--sc_test_h5ad",
+          "name" : "--sc_test",
           "example" : [
             "sc_test.h5ad"
           ],
@@ -2954,7 +2954,7 @@ meta = [
     "engine" : "docker",
     "output" : "target/nextflow/process_dataset/split_sc",
     "viash_version" : "0.9.0",
-    "git_commit" : "cb4543d77463c5a73219385d2435d65e5e9561e6",
+    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -3120,8 +3120,8 @@ import pandas as pd
 par = {
   'filtered_sc_counts': $( if [ ! -z ${VIASH_PAR_FILTERED_SC_COUNTS+x} ]; then echo "r'${VIASH_PAR_FILTERED_SC_COUNTS//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
   'pseudobulk_filtered_with_uns': $( if [ ! -z ${VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS+x} ]; then echo "r'${VIASH_PAR_PSEUDOBULK_FILTERED_WITH_UNS//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'sc_train_h5ad': $( if [ ! -z ${VIASH_PAR_SC_TRAIN_H5AD+x} ]; then echo "r'${VIASH_PAR_SC_TRAIN_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
-  'sc_test_h5ad': $( if [ ! -z ${VIASH_PAR_SC_TEST_H5AD+x} ]; then echo "r'${VIASH_PAR_SC_TEST_H5AD//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi )
+  'sc_train': $( if [ ! -z ${VIASH_PAR_SC_TRAIN+x} ]; then echo "r'${VIASH_PAR_SC_TRAIN//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
+  'sc_test': $( if [ ! -z ${VIASH_PAR_SC_TEST+x} ]; then echo "r'${VIASH_PAR_SC_TEST//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi )
 }
 meta = {
   'name': $( if [ ! -z ${VIASH_META_NAME+x} ]; then echo "r'${VIASH_META_NAME//\\'/\\'\\"\\'\\"r\\'}'"; else echo None; fi ),
@@ -3193,8 +3193,8 @@ for col in filtered_sc_counts.obs.columns:
         filtered_sc_counts.obs[col] = filtered_sc_counts.obs[col].astype("category")
 
 print(">> Save sc dataset into splits", flush=True)
-filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train_h5ad"], compression="gzip")
-filtered_sc_counts[filtered_sc_counts.obs["split"] == "test"].write_h5ad(par["sc_test_h5ad"], compression="gzip")
+filtered_sc_counts[filtered_sc_counts.obs["split"] == "train"].write_h5ad(par["sc_train"], compression="gzip")
+filtered_sc_counts[filtered_sc_counts.obs["split"] == "test"].write_h5ad(par["sc_test"], compression="gzip")
 VIASHMAIN
 python -B "$tempscript"
 '''

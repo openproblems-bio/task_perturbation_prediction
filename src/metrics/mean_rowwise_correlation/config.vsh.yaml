@@ -13,11 +13,20 @@ info:
         $$
 
         where $(R)$ is the number of scored rows, and $(\mathbf{y}_i)$ and $(\mathbf{\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.
-      repository_url: null
-      documentation_url: null
       min: -1
       max: 1
       maximize: true
+      references:
+        bibtex: |
+          @article{slazata2024benchmark,
+            title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},
+            author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},
+            booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+            year = {2024},
+            url = {https://openreview.net/forum?id=WTI4RJYSVm}
+          }
+      links: {}
+
     - name: mean_rowwise_spearman
       label: Mean Rowwise Spearman
       summary: The mean of Spearman correlations per row (perturbation).
@@ -29,11 +38,19 @@ info:
         $$
 
         where $(R)$ is the number of scored rows, and $(\mathbf{r}_i)$ and $(\mathbf{\hat{r}}_i)$ are the ranks of the actual and predicted values, respectively, for row $(i)$.
-      repository_url: null
-      documentation_url: null
       min: -1
       max: 1
       maximize: true
+      references:
+        bibtex: |
+          @article{slazata2024benchmark,
+            title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},
+            author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},
+            booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+            year = {2024},
+            url = {https://openreview.net/forum?id=WTI4RJYSVm}
+          }
+      links: {}
     - name: mean_rowwise_cosine
       label: Mean Rowwise Cosine
       summary: The mean of cosine similarities per row (perturbation).
@@ -45,11 +62,19 @@ info:
         $$
 
         where $(R)$ is the number of scored rows, and $(\mathbf{y}_i)$ and $(\mathbf{\hat{y}}_i)$ are the actual and predicted values, respectively, for row $(i)$.
-      repository_url: null
-      documentation_url: null
       min: -1
       max: 1
       maximize: true
+      references:
+        bibtex: |
+          @article{slazata2024benchmark,
+            title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},
+            author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},
+            booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+            year = {2024},
+            url = {https://openreview.net/forum?id=WTI4RJYSVm}
+          }
+      links: {}
 resources:
   - type: r_script
     path: script.R
