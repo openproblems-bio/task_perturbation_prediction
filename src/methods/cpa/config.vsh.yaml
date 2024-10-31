@@ -36,6 +36,9 @@ engines:
           - anndata
           - numpy
           - pandas
+      - type: apt
+        packages:
+          - python3-tk
 
 runners:
   - type: executable
