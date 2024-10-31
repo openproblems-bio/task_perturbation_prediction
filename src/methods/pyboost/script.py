@@ -13,7 +13,7 @@ pd.set_option("min_rows", 6)
 
 ## VIASH START
 par = dict(
-    de_train_h5ad = "resources/datasets/neurips-2023-data/de_train.h5ad",
+    de_train = "resources/datasets/neurips-2023-data/de_train.h5ad",
     layer = "clipped_sign_log10_pval",
     id_map = "resources/datasets/neurips-2023-data/id_map.csv",
     predictor_names = ["py_boost"],
@@ -29,28 +29,28 @@ from anndata_to_dataframe import anndata_to_dataframe
 from helper import predictors
 
 print("Loading data\n", flush=True)
-de_train_h5ad = ad.read_h5ad(par["de_train_h5ad"])
-de_train = anndata_to_dataframe(de_train_h5ad, par["layer"])
-adata_obs = de_train_h5ad.uns["single_cell_obs"]
+de_train = ad.read_h5ad(par["de_train"])
+de_train_df = anndata_to_dataframe(de_train, par["layer"])
+adata_obs = de_train.uns["single_cell_obs"]
 
 id_map = pd.read_csv(par['id_map'], index_col = 0)
 # display(id_map)
 
 # 18211 genes
-genes = de_train_h5ad.var_names
-de_train_indexed = de_train.set_index(['cell_type', 'sm_name'])[genes]
+genes = de_train.var_names
+de_train_indexed = de_train_df.set_index(['cell_type', 'sm_name'])[genes]
 
 # All 146 sm_names
-sm_names = sorted(de_train.sm_name.unique())
+sm_names = sorted(de_train_df.sm_name.unique())
 # Determine the 17 compounds (including the two control compounds) with data for almost all cell types
-train_sm_names = de_train.query("cell_type == 'B cells'").sm_name.sort_values().values
+train_sm_names = de_train_df.query("cell_type == 'B cells'").sm_name.sort_values().values
 # The other 129 sm_names
 test_sm_names = [sm for sm in sm_names if sm not in train_sm_names]
 # The three control sm_names
 controls3 = ['Dabrafenib', 'Belinostat', 'Dimethyl Sulfoxide']
 
 # All 6 cell types
-cell_types = list(de_train_h5ad.obs.cell_type.cat.categories)
+cell_types = list(de_train.obs.cell_type.cat.categories)
 test_cell_types = list(id_map.cell_type.unique())
 train_cell_types = [ct for ct in cell_types if not ct in test_cell_types]
 
@@ -94,8 +94,8 @@ output = ad.AnnData(
     obs=pd.DataFrame(index=id_map.index),
     var=pd.DataFrame(index=genes),
     uns={
-      "dataset_id": de_train_h5ad.uns["dataset_id"],
-      "method_id": meta["functionality_name"]
+      "dataset_id": de_train.uns["dataset_id"],
+      "method_id": meta["name"]
     }
 )
 

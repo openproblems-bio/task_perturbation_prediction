@@ -1,7 +1,7 @@
 name: lgc_ensemble_prepare
 namespace: methods
 arguments:
-  - name: --de_train_h5ad
+  - name: --de_train
     type: file
     required: false
     direction: input

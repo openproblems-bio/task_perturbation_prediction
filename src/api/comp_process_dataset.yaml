@@ -11,12 +11,12 @@ arguments:
     __merge__: file_sc_counts.yaml
     required: true
     direction: input
-  - name: --de_train_h5ad
+  - name: --de_train
     __merge__: file_de_train.yaml
     required: true
     direction: output
     default: de_train.h5ad
-  - name: --de_test_h5ad
+  - name: --de_test
     __merge__: file_de_test.yaml
     required: true
     direction: output
@@ -26,12 +26,12 @@ arguments:
     required: true
     direction: output
     default: id_map.csv
-  - name: --sc_train_h5ad
+  - name: --sc_train
     type: file
     required: false
     direction: output
     default: sc_train.h5ad
-  - name: --sc_test_h5ad
+  - name: --sc_test
     type: file
     required: false
     direction: output

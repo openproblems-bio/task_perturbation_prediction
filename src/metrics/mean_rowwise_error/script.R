@@ -2,7 +2,7 @@ library(anndata)
 
 ## VIASH START (unchanged)
 par <- list(
-  de_test_h5ad = "resources/datasets/neurips-2023-data/de_test.h5ad",
+  de_test = "resources/datasets/neurips-2023-data/de_test.h5ad",
   de_test_layer = "clipped_sign_log10_pval",
   prediction = "resources/datasets/neurips-2023-data/prediction.h5ad",
   prediction_layer = "prediction",
@@ -12,7 +12,7 @@ par <- list(
 ## VIASH END
 
 cat("Load data\n")
-de_test <- read_h5ad(par$de_test_h5ad)
+de_test <- read_h5ad(par$de_test)
 cat("de_test: "); print(de_test)
 prediction <- read_h5ad(par$prediction)
 cat("prediction: "); print(prediction)

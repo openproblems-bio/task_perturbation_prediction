@@ -18,12 +18,12 @@ arguments:
     required: true
     direction: input
     example: resources/neurips-2023-data/pseudobulk_cleaned.h5ad
-  - name: --sc_train_h5ad
+  - name: --sc_train
     type: file
     required: true
     direction: output
     example: sc_train.h5ad
-  - name: --sc_test_h5ad
+  - name: --sc_test
     type: file
     required: true
     direction: output

@@ -2,17 +2,18 @@ __merge__: ../../api/comp_method.yaml
 
 name: lgc_ensemble_direct
 label: LSTM-GRU-CNN Ensemble
+summary: An ensemble of LSTM, GRU, and 1D CNN models
+description: |
+  An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,
+  one-hot encoding of cell type/small molecule pairs, and various statistical measures of target gene expression.
+  The models were trained with a combination of MSE, MAE, LogCosh, and BCE loss functions to improve their
+  robustness and predictive performance. The approach also included data augmentation techniques to ensure
+  generalization and account for noise in the data.
+links:
+  documentation: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/459258
+  repository: https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main
 info:
   neurips2023_rank: 1
-  summary: An ensemble of LSTM, GRU, and 1D CNN models
-  description: |
-    An ensemble of LSTM, GRU, and 1D CNN models with a variety of input features derived from ChemBERTa embeddings,
-    one-hot encoding of cell type/small molecule pairs, and various statistical measures of target gene expression.
-    The models were trained with a combination of MSE, MAE, LogCosh, and BCE loss functions to improve their
-    robustness and predictive performance. The approach also included data augmentation techniques to ensure
-    generalization and account for noise in the data.
-  documentation_url: https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/discussion/459258
-  repository_url: https://github.com/Jean-KOUAGOU/1st-place-solution-single-cell-pbs/tree/main
 
 arguments:
   - name: --epochs
