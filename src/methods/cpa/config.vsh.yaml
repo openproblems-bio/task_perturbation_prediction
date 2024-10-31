@@ -18,7 +18,7 @@ links:
 
 info:
   # we normalize in the script. The model can operate on either raw counts or cpm and log-normalized data.
-  preferred_normalization: raw_counts
+  preferred_normalization: counts
 
 resources:
   - type: python_script

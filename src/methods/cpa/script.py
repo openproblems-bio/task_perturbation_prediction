@@ -6,8 +6,8 @@ import numpy as np
 
 ## VIASH START
 par = {
-  'sc_train_h5ad': 'resources_test/sc_train.h5ad',
-  'sc_test_h5ad': 'resources_test/sc_test.h5ad',
+  'sc_train': 'resources_test/sc_train.h5ad',
+  'sc_test': 'resources_test/sc_test.h5ad',
   'output_sc': 'output_sc.h5ad',
 }
 meta = {
@@ -16,14 +16,14 @@ meta = {
 ## VIASH END
 
 print('Reading input files', flush=True)
-sc_train_h5ad = ad.read_h5ad(par['sc_train_h5ad'])
-sc_test_h5ad = ad.read_h5ad(par['sc_test_h5ad'])
+sc_train = ad.read_h5ad(par['sc_train'])
+sc_test = ad.read_h5ad(par['sc_test'])
 
 # remove the counts from the test set to prevent leakage
-sc_test_h5ad.X[:] = 0
+sc_test.X[:] = 0
 
 print('Preprocess data for CPA', flush=True)
-sc_h5ad = ad.concat([sc_train_h5ad, sc_test_h5ad], axis=0)
+sc_h5ad = ad.concat([sc_train, sc_test], axis=0)
 sc_h5ad.obs['control'] = sc_h5ad.obs['sm_name'].eq("Dimethyl Sulfoxide").astype(int)
 sc_h5ad.layers["counts"] = sc_h5ad.X.copy()
 sc.pp.normalize_total(sc_h5ad, target_sum=1e4)
