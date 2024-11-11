@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# get the root of the directory
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
+# ensure that the command below is run from the root of the repository
+cd "$REPO_ROOT"
+
+set -e
+
+# generate a unique id
 RUN_ID="stability_$(date +%Y-%m-%d_%H-%M-%S)"
 publish_dir="s3://openproblems-data/resources/task_perturbation_prediction/results/${RUN_ID}"
 
@@ -12,10 +21,11 @@ publish_dir: "$publish_dir"
 HERE
 
 tw launch https://github.com/openproblems-bio/task_perturbation_prediction.git \
-  --revision main_build \
+  --revision build/main \
   --pull-latest \
   --main-script target/nextflow/workflows/run_stability_analysis/main.nf \
   --workspace 53907369739130 \
-  --compute-env 6TeIFgV5OY4pJCk8I0bfOh \
+  --compute-env 5DwwhQoBi0knMSGcwThnlF \
   --params-file /tmp/params.yaml \
-  --config src/common/nextflow_helpers/labels_tw.config
+  --config src/common/nextflow_helpers/labels_tw.config \
+  --labels task_perturbation_prediction,stability
