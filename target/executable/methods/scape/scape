@@ -528,9 +528,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "tensorflow~=2.14.0" "tensorflow-io-gcs-filesystem>=0.31.0" "pandas~=1.5.3" "scikit-learn~=1.2.2" "fastparquet~=2023.10.1" "git+https://github.com/scapeML/scape.git"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods scape"
-LABEL org.opencontainers.image.created="2024-10-31T04:35:16Z"
+LABEL org.opencontainers.image.created="2025-01-28T17:25:08Z"
 LABEL org.opencontainers.image.source="https://github.com/scapeML/scape"
-LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
+LABEL org.opencontainers.image.revision="626f94521fd236e6b79cc60696159172dd07d2bd"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER

@@ -342,7 +342,7 @@ build_info:
   output: "target/nextflow/methods/lgc_ensemble"
   executable: "target/nextflow/methods/lgc_ensemble/main.nf"
   viash_version: "0.9.0"
-  git_commit: "2fa44462b1e7d530bad703c4a20ed22b49d3705e"
+  git_commit: "626f94521fd236e6b79cc60696159172dd07d2bd"
   git_remote: "https://github.com/openproblems-bio/task_perturbation_prediction"
   dependencies:
   - "target/nextflow/methods/lgc_ensemble_prepare"
@@ -414,7 +414,7 @@ package_config:
     - "author"
     info:
       github: "szalata"
-      orcid: "000-0001-8413-234X"
+      orcid: "0000-0001-8413-234X"
   - name: "Robrecht Cannoodt"
     roles:
     - "author"

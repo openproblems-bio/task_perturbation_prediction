@@ -507,9 +507,9 @@ RUN pip install --upgrade pip && \
   pip install --upgrade --no-cache-dir "fastparquet" "pyarrow" "pandas~=2.0.3" "scikit-learn~=1.0.1" "tqdm~=4.66.1" "numpy~=1.23" "matplotlib~=3.5.0" "PyYAML~=6.0.1" "lion-pytorch"
 
 LABEL org.opencontainers.image.description="Companion container for running component methods transformer_ensemble"
-LABEL org.opencontainers.image.created="2024-10-31T04:35:17Z"
+LABEL org.opencontainers.image.created="2025-01-28T17:25:08Z"
 LABEL org.opencontainers.image.source="https://github.com/Eliorkalfon/single_cell_pb"
-LABEL org.opencontainers.image.revision="2fa44462b1e7d530bad703c4a20ed22b49d3705e"
+LABEL org.opencontainers.image.revision="626f94521fd236e6b79cc60696159172dd07d2bd"
 LABEL org.opencontainers.image.version="build_main"
 
 VIASHDOCKER

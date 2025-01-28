@@ -2954,7 +2954,7 @@ meta = [
     "engine" : "docker",
     "output" : "target/nextflow/process_dataset/split_sc",
     "viash_version" : "0.9.0",
-    "git_commit" : "2fa44462b1e7d530bad703c4a20ed22b49d3705e",
+    "git_commit" : "626f94521fd236e6b79cc60696159172dd07d2bd",
     "git_remote" : "https://github.com/openproblems-bio/task_perturbation_prediction"
   },
   "package_config" : {
@@ -2986,7 +2986,7 @@ meta = [
         ],
         "info" : {
           "github" : "szalata",
-          "orcid" : "000-0001-8413-234X"
+          "orcid" : "0000-0001-8413-234X"
         }
       },
       {
