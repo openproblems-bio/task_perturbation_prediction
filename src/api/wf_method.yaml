@@ -11,6 +11,10 @@ arguments:
     __merge__: file_de_train.yaml
     required: false
     direction: input
+  - name: --sc_train
+    __merge__: file_sc_train.yaml
+    required: false
+    direction: input
   - name: --id_map
     __merge__: file_id_map.yaml
     required: true

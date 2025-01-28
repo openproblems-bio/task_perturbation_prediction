@@ -1,0 +1,114 @@
+type: file
+example: resources/datasets/neurips-2023-data/sc_train.h5ad
+label: SC train
+summary: "Single-Cell Perturbation Data for Training"
+info:
+  format:
+    type: h5ad
+    obs:
+      - name: dose_uM
+        description: "Dose in micromolar."
+        type: integer
+        required: true
+      - name: timepoint_hr
+        description: "Time point measured in hours."
+        type: float
+        required: true
+      - name: raw_cell_id
+        description: "Original cell identifier."
+        type: string
+        required: true
+      - name: hashtag_id
+        description: "Identifier for hashtag oligo."
+        type: string
+        required: true
+      - name: well
+        description: "Well location in the plate."
+        type: string
+        required: true
+      - name: container_format
+        description: "Format of the container (e.g., 96-well plate)."
+        type: string
+        required: true
+      - name: row
+        description: "Row in the plate."
+        type: string
+        required: true
+      - name: col
+        description: "Column in the plate."
+        type: integer
+        required: true
+      - name: plate_name
+        description: "Name of the plate."
+        type: string
+        required: true
+      - name: cell_id
+        description: "Unique cell identifier."
+        type: string
+        required: true
+      - name: cell_type
+        description: "Type of cell (e.g., B cells, T cells CD4+)."
+        type: string
+        required: true
+      - name: split
+        description: "Dataset split type (e.g., control, treated)."
+        type: string
+        required: true
+      - name: donor_id
+        description: "Identifier for the donor."
+        type: string
+        required: true
+      - name: sm_name
+        description: "Name of the small molecule used for treatment."
+        type: string
+        required: true
+      - name: control
+        type: boolean
+        description: "Boolean indicating whether this instance was used as a control."
+        required: true
+      - name: SMILES
+        type: string
+        description: |
+          Simplified molecular-input line-entry system (SMILES) representations of the
+          compounds used in the experiment. This is a 1D representation of molecular
+          structure. These SMILES are provided by Cellarity based on the specific
+          compounds ordered for this experiment.
+        required: true
+      - name: sm_lincs_id
+        type: string
+        description: |
+          The global LINCS ID (parent) compound (in a standardized representation).
+          This is provided to map the data in this experiment to the LINCS Connectivity
+          Map data.
+        required: true
+    uns:
+      - type: string
+        name: dataset_id
+        description: A unique identifier for the dataset. This is different from the `obs.dataset_id` field, which is the identifier for the dataset from which the cell data is derived.
+        required: true
+      - name: dataset_name
+        type: string
+        description: A human-readable name for the dataset.
+        required: true
+      - type: string
+        name: dataset_url
+        description: Link to the original source of the dataset.
+        required: false
+      - name: dataset_reference
+        type: string
+        description: Bibtex reference of the paper in which the dataset was published.
+        required: false
+        multiple: true
+      - name: dataset_summary
+        type: string
+        description: Short description of the dataset.
+        required: true
+      - name: dataset_description
+        type: string
+        description: Long description of the dataset.
+        required: true
+      - name: dataset_organism
+        type: string
+        description: The organism of the sample in the dataset.
+        required: false
+        multiple: true
