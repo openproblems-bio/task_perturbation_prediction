@@ -54,12 +54,16 @@ links:
   docker_registry: ghcr.io
 references:
   bibtex: |
-    @article{slazata2024benchmark,
+    @inproceedings{NEURIPS2024_24c4d51f,
+      author = {Sza\l ata, Artur and Benz, Andrew and Cannoodt, Robrecht and Cortes, Mauricio and Fong, Jason and Kuppasani, Sunil and Lieberman, Richard and Liu, Tianyu and Mas-Rosario, Javier A. and Meinl, Rico and Nourisa, Jalil and Tumiel, Jared and Tunjic, Tin M. and Wang, Mengbo and Weber, Noah and Zhao, Hongyu and Anchang, Benedict and Theis, Fabian J. and Luecken, Malte D. and Burkhardt, Daniel B.},
+      booktitle = {Advances in Neural Information Processing Systems},
+      editor = {A. Globerson and L. Mackey and D. Belgrave and A. Fan and U. Paquet and J. Tomczak and C. Zhang},
+      pages = {20566--20616},
+      publisher = {Curran Associates, Inc.},
       title = {A benchmark for prediction of transcriptomic responses to chemical perturbations across cell types},
-      author = {Artur Szałata and Andrew Benz and Robrecht Cannoodt and Mauricio Cortes and Jason Fong and Sunil Kuppasani and Richard Lieberman and Tianyu Liu and Javier A. Mas-Rosario and Rico Meinl and Jalil Nourisa and Jared Tumiel and Tin M. Tunjic and Mengbo Wang and Noah Weber and Hongyu Zhao and Benedict Anchang and Fabian J Theis and Malte D Luecken and Daniel B Burkhardt},
-      booktitle = {The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
-      year = {2024},
-      url = {https://openreview.net/forum?id=WTI4RJYSVm}
+      url = {https://proceedings.neurips.cc/paper_files/paper/2024/file/24c4d51f3ef48dd2dbab78243ecb26a1-Paper-Datasets_and_Benchmarks_Track.pdf},
+      volume = {37},
+      year = {2024}
     }
 
 authors:
@@ -119,6 +123,7 @@ authors:
 organization: openproblems-bio
 viash_version: 0.9.0
 info:
+  image: thumbnail.svg
   test_resources:
     - type: s3
       path: s3://openproblems-data/resources/task_perturbation_prediction/datasets
