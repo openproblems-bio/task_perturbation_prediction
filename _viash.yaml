@@ -121,7 +121,7 @@ authors:
 
 # technical settings
 organization: openproblems-bio
-viash_version: 0.9.0
+viash_version: 0.9.4
 info:
   image: thumbnail.svg
   test_resources:
