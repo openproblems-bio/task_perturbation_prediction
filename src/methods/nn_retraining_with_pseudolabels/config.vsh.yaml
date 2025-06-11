@@ -40,7 +40,7 @@ resources:
 
 engines:
   - type: docker
-    image: openproblems/base_tensorflow_nvidia:1.0.0
+    image: openproblems/base_tensorflow_nvidia:1
     setup:
       - type: python
         packages: 
