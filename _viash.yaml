@@ -1,4 +1,16 @@
+viash_version: 0.9.4
+
 name: task_perturbation_prediction
+organization: openproblems-bio
+version: dev
+
+license: MIT
+keywords: [single-cell, perturbation prediction, perturbation, benchmark]
+links:
+  issue_tracker: https://github.com/openproblems-bio/task_perturbation_prediction/issues
+  repository: https://github.com/openproblems-bio/task_perturbation_prediction
+  docker_registry: ghcr.io
+
 label: Perturbation Prediction
 summary: Predicting how small molecules change gene expression in different cell types.
 description: |
@@ -45,13 +57,6 @@ description: |
   help establish biological priors that explain the susceptibility of particular genes to
   exhibit perturbation responses in difference biological contexts.
 
-version: dev
-license: MIT
-keywords: [single-cell, perturbation prediction, perturbation, benchmark]
-links:
-  issue_tracker: https://github.com/openproblems-bio/task_perturbation_prediction/issues
-  repository: https://github.com/openproblems-bio/task_perturbation_prediction
-  docker_registry: ghcr.io
 references:
   bibtex: |
     @article{slazata2024benchmark,
@@ -61,6 +66,12 @@ references:
       year = {2024},
       url = {https://openreview.net/forum?id=WTI4RJYSVm}
     }
+
+info:
+  test_resources:
+    - type: s3
+      path: s3://openproblems-data/resources/task_perturbation_prediction/datasets
+      dest: resources/datasets
 
 authors:
   - name: Artur Szałata
@@ -113,16 +124,6 @@ authors:
     info:
       github: ricomnl
       orcid: 0000-0003-4356-6058
-
-
-# technical settings
-organization: openproblems-bio
-viash_version: 0.9.0
-info:
-  test_resources:
-    - type: s3
-      path: s3://openproblems-data/resources/task_perturbation_prediction/datasets
-      dest: resources/datasets
 
 # set default labels
 config_mods: |
