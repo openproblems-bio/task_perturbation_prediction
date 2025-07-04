@@ -81,11 +81,6 @@ dependencies:
   - name: methods/pyboost
   - name: metrics/mean_rowwise_error
   - name: metrics/mean_rowwise_correlation
-repositories:
-  - name: openproblems
-    type: github
-    repo: openproblems-bio/openproblems
-    tag: main_build
 runners:
   - type: executable
   - type: nextflow
