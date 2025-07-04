@@ -75,11 +75,6 @@ dependencies:
   - name: process_dataset/bootstrap
   - name: workflows/process_dataset
   - name: workflows/run_benchmark
-repositories:
-  - name: openproblemsv2
-    type: github
-    repo: openproblems-bio/openproblems-v2
-    tag: main_build
 runners:
   - type: executable
   - type: nextflow
