@@ -1,0 +1,36 @@
+__merge__: ../../../api/comp_condition_centroid_metric.yaml
+name: mse
+info:
+  metrics:
+    - name: mse
+      label: MSE
+      summary: Mean squared error between predicted and observed condition centroids.
+      description: >-
+        Computes the mean squared gene-wise difference between each predicted
+        condition centroid and its matched observed centroid, then reports the
+        macro mean over perturbation conditions.
+      references:
+        doi: 10.1101/2025.10.20.683304
+      links:
+        repository: https://github.com/shiftbioscience/Perturbation-Models-Outperform-Baselines
+      min: 0
+      max: +.inf
+      maximize: false
+resources:
+  - type: python_script
+    path: script.py
+  - path: ../_shared/condition_centroid_metric_runner.py
+  - path: ../_shared/condition_centroid_metrics.py
+test_resources: &condition_centroid_tests
+  - type: python_script
+    path: /common/component_tests/check_config.py
+  - type: python_script
+    path: ../_shared/test_condition_centroid_component.py
+engines: &python_engine
+  - type: docker
+    image: openproblems/base_python:1.0.0
+runners: &metric_runners
+  - type: executable
+  - type: nextflow
+    directives:
+      label: [midtime, highmem, highcpu]

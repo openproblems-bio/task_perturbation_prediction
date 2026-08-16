@@ -1,0 +1,35 @@
+__merge__: ../../../api/comp_condition_centroid_metric.yaml
+name: pearson_delta_perturbed_mean_degs
+info:
+  metrics:
+    - name: pearson_delta_perturbed_mean_degs
+      label: Pearson delta perturbed mean DEGs
+      summary: Perturbed-mean Pearson correlation on significant DE genes.
+      description: >-
+        Computes training-perturbation-mean-referenced Pearson correlation
+        after restricting each condition to its significant DE genes.
+      references:
+        doi: 10.1101/2025.10.20.683304
+      links:
+        repository: https://github.com/shiftbioscience/Perturbation-Models-Outperform-Baselines
+      min: -1
+      max: 1
+      maximize: true
+resources:
+  - type: python_script
+    path: script.py
+  - path: ../_shared/condition_centroid_metric_runner.py
+  - path: ../_shared/condition_centroid_metrics.py
+test_resources:
+  - type: python_script
+    path: /common/component_tests/check_config.py
+  - type: python_script
+    path: ../_shared/test_condition_centroid_component.py
+engines:
+  - type: docker
+    image: openproblems/base_python:1.0.0
+runners:
+  - type: executable
+  - type: nextflow
+    directives:
+      label: [midtime, highmem, highcpu]

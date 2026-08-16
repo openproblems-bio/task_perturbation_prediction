@@ -1,0 +1,210 @@
+schema_version: "0.3.0"
+
+suite:
+  id: perturbation_prediction_model_metrics
+  version: "0.1.0-draft"
+  scope: prediction_level_metrics_only
+  prediction_objects:
+    - differential_expression_result
+    - condition_level_gene_expression_centroid
+  purpose: >-
+    Metrics that directly compare perturbation-model predictions with observed
+    perturbation responses. This file intentionally excludes meta-metrics,
+    dataset diagnostics, controls-as-scores, and embedding-integration metrics.
+
+boundaries:
+  included:
+    - metrics that assign a score to perturbation-model predictions
+    - references, feature rules, and candidate pools that are part of those scoring protocols
+  not_in_this_registry:
+    - protocols whose subject is another evaluation metric
+    - dataset-quality diagnostics and score calibrators
+    - cell-embedding and batch-integration metrics
+
+sources:
+  systema:
+    url: https://www.nature.com/articles/s41587-025-02777-8
+    code: https://github.com/mlbio-epfl/systema/tree/aaf5b5353993b48b78543f2f93b3e18ca65df515/evaluation
+    model_metric_contribution: centroid accuracy and explicit response-reference comparisons
+  miller:
+    url: https://www.biorxiv.org/content/10.1101/2025.10.20.683304v1
+    code: https://github.com/shiftbioscience/Perturbation-Models-Outperform-Baselines/tree/edf89745269d
+    model_metric_contribution: 13 condition-centroid scoring protocols
+  scperteval:
+    url: https://www.biorxiv.org/content/10.64898/2026.07.23.740433v1
+    code: https://github.com/Virtual-Cell-Research-Community/scPertEval/tree/8709eb07a0e7d4ecf1c60c977f2018690a749975
+    model_metric_contribution: protocol taxonomy and empirical comparison of the same prediction-level families
+  perturbation_metrics:
+    url: https://www.biorxiv.org/content/10.1101/2023.12.26.572833v1
+    code: https://github.com/theislab/perturbation-metrics/tree/825148f97f6bccb123fe63d4ac411d4361f2e171
+    model_metric_contribution: evidence supporting MSE as a default centroid distance
+  open_problems:
+    url: https://github.com/openproblems-bio/task_perturbation_prediction
+    model_metric_contribution: current historical row-wise metrics
+
+active_historical_metrics:
+  - id: mean_rowwise_rmse
+    component_path: deg/mean_rowwise_error
+    target: selected DE layer; currently clipped_sign_log10_pval
+    direction: minimize
+    scoring_unit: condition
+    aggregation: macro mean across conditions
+
+  - id: mean_rowwise_mae
+    component_path: deg/mean_rowwise_error
+    target: selected DE layer; currently clipped_sign_log10_pval
+    direction: minimize
+    scoring_unit: condition
+    aggregation: macro mean across conditions
+
+  - id: mean_rowwise_pearson
+    component_path: deg/mean_rowwise_correlation
+    target: selected DE layer; currently clipped_sign_log10_pval
+    direction: maximize
+    scoring_unit: condition
+    aggregation: macro mean across conditions
+
+  - id: mean_rowwise_spearman
+    component_path: deg/mean_rowwise_correlation
+    target: selected DE layer; currently clipped_sign_log10_pval
+    direction: maximize
+    scoring_unit: condition
+    aggregation: macro mean across conditions
+
+  - id: mean_rowwise_cosine
+    component_path: deg/mean_rowwise_correlation
+    target: selected DE layer; currently clipped_sign_log10_pval
+    direction: maximize
+    scoring_unit: condition
+    aggregation: macro mean across conditions
+
+paper_model_metrics:
+  prediction_object: log-normalized condition centroid
+  scoring_unit: perturbation condition
+  aggregation: macro mean across finite condition scores
+  metrics:
+    - id: mse
+      component_path: pseudobulk/mse
+      source: miller
+      protocol: mean squared error between predicted and observed centroids over all genes
+      direction: minimize
+
+    - id: weighted_mse
+      component_path: pseudobulk/weighted_mse
+      source: miller
+      protocol: >-
+        mean squared centroid error weighted by squared min-max-normalized
+        absolute ground-truth DE test statistics, then normalized to sum to one
+      direction: minimize
+
+    - id: pearson_delta_control
+      component_path: pseudobulk/pearson_delta_control
+      source: miller
+      protocol: Pearson correlation between predicted and observed control-referenced effects over all genes
+      direction: maximize
+
+    - id: pearson_delta_control_degs
+      component_path: pseudobulk/pearson_delta_control_degs
+      source: miller
+      protocol: Pearson correlation between control-referenced effects restricted to DE genes
+      direction: maximize
+
+    - id: pearson_delta_perturbed_mean
+      component_path: pseudobulk/pearson_delta_perturbed_mean
+      source: miller
+      protocol: >-
+        Pearson correlation after subtracting the equal-condition-weighted
+        training-perturbation mean within the covariate group
+      direction: maximize
+
+    - id: pearson_delta_perturbed_mean_degs
+      component_path: pseudobulk/pearson_delta_perturbed_mean_degs
+      source: miller
+      protocol: >-
+        training-perturbation-mean-referenced Pearson restricted to
+        adjusted-p-value DE genes
+      direction: maximize
+
+    - id: r2_delta_control
+      component_path: pseudobulk/r2_delta_control
+      source: miller
+      protocol: R-squared between predicted and observed control-referenced effects over all genes
+      direction: maximize
+
+    - id: r2_delta_control_degs
+      component_path: pseudobulk/r2_delta_control_degs
+      source: miller
+      protocol: control-referenced R-squared restricted to DE genes
+      direction: maximize
+
+    - id: r2_delta_perturbed_mean
+      component_path: pseudobulk/r2_delta_perturbed_mean
+      source: miller
+      protocol: >-
+        R-squared after subtracting the equal-condition-weighted
+        training-perturbation mean within the covariate group
+      direction: maximize
+
+    - id: r2_delta_perturbed_mean_degs
+      component_path: pseudobulk/r2_delta_perturbed_mean_degs
+      source: miller
+      protocol: perturbed-mean-referenced R-squared restricted to DE genes
+      direction: maximize
+
+    - id: weighted_r2_delta_control
+      component_path: pseudobulk/weighted_r2_delta_control
+      source: miller
+      protocol: continuously DE-weighted R-squared on control-referenced effects
+      direction: maximize
+
+    - id: weighted_r2_delta_perturbed_mean
+      component_path: pseudobulk/weighted_r2_delta_perturbed_mean
+      source: miller
+      protocol: continuously DE-weighted R-squared on perturbed-mean-referenced effects
+      direction: maximize
+
+    - id: normalized_inverse_rank
+      component_path: pseudobulk/normalized_inverse_rank
+      source: miller
+      protocol: >-
+        Within each covariate group, compute the fraction of unmatched observed
+        centroids farther from a prediction than its matched observed centroid,
+        using Euclidean distance and treating ties as failures.
+      direction: maximize
+      cross_perturbation_scope: transposed retrieval
+
+    - id: centroid_accuracy
+      component_path: pseudobulk/centroid_accuracy
+      source: systema
+      protocol: >-
+        Fraction of unmatched observed perturbation centroids farther from a
+        prediction than its matched observed centroid, using Euclidean distance.
+      direction: maximize
+      cross_perturbation_scope: transposed retrieval
+      note: >-
+        This has the same released formula as Normalized Inverse Rank when the
+        candidate pool is the same. It is retained as a source alias, not an
+        independent aggregate vote.
+
+data_contract:
+  truth: condition_by_gene observed centroid matrix
+  prediction: condition_by_gene predicted centroid matrix
+  control_reference: condition-matched control centroid matrix
+  perturbed_mean_reference: >-
+    equal-condition-weighted training-perturbation mean within the covariate group
+  deg_mask: condition_by_gene boolean DE calls
+  deg_weights: >-
+    condition_by_gene squared min-max-normalized absolute ground-truth DE test
+    statistics, normalized to sum to one per condition
+  condition_keys: stable keys used to align predictions, truths, and retrieval candidates
+  candidate_groups: covariate groups that define valid retrieval candidate pools
+
+smoke_test_contract:
+  dataset: resources/datasets/srivatsan_2020_sciplex3/srivatsan_2020_sciplex3_compressed.h5ad
+  train_partition: source_replicate == rep1
+  truth_partition: source_replicate == rep2
+  prediction: mean log-normalized expression of train cells for the matched condition
+  condition_keys: [cell_type, sm_name, dose_uM, timepoint_hr]
+  note: >-
+    This replicate-mean predictor is only an executable smoke test. Its scores
+    are not a benchmark result or evidence for model quality.

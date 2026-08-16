@@ -1,0 +1,35 @@
+__merge__: ../../../api/comp_condition_centroid_metric.yaml
+name: r2_delta_control_degs
+info:
+  metrics:
+    - name: r2_delta_control_degs
+      label: R2 delta control DEGs
+      summary: Control-referenced R-squared on significant DE genes.
+      description: >-
+        Computes control-referenced R-squared after restricting each condition
+        to genes passing its adjusted DE significance threshold.
+      references:
+        doi: 10.1101/2025.10.20.683304
+      links:
+        repository: https://github.com/shiftbioscience/Perturbation-Models-Outperform-Baselines
+      min: -.inf
+      max: 1
+      maximize: true
+resources:
+  - type: python_script
+    path: script.py
+  - path: ../_shared/condition_centroid_metric_runner.py
+  - path: ../_shared/condition_centroid_metrics.py
+test_resources:
+  - type: python_script
+    path: /common/component_tests/check_config.py
+  - type: python_script
+    path: ../_shared/test_condition_centroid_component.py
+engines:
+  - type: docker
+    image: openproblems/base_python:1.0.0
+runners:
+  - type: executable
+  - type: nextflow
+    directives:
+      label: [midtime, highmem, highcpu]

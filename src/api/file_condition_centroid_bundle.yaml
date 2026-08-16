@@ -1,0 +1,11 @@
+type: file
+example: resources/datasets/srivatsan_2020_sciplex3/train_mean_smoke_input.npz
+label: Pseudobulk condition-centroid metric bundle
+summary: >-
+  Aligned observed and predicted condition centroids, scoring references,
+  differential-expression evidence, and retrieval candidate groups.
+description: >-
+  A NumPy NPZ bundle containing truth, prediction, control_reference,
+  perturbed_mean_reference, deg_mask, deg_weights, candidate_groups,
+  condition_keys, and metadata_json arrays. All condition-by-gene arrays must
+  be aligned and condition identifiers must be unique.

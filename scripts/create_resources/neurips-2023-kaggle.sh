@@ -41,7 +41,7 @@ viash run src/control_methods/mean_across_compounds/config.vsh.yaml -- \
   --output "$OUT/prediction.h5ad"
 
 echo ">> Run metric"
-viash run src/metrics/mean_rowwise_error/config.vsh.yaml -- \
+viash run src/metrics/deg/mean_rowwise_error/config.vsh.yaml -- \
   --prediction "$OUT/prediction.h5ad" \
   --de_test "$OUT/de_test.h5ad" \
   --output "$OUT/score.h5ad"

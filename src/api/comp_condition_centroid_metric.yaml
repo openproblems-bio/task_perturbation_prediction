@@ -1,0 +1,18 @@
+namespace: metrics
+info:
+  type: metric
+  type_info:
+    label: Metric
+    summary: A pseudobulk condition-centroid perturbation prediction metric
+    description: >-
+      A metric that compares predicted and observed perturbation-response
+      centroids, optionally using aligned references and DE evidence.
+arguments:
+  - name: --prepared
+    __merge__: file_condition_centroid_bundle.yaml
+    required: true
+    direction: input
+  - name: --output
+    __merge__: file_score.yaml
+    required: true
+    direction: output

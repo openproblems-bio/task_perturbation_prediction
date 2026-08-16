@@ -1,0 +1,36 @@
+__merge__: ../../../api/comp_condition_centroid_metric.yaml
+name: centroid_accuracy
+info:
+  metrics:
+    - name: centroid_accuracy
+      label: Centroid accuracy
+      summary: Systema Euclidean centroid retrieval accuracy.
+      description: >-
+        Measures the fraction of unmatched observed perturbation centroids that
+        are farther from a prediction than its matched observed centroid. This
+        is a source alias of normalized inverse rank for an identical pool.
+      references:
+        doi: 10.1038/s41587-025-02777-8
+      links:
+        repository: https://github.com/mlbio-epfl/systema
+      min: 0
+      max: 1
+      maximize: true
+resources:
+  - type: python_script
+    path: script.py
+  - path: ../_shared/condition_centroid_metric_runner.py
+  - path: ../_shared/condition_centroid_metrics.py
+test_resources:
+  - type: python_script
+    path: /common/component_tests/check_config.py
+  - type: python_script
+    path: ../_shared/test_condition_centroid_component.py
+engines:
+  - type: docker
+    image: openproblems/base_python:1.0.0
+runners:
+  - type: executable
+  - type: nextflow
+    directives:
+      label: [midtime, highmem, highcpu]
